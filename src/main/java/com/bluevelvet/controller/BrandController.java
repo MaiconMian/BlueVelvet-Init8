@@ -1,14 +1,15 @@
 package com.bluevelvet.controller;
 
+import com.bluevelvet.DTO.BrandDTO;
+import com.bluevelvet.DTO.CategoryDTO;
 import com.bluevelvet.model.ApiResponse;
 import com.bluevelvet.service.BrandService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.bluevelvet.model.*;
 
 import java.util.List;
@@ -40,6 +41,26 @@ public class BrandController {
                     .body(new ApiResponse<>("error", "Brand not found"));
         }
         return ResponseEntity.ok(new ApiResponse<>("success", brand.get()));
+    }
+
+    @DeleteMapping("/brands/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EDITOR')")
+    public ResponseEntity<ApiResponse<Object>> deleteBrandById(@PathVariable int id) {
+        boolean deleted = brandService.deleteBrand(id);
+        if (deleted) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("error", "Category not found"));
+        }
+    }
+
+    @PostMapping("/brands")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EDITOR')")
+    public ResponseEntity<ApiResponse<String>> addBrand(@Valid @RequestBody BrandDTO brandDTO) {
+        Brand newBrand = brandService.saveBrand(brandDTO);
+        return ResponseEntity.ok(new ApiResponse<>("success", "Product with ID " +
+                newBrand.getId() + " added successfully"));
     }
 
 }

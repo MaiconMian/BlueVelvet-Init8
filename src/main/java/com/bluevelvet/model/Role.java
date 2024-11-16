@@ -7,7 +7,7 @@ import java.util.*;
 @Entity
 @Setter
 @Getter
-@Table(name = "bv_role")
+@Table (name = "bv_roles")
 public class Role {
 
     @Id

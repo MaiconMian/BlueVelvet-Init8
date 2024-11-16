@@ -11,7 +11,7 @@ import java.io.*;
 @Entity
 @Getter
 @Setter
-@Table (name="bv_product_photos")
+@Table (name = "bv_products_photos")
 public class ProductPhotos {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +22,6 @@ public class ProductPhotos {
     @JoinColumn(name = "id_product")
     private Product product;
 
-    @Column(name = "product_ph_content")
+    @Column(name = "products_ph_contents")
     private byte[] image;
 }

@@ -3,6 +3,7 @@ package com.bluevelvet.DTO;
 import com.bluevelvet.model.Category;
 import com.bluevelvet.model.Product;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
@@ -12,11 +13,12 @@ import java.util.Set;
 @Setter
 public class BrandDTO {
 
-    private String categoryName;
+    @NotNull(message = "Brand name is required")
+    private String brandName;
 
     private byte[] image;
 
-    private List<ProductDTO> products;
+    private List<Integer> products;
 
-    private Set<CategoryDTO> category;
+    private Set<Integer> category;
 }

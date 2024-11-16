@@ -11,8 +11,9 @@ import java.io.*;
 @Entity
 @Getter
 @Setter
-@Table (name = "bv_product_detail")
+@Table (name = "bv_products_details")
 public class ProductDetails {
+
     @Id
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,4 +29,5 @@ public class ProductDetails {
 
     @Column(name = "detail_value", length = 100)
     private String detailValue;
+
 }

@@ -11,7 +11,7 @@ import java.io.*;
 @Getter
 @Setter
 @Entity
-@Table (name="bv_brand")
+@Table (name="bv_brands")
 public class Brand {
 
     @Id
@@ -30,7 +30,7 @@ public class Brand {
 
     @ManyToMany
     @JoinTable(
-            name = "bv_brand_category",
+            name = "bv_brands_categories",
             joinColumns = @JoinColumn(name = "brand_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )

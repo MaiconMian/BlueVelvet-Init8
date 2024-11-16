@@ -11,7 +11,7 @@ import java.io.*;
 @Entity
 @Setter
 @Getter
-@Table(name = "bv_product")
+@Table(name = "bv_products")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

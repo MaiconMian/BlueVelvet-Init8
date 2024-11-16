@@ -11,7 +11,7 @@ import java.util.*;
 @Entity
 @Setter
 @Getter
-@Table(name = "bv_user")
+@Table(name = "bv_users")
 public class User implements UserDetails{
 
     @Id
