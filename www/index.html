@@ -64,88 +64,129 @@
     <!-- Modals -->
     <!-- Modal View -->
     <div class="modal fade" id="modalView" tabindex="-1" role="dialog" aria-labelledby="modalViewLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalViewLabel">View Product</h5>
+                    <h5 class="modal-title" id="modalViewLabel">Product Details</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <!-- Error Message -->
-                    <div id="viewError" class="alert alert-danger" style="display: none; background-color: #f8d7da; color: #721c24;"></div>
-                    <p><strong>ID:</strong> <span id="viewId"></span></p>
-                    <p><strong>Name:</strong> <span id="viewName"></span></p>
-                    <p><strong>Brand:</strong> <span id="viewBrand"></span></p>
-                    <p><strong>Short Description:</strong> <span id="viewShortDescription"></span></p>
-                    <p><strong>Long Description:</strong> <span id="viewLongDescription"></span></p>
-                    <p><strong>Price:</strong> <span id="viewPrice"></span></p>
-                    <p><strong>Discount:</strong> <span id="viewDiscount"></span></p>
-                    <img id="viewImage" src="" alt="Product Image" style="width: 100%; display: none;">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <img id="mainImage" src="" alt="Main Product Image" class="img-fluid rounded" style="max-width: 100%; height: auto; border: 1px solid #ddd;">
+                        </div>
+                        <div class="col-md-8">
+                            <h5 id="viewName" class="font-weight-bold"></h5>
+                            <p><strong>Brand:</strong> <span id="viewBrand"></span></p>
+                            <p><strong>Short Description:</strong> <span id="viewShortDescription"></span></p>
+                            <p><strong>Long Description:</strong> <span id="viewLongDescription"></span></p>
+    
+                            <div class="d-flex align-items-center flex-wrap mt-2">
+                                <span id="tagStatus" class="badge badge-pill px-3 py-2 mr-2"></span>
+                                <span id="tagStock" class="badge badge-pill px-3 py-2 mr-2"></span>
+                                <span id="tagPrice" class="badge badge-pill px-3 py-2"></span>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="mt-4">
+                        <div id="secondaryImagesCarousel" class="carousel slide" data-ride="carousel">
+                            <div class="carousel-inner" id="carouselInner"></div>
+                            <a class="carousel-control-prev" href="#secondaryImagesCarousel" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="carousel-control-next" href="#secondaryImagesCarousel" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </div>
+                    </div>
+    
+                    <div class="mt-4">
+                        <h5 class="font-weight-bold">Technical Details</h5>
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th>Width</th>
+                                    <td id="viewWidth"></td>
+                                </tr>
+                                <tr>
+                                    <th>Height</th>
+                                    <td id="viewHeight"></td>
+                                </tr>
+                                <tr>
+                                    <th>Length</th>
+                                    <td id="viewLength"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal Edit -->
-    <div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="modalEditLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalEditLabel">Edit Product</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <!-- Error Message -->
-                    <div id="editError" class="alert alert-danger" style="display: none; background-color: #f8d7da; color: #721c24;"></div>
-                    <form id="editForm">
-                        <div class="form-group">
-                            <label for="editName">Name</label>
-                            <input type="text" id="editName" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="editBrand">Brand</label>
-                            <input type="text" id="editBrand" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="editShortDescription">Short Description</label>
-                            <textarea id="editShortDescription" class="form-control"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="editLongDescription">Long Description</label>
-                            <textarea id="editLongDescription" class="form-control"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Delete -->
-    <div class="modal fade" id="modalDelete" tabindex="-1" role="dialog" aria-labelledby="modalDeleteLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalDeleteLabel">Delete Product</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <!-- Error Message -->
-                    <div id="deleteError" class="alert alert-danger" style="display: none; background-color: #f8d7da; color: #721c24;"></div>
-                    Are you sure you want to delete this product?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+        <!-- Modal Edit -->
+        <div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="modalEditLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEditLabel">Edit Product</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Error Message -->
+                        <div id="editError" class="alert alert-danger" style="display: none; background-color: #f8d7da; color: #721c24;"></div>
+                        <form id="editForm">
+                            <div class="form-group">
+                                <label for="editName">Name</label>
+                                <input type="text" id="editName" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="editBrand">Brand</label>
+                                <input type="text" id="editBrand" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="editShortDescription">Short Description</label>
+                                <textarea id="editShortDescription" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="editLongDescription">Long Description</label>
+                                <textarea id="editLongDescription" class="form-control"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    
+        <!-- Modal Delete -->
+        <div class="modal fade" id="modalDelete" tabindex="-1" role="dialog" aria-labelledby="modalDeleteLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalDeleteLabel">Delete Product</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Error Message -->
+                        <div id="deleteError" class="alert alert-danger" style="display: none; background-color: #f8d7da; color: #721c24;"></div>
+                        Are you sure you want to delete this product?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -192,23 +233,62 @@
                     $('#products').on('click', '.btn-view', function () {
                         const productId = $(this).data('id');
                         $('#viewError').hide();
+
                         $.ajax({
                             url: `http://localhost:8090/api/v1/products/${productId}`,
                             type: 'GET',
                             success: function (response) {
                                 const product = response.data;
-                                $('#viewId').text(product.id);
+
                                 $('#viewName').text(product.name);
                                 $('#viewBrand').text(product.brand.brandName);
                                 $('#viewShortDescription').text(product.shortDescription);
                                 $('#viewLongDescription').text(product.longDescription);
-                                $('#viewPrice').text(product.price);
-                                $('#viewDiscount').text(product.discount);
-                                $('#viewImage').attr('src', `data:image/jpeg;charset=utf-8;base64,${product.image}`).show();
+
+                                const mainImageSrc = product.image
+                                    ? `data:image/jpeg;charset=utf-8;base64,${product.image}`
+                                    : 'https://via.assets.so/img.jpg?w=300&h=300&tc=gray&bg=#cecece&t=Image+not+found';
+                                $('#mainImage').attr('src', mainImageSrc);
+
+                                const carouselInner = $('#carouselInner');
+                                carouselInner.empty();
+
+                                if (product.photos && product.photos.length > 0) {
+                                    product.photos.forEach((photo, index) => {
+                                        carouselInner.append(`
+                                            <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                                <img src="data:image/jpeg;charset=utf-8;base64,${photo.image}" class="d-block w-100 rounded" alt="Photo ${index + 1}">
+                                            </div>
+                                        `);
+                                    });
+                                } else {
+                                    carouselInner.append(`
+                                        <div class="carousel-item active">
+                                            <img src="https://via.assets.so/img.jpg?w=300&h=300&tc=gray&bg=#cecece&t=Image+not+found" class="d-block w-100 rounded" alt="No Additional Images">
+                                        </div>
+                                    `);
+                                }
+
+                                $('#tagStatus')
+                                    .text(product.status ? 'Active' : 'Inactive')
+                                    .removeClass('badge-danger badge-success')
+                                    .addClass(product.status ? 'badge-success' : 'badge-danger');
+
+                                $('#tagStock')
+                                    .text(product.hasStock ? 'In Stock' : 'Out of Stock')
+                                    .removeClass('badge-danger badge-success')
+                                    .addClass(product.hasStock ? 'badge-success' : 'badge-danger');
+
+                                $('#tagPrice').text(`$${product.price}`).addClass('badge-primary');
+
+                                $('#viewWidth').text(product.width + ' in');
+                                $('#viewHeight').text(product.height + ' in');
+                                $('#viewLength').text(product.length + ' in');
+
                                 $('#modalView').modal('show');
                             },
-                            error: function (xhr) {
-                                $('#viewError').text(`Error: Failed to load product details`).show();
+                            error: function () {
+                                $('#viewError').text('Error: Failed to load product details').show();
                             }
                         });
                     });
