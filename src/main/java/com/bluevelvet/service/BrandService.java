@@ -5,6 +5,8 @@ import com.bluevelvet.model.Brand;
 import com.bluevelvet.model.Category;
 import com.bluevelvet.model.Product;
 import com.bluevelvet.repository.BrandRepository;
+import com.bluevelvet.repository.CategoryRepository;
+import com.bluevelvet.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -16,9 +18,9 @@ public class BrandService {
     @Autowired
     private BrandRepository brandRepository;
     @Autowired
-    private CategoryService categoryService;
+    private CategoryRepository categoryRepository;
     @Autowired
-    private ProductService productService;
+    private ProductRepository productRepository;
 
     public Brand saveBrand(Brand brand) {
         return brandRepository.save(brand);
@@ -56,21 +58,21 @@ public class BrandService {
 
         if (brandDTO.getCategory() != null) {
             brandDTO.getCategory().forEach(categoryID -> {
-                Category category = categoryService.getCategoryById(categoryID)
+                Category category = categoryRepository.findById(categoryID)
                         .orElseThrow(() -> new IllegalArgumentException("Category not fold " + categoryID));
                 newBrand.getCategory().add(category);
                 category.getBrands().add(newBrand);
-                categoryService.saveCategory(category);
+                categoryRepository.save(category);
             });
         }
 
         if (brandDTO.getProducts() != null) {
             brandDTO.getProducts().forEach(productId -> {
-                Product product = productService.getProductById(productId)
+                Product product = productRepository.findById(productId)
                         .orElseThrow(() -> new IllegalArgumentException("Product not found for ID: " + productId));
                 newBrand.getProducts().add(product);
                 product.setBrand(newBrand);
-                productService.saveProduct(product);
+                productRepository.save(product);
             });
         }
 

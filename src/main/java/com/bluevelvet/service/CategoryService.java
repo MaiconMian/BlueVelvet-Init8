@@ -5,6 +5,7 @@ import com.bluevelvet.model.Category;
 import com.bluevelvet.model.Product;
 import com.bluevelvet.repository.BrandRepository;
 import com.bluevelvet.repository.CategoryRepository;
+import com.bluevelvet.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -17,9 +18,9 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
     @Autowired
-    private BrandService brandService;
+    private BrandRepository brandRepository;
     @Autowired
-    private ProductService productService;
+    private ProductRepository productRepository;
 
     public Category saveCategory(Category category) {
         return categoryRepository.save(category);
@@ -49,45 +50,43 @@ public class CategoryService {
         return categoryRepository.findById(id);
     }
 
-    public Category saveCategory (CategoryDTO categoryDTO){
+    public Category saveCategory(CategoryDTO categoryDTO) {
 
-        Category newcategory = new Category();
+        Category newCategory = new Category();
+        newCategory.setImage(categoryDTO.getImage());
+        newCategory.setCategoryName(categoryDTO.getCategoryName());
 
-        newcategory.setImage(categoryDTO.getImage());
-        newcategory.setCategoryName(categoryDTO.getCategoryName());
+        this.saveCategory(newCategory);
 
-        this.saveCategory(newcategory);
-
-        if(categoryDTO.getCategoryParent() == null){
-            newcategory.setCategoryParent(newcategory);
+        if (categoryDTO.getCategoryParent() == null) {
+            newCategory.setCategoryParent(newCategory);
         } else {
             Category parentCategory = this.getCategoryById(categoryDTO.getCategoryParent())
-                    .orElseThrow(() -> new IllegalArgumentException("Parent Category not fold"));
-            newcategory.setCategoryParent(parentCategory);
+                    .orElseThrow(() -> new IllegalArgumentException("Parent Category not found"));
+            newCategory.setCategoryParent(parentCategory);
         }
 
         if (categoryDTO.getBrands() != null) {
             categoryDTO.getBrands().forEach(brandId -> {
-                Brand brand = brandService.getBrandById(brandId)
-                        .orElseThrow(() -> new IllegalArgumentException("Brand not fold " + brandId));
-                newcategory.getBrands().add(brand);
-                brand.getCategory().add(newcategory);
-                brandService.saveBrand(brand);
+                Brand brand = brandRepository.findById(brandId)
+                        .orElseThrow(() -> new IllegalArgumentException("Brand not found: " + brandId));
+                newCategory.getBrands().add(brand);
+                brand.getCategory().add(newCategory);
+                brandRepository.save(brand);
             });
         }
 
         if (categoryDTO.getProducts() != null) {
             categoryDTO.getProducts().forEach(productId -> {
-                Product product = productService.getProductById(productId)
+                Product product = productRepository.findById(productId)
                         .orElseThrow(() -> new IllegalArgumentException("Product not found for ID: " + productId));
-                newcategory.getProducts().add(product);
-                product.getCategories().add(newcategory);
-                productService.saveProduct(product);
+                newCategory.getProducts().add(product);
+                product.getCategories().add(newCategory);
+                productRepository.save(product);
             });
         }
 
-        this.saveCategory(newcategory);
-        return newcategory;
-
+        // Finalize saving the new category
+        return this.saveCategory(newCategory);
     }
 }
