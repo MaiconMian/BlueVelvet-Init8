@@ -90,6 +90,17 @@ public class RunTestsOnStartup implements CommandLineRunner {
 
         product1.setBrand(brand);
         product2.setBrand(brand);
+        product1.getCategories().add(category);
+        try {
+            productRepository.save(product1);
+            productRepository.save(product2);
+        } catch (Exception e) {}
+
+        category.getProducts().add(product1);
+        try {
+            categoryRepository.save(category);
+        } catch (Exception e) {}
+
         try {
             productRepository.save(product1);
             productRepository.save(product2);

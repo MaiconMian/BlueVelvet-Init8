@@ -4,6 +4,7 @@ import com.bluevelvet.DTO.ProductDTO;
 import com.bluevelvet.exception.BrandNotFoundException;
 import com.bluevelvet.model.Product;
 import com.bluevelvet.service.BrandService;
+import com.bluevelvet.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,9 @@ public class ProductMapper {
 
     @Autowired
     private BrandService brandService;
+
+    @Autowired
+    private CategoryService categoryService;
 
     public Product toProduct(ProductDTO productDTO) {
         Product product = new Product();
@@ -35,12 +39,6 @@ public class ProductMapper {
         product.setCost(productDTO.getCost());
         product.setCreationTime(now);
         product.setUpdateTime(now);
-
-        brandService.getBrandById(productDTO.getBrand())
-                .ifPresentOrElse(product::setBrand,
-                        () -> { throw new BrandNotFoundException("Brand with ID " + productDTO.getBrand()
-                                + " not found!"); }
-                );
 
         return product;
     }
