@@ -39,6 +39,7 @@ public class ProductService {
     @Autowired
     private ProductPhotosService productPhotosService;
 
+
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
@@ -62,19 +63,29 @@ public class ProductService {
 
     @Transactional
     public Product saveProductWithDetails(ProductDTO productDTO) {
+
         Product product = productMapper.toProduct(productDTO);
 
         saveProduct(product);
 
         brandService.getBrandById(productDTO.getBrand())
-                .ifPresentOrElse(product::setBrand,
-                        () -> { throw new BrandNotFoundException("Brand with ID " +
-                                productDTO.getBrand() + " not found!"); }
+                .ifPresentOrElse(
+                        brand -> {
+                            product.setBrand(brand);
+                            brand.getProducts().add(product);
+                            brandService.saveBrand(brand);
+                        },
+                        () -> {
+                            throw new BrandNotFoundException("Brand with ID " + productDTO.getBrand() + " not found!");
+                        }
                 );
 
         productDTO.getCategories().forEach(categoryId -> {
-            categoryService.getCategoryById(categoryId)
-                    .ifPresent(product.getCategories()::add);
+            categoryService.getCategoryById(categoryId).ifPresent(category -> {
+                product.getCategories().add(category);
+                category.getProducts().add(product);
+                categoryService.saveCategory(category);
+            });
         });
 
         productDTO.getDetails().forEach(detailDTO -> {
