@@ -24,7 +24,8 @@ public class Product {
     @Column(name = "product_name", length = 100)
     private String name;
 
-    @Column(name = "product_main_photo")
+    @Lob
+    @Column(name = "product_main_photo", columnDefinition = "MEDIUMBLOB")
     private byte[] image;
 
     @Column(name = "product_short_desc", length = 100)

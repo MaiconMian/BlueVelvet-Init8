@@ -22,6 +22,7 @@ public class ProductPhotos {
     @JoinColumn(name = "id_product")
     private Product product;
 
-    @Column(name = "products_ph_contents")
+    @Lob
+    @Column(name = "product_ph_content", columnDefinition = "MEDIUMBLOB")
     private byte[] image;
 }

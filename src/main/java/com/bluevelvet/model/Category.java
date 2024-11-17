@@ -26,7 +26,8 @@ public class Category {
     @Column(name = "category_name", length=100)
     private String categoryName;
 
-    @Column(name = "category_ph_content")
+    @Lob
+    @Column(name = "category_ph_content", columnDefinition = "MEDIUMBLOB")
     private byte[] image;
 
     @ManyToMany(mappedBy = "category")

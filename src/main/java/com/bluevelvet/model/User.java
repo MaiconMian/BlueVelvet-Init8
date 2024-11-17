@@ -33,7 +33,8 @@ public class User implements UserDetails{
     @Column(name = "user_status", columnDefinition = "TINYINT", nullable = false)
     private Boolean status;
 
-    @Column(name = "user_ph_content")
+    @Lob
+    @Column(name = "user_ph_content", columnDefinition = "MEDIUMBLOB")
     private byte[] image;
 
     @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)

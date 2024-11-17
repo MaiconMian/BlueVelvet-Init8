@@ -21,7 +21,8 @@ public class Brand {
     @Column(name = "brand_name", length=100)
     private String brandName;
 
-    @Column(name = "brand_ph_content")
+    @Lob
+    @Column(name = "brand_ph_content", columnDefinition = "MEDIUMBLOB")
     private byte[] image;
 
     @JsonIgnore
