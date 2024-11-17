@@ -250,10 +250,12 @@
                                     : 'https://via.assets.so/img.jpg?w=300&h=300&tc=gray&bg=#cecece&t=Image+not+found';
                                 $('#mainImage').attr('src', mainImageSrc);
 
+                                const carouselContainer = $('#carouselContainer');
                                 const carouselInner = $('#carouselInner');
                                 carouselInner.empty();
 
                                 if (product.photos && product.photos.length > 0) {
+                                    carouselContainer.show();
                                     product.photos.forEach((photo, index) => {
                                         carouselInner.append(`
                                             <div class="carousel-item ${index === 0 ? 'active' : ''}">
@@ -262,11 +264,7 @@
                                         `);
                                     });
                                 } else {
-                                    carouselInner.append(`
-                                        <div class="carousel-item active">
-                                            <img src="https://via.assets.so/img.jpg?w=300&h=300&tc=gray&bg=#cecece&t=Image+not+found" class="d-block w-100 rounded" alt="No Additional Images">
-                                        </div>
-                                    `);
+                                    carouselContainer.hide();
                                 }
 
                                 $('#tagStatus')
