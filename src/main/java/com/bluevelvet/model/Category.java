@@ -19,6 +19,7 @@ public class Category {
     private int id;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "category_parent_id", insertable = false, updatable = false)
     private Category categoryParent;
 
@@ -29,6 +30,7 @@ public class Category {
     private byte[] image;
 
     @ManyToMany(mappedBy = "category")
+    @JsonIgnore
     private Set<Brand> brands;
 
     @ManyToMany
@@ -38,6 +40,6 @@ public class Category {
             joinColumns = @JoinColumn(name = "category_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
-    private Set<Product> products;
+    private Set<Product> products = new HashSet<>();
 
 }

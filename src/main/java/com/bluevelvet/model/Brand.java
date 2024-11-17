@@ -28,12 +28,13 @@ public class Brand {
     @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
     private List<Product> products;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "bv_brands_categories",
             joinColumns = @JoinColumn(name = "brand_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
-    private Set<Category> category;
+    private Set<Category> category = new HashSet<>();
 
 }
