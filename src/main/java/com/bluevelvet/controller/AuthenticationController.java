@@ -2,9 +2,7 @@ package com.bluevelvet.controller;
 
 import com.bluevelvet.DTO.AdminRegisterDTO;
 import com.bluevelvet.DTO.LoginDTO;
-import com.bluevelvet.DTO.LoginResponseDTO;
 import com.bluevelvet.DTO.UserRegisterDTO;
-import com.bluevelvet.model.Role;
 import com.bluevelvet.repository.UserRepository;
 import com.bluevelvet.security.TokenService;
 import com.bluevelvet.service.RoleService;
@@ -21,12 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import com.bluevelvet.model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-
-import java.util.ArrayList;
-import java.util.List;
+import com.bluevelvet.security.SecurityFilter;
 
 @RestController
 @RequestMapping("auth")
@@ -40,8 +33,8 @@ public class AuthenticationController {
     private TokenService tokenService;
     @Autowired
     private AuthenticationManager authenticationManager;
-    private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
-
+    @Autowired
+    private SecurityFilter securityHelper;
 
     @PostMapping("/login")
     @PreAuthorize("permitAll()")
@@ -55,7 +48,7 @@ public class AuthenticationController {
                     .httpOnly(true)
                     .secure(true)
                     .path("/")
-                    .sameSite("Strict")
+                    .sameSite("None")
                     .maxAge(60 * 60)
                     .build();
 
@@ -137,47 +130,15 @@ public class AuthenticationController {
     @GetMapping("/validate")
     public ResponseEntity<?> validateToken(HttpServletRequest request) {
 
-        String token = request.getHeader("Authorization");
-
-        if (token == null) {
-            token = getTokenFromCookie(request);
-        }
-
-        logger.debug("O token eh: {}", token);
-
-        if (token == null || !isValidToken(token)) {
-            logger.debug("O token não é valido");
-
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
-        }
-
-        return ResponseEntity.ok("Valid Token");
-    }
-
-    private String getTokenFromCookie(HttpServletRequest request) {
-        if (request.getCookies() != null) {
-            for (var cookie : request.getCookies()) {
-                if ("jwt".equals(cookie.getName())) {
-                    return cookie.getValue();
-                }
+        String token = securityHelper.recoveryToken(request);
+        if(token != null) {
+            try {
+                tokenService.validateToken(token);
+                return ResponseEntity.ok("Valid Token");
+            } catch (RuntimeException e) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
             }
         }
-        return null;
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
     }
-
-    private boolean isValidToken(String token) {
-
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
-
-        try {
-            tokenService.validateToken(token);
-            return true;
-        } catch (RuntimeException e) {
-            return false;
-        }
-    }
-
-
 }
