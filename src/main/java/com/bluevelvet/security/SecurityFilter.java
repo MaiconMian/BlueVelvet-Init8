@@ -50,11 +50,10 @@ public class SecurityFilter extends OncePerRequestFilter {
             return authHeader.replaceFirst("Bearer ", "").trim();
         }
 
-        // Se não encontrar no cabeçalho, tenta pegar o token do cookie
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("token".equals(cookie.getName())) {
+                if ("jwt".equals(cookie.getName())) {
                     return cookie.getValue();
                 }
             }
