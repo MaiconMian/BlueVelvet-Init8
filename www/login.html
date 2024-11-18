@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h2>Login</h2>
+
+<form id="loginForm">
+    <div>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required placeholder="Enter your email">
+    </div>
+
+    <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required placeholder="Enter your password">
+    </div>
+
+    <button type="submit">Submit</button>
+</form>
+
+<script>
+    const submitData = () => {
+        const baseUrl = "http://localhost:8090/api/v1";
+        const url = `${baseUrl}/auth/login`;
+        const method = "POST";
+
+        const data = {
+            email: $('#email').val(),
+            password: $('#password').val(),
+        };
+
+        $.ajax({
+            url,
+            method,
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            xhrFields: {
+                withCredentials: true
+            },
+            success: () => {
+                alert("Login successful!");
+                window.location.href = "/admin.html";
+            },
+            error: () => {
+                alert("Failed to login. Please try again.");
+            },
+        });
+
+    };
+
+    $('#loginForm').on('submit', function(event) {
+        event.preventDefault();
+        submitData();
+    });
+
+
+</script>
+
+</body>
+</html>

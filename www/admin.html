@@ -470,10 +470,9 @@
                     $.ajax({
                         url,
                         method,
-                        // AUTENTICAÇÃO
-                        // beforeSend: function(request) {
-                        //     request.setRequestHeader("Authorization", `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoLWFwaSIsInJvbGVzIjpbMV0sImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJleHAiOjE3MzE5MDIxNTZ9.SfQXzk97YUUlvSynSMC29WUsvK8CN2juNmTIAo8pRiI`);
-                        // },
+                        xhrFields: {
+                            withCredentials: true
+                        },
                         contentType: 'application/json',
                         data: JSON.stringify(data),
                         success: () => {

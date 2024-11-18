@@ -91,10 +91,9 @@ function populateTable(actions) {
                 $('#confirmDelete').off().on('click', function () {
                     $.ajax({
                         url: `http://localhost:8090/api/v1/products/${productId}`,
-                        // AUTENTICAÇÃO
-                        // beforeSend: function(request) {
-                        //     request.setRequestHeader("Authorization", `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoLWFwaSIsInJvbGVzIjpbMV0sImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJleHAiOjE3MzE5MDIxNTZ9.SfQXzk97YUUlvSynSMC29WUsvK8CN2juNmTIAo8pRiI`);
-                        // },
+                        xhrFields: {
+                            withCredentials: true
+                        },
                         type: 'DELETE',
                         success: function () {
                             $('#modalDelete').modal('hide');
