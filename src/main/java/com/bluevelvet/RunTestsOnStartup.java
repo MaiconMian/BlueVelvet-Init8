@@ -1,8 +1,11 @@
 package com.bluevelvet;
 
+import com.bluevelvet.controller.AuthenticationController;
 import com.bluevelvet.model.*;
 import com.bluevelvet.repository.*;
 import com.bluevelvet.service.RoleService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,9 +28,11 @@ public class RunTestsOnStartup implements CommandLineRunner {
     private UserRepository userRepository;
     @Autowired
     private RoleService roleService;
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
     @Override
     public void run(String... args) throws Exception {
+        logger.debug("ESTOU FUNFANTE");
         Product product1 = new Product();
         product1.setName("Produto de Teste 1");
         product1.setShortDescription("Descrição curta do Produto 1");
