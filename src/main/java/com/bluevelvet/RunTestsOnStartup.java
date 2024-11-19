@@ -4,8 +4,7 @@ import com.bluevelvet.controller.AuthenticationController;
 import com.bluevelvet.model.*;
 import com.bluevelvet.repository.*;
 import com.bluevelvet.service.RoleService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,53 +27,15 @@ public class RunTestsOnStartup implements CommandLineRunner {
     private UserRepository userRepository;
     @Autowired
     private RoleService roleService;
-    private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
     @Override
     public void run(String... args) throws Exception {
-        logger.debug("ESTOU FUNFANTE");
-        Product product1 = new Product();
-        product1.setName("Produto de Teste 1");
-        product1.setShortDescription("Descrição curta do Produto 1");
-        product1.setLongDescription("Descrição longa detalhando o Produto de Teste 1");
-        product1.setPrice(150.0f);
-        product1.setDiscount(5.0f);
-        product1.setStatus(true);
-        product1.setHasStock(true);
-        product1.setWidth(10.0f);
-        product1.setLength(20.0f);
-        product1.setHeight(30.0f);
-        product1.setCost(100.0f);
-        product1.setCreationTime(LocalDateTime.now());
-        product1.setUpdateTime(LocalDateTime.now());
 
-        Product product2 = new Product();
-        product2.setName("Produto de Teste 2");
-        product2.setShortDescription("Descrição curta do Produto 2");
-        product2.setLongDescription("Descrição longa detalhando o Produto de Teste 2");
-        product2.setPrice(200.0f);
-        product2.setDiscount(10.0f);
-        product2.setStatus(true);
-        product2.setHasStock(true);
-        product2.setWidth(15.0f);
-        product2.setLength(25.0f);
-        product2.setHeight(35.0f);
-        product2.setCost(150.0f);
-        product2.setCreationTime(LocalDateTime.now());
-        product2.setUpdateTime(LocalDateTime.now());
+        // adicionando imagem basica que será usada em todas as inserções
+        String imagemBase = "iVBORw0KGgoAAAANSUhEUgAAAGUAAABeCAIAAAC1o032AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAA3ElEQVR4nO3QwQ3AIBDAsNL9dz5WIC+EZE8QZc3Mx7H/dsBj/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8ajYNfwO5QbHnsQAAAABJRU5ErkJggg==";
+        byte[] imageBytes = Base64.getDecoder().decode(imagemBase);
 
-        Brand brand = new Brand();
-        brand.setBrandName("RGV");
-        try {
-            brandRepository.save(brand);
-        } catch (Exception e) {}
-
-        Category category = new Category();
-        category.setCategoryName("Discos de Vinil");
-        try {
-            categoryRepository.save(category);
-        } catch (Exception e) {}
-
+        // insert roles test
         Role role1 = new Role();
         role1.setName("ADMIN");
         role1.setDescription("A role for administrator in BV");
@@ -93,29 +54,12 @@ public class RunTestsOnStartup implements CommandLineRunner {
             roleRepository.save(role3);
         } catch (Exception e) {}
 
-        product1.setBrand(brand);
-        product2.setBrand(brand);
-        product1.getCategories().add(category);
-        try {
-            productRepository.save(product1);
-            productRepository.save(product2);
-        } catch (Exception e) {}
-
-        category.getProducts().add(product1);
-        try {
-            categoryRepository.save(category);
-        } catch (Exception e) {}
-
-        try {
-            productRepository.save(product1);
-            productRepository.save(product2);
-        } catch (Exception e) {}
-
+        // create a user
         User user = new User();
-        user.setName("my");
-        user.setLastName("user");
-        user.setEmail("test@gmail.com");
-        user.setPassword(new BCryptPasswordEncoder().encode("mypass"));
+        user.setName("Florentino");
+        user.setLastName("Souza");
+        user.setEmail("florentino@bluevelvet.com");
+        user.setPassword(new BCryptPasswordEncoder().encode("florentino123"));
         user.getRoles().add(role1);
         user.setStatus(true);
         try {
@@ -123,5 +67,66 @@ public class RunTestsOnStartup implements CommandLineRunner {
             role1.getUsers().add(user);
             roleService.saveRole(role1);
         } catch (Exception e) {}
+
+        // insert brands test
+        Brand brand = new Brand();
+        brand.setBrandName("Brand Test 1");
+        try {
+            brandRepository.save(brand);
+        } catch (Exception e) {}
+
+        // insert category test
+        Category category = new Category();
+        category.setCategoryName("Category Test 1");
+        try {
+            categoryRepository.save(category);
+        } catch (Exception e) {}
+
+        // create 10 products
+        for (int i = 1; i <= 10; i++){
+
+            String nome = "Product " + i;
+            String shortDescription = "Short description for product " + i;
+            String longDescription = "Long description for product " + i;
+
+            Product product = new Product();
+            product.setName(nome);
+            product.setShortDescription(shortDescription);
+            product.setLongDescription(longDescription);
+            product.setImage(imageBytes);
+            product.setPrice(150.0f);
+            product.setDiscount(5.0f);
+            product.setStatus(true);
+            product.setHasStock(true);
+            product.setWidth(10.0f);
+            product.setLength(20.0f);
+            product.setHeight(30.0f);
+            product.setCost(100.0f);
+            product.setCreationTime(LocalDateTime.now());
+            product.setUpdateTime(LocalDateTime.now());
+            product.setBrand(brand);
+            product.getCategories().add(category);
+
+            try {
+                productRepository.save(product);
+            } catch (Exception e) {}
+
+            category.getProducts().add(product);
+            brand.getProducts().add(product);
+
+            try {
+                productRepository.save(product);
+            } catch (Exception e) {}
+
+        }
+
+        try {
+            categoryRepository.save(category);
+        } catch (Exception e) {}
+
+        try {
+            brandRepository.save(brand);
+        } catch (Exception e) {}
+
     }
 }
