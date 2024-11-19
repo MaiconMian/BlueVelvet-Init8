@@ -2,65 +2,73 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>BlueVelvet Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap">
+    <link rel="stylesheet" href="assets/css/style_login.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-<body>
-
-<h2>Login</h2>
-
-<form id="loginForm">
-    <div>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required placeholder="Enter your email">
+<body class="admin-mode">
+    <div class="container" id="container">
+        <div class="form-container sign-in-container">
+            <form id="loginForm">
+                <h1>Admin Sign In</h1>
+                <div class="infield">
+                    <input type="email" id="email" name="email" placeholder="Admin Email" required />
+                    <label></label>
+                </div>
+                <div class="infield">
+                    <input type="password" id="password" name="password" placeholder="Password" required />
+                    <label></label>
+                </div>
+                <button type="submit">Sign In</button>
+            </form>
+        </div>        
+        <div class="overlay-container" id="overlayCon">
+            <div class="overlay">
+                <div class="overlay-panel overlay-right">
+                    <img src="assets/images/LogoBranca.png" alt="Store Logo" class="logo-image">
+                    <p>Welcome to the BlueVelvet Music Store admin panel</p>                
+                </div>
+            </div>
+        </div>
     </div>
+    <script>
+        // Script funcional
+        const submitData = () => {
+            const baseUrl = "http://localhost:8090/api/v1";
+            const url = `${baseUrl}/auth/login`;
+            const method = "POST";
 
-    <div>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required placeholder="Enter your password">
-    </div>
+            const data = {
+                email: $('#email').val(),
+                password: $('#password').val(),
+            };
 
-    <button type="submit">Submit</button>
-</form>
-
-<script>
-    const submitData = () => {
-        const baseUrl = "http://localhost:8090/api/v1";
-        const url = `${baseUrl}/auth/login`;
-        const method = "POST";
-
-        const data = {
-            email: $('#email').val(),
-            password: $('#password').val(),
+            $.ajax({
+                url,
+                method,
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: () => {
+                    alert("Login successful!");
+                    window.location.href = "/admin.html";
+                },
+                error: () => {
+                    alert("Failed to login. Please try again.");
+                },
+            });
         };
 
-        $.ajax({
-            url,
-            method,
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            xhrFields: {
-                withCredentials: true
-            },
-            success: () => {
-                alert("Login successful!");
-                window.location.href = "/admin.html";
-            },
-            error: () => {
-                alert("Failed to login. Please try again.");
-            },
+        $('#loginForm').on('submit', function(event) {
+            event.preventDefault();
+            submitData();
         });
-
-    };
-
-    $('#loginForm').on('submit', function(event) {
-        event.preventDefault();
-        submitData();
-    });
-
-
-</script>
-
+    </script>
 </body>
 </html>
