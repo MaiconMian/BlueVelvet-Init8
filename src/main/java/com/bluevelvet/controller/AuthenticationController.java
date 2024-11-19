@@ -45,7 +45,7 @@ public class AuthenticationController {
             var token = tokenService.generateToken((User) auth.getPrincipal());
 
             ResponseCookie cookie = ResponseCookie.from("jwt", token)
-                    .httpOnly(true)
+                    .httpOnly(false)
                     .secure(true)
                     .path("/")
                     .sameSite("None")
@@ -61,7 +61,7 @@ public class AuthenticationController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
         ResponseCookie cookie = ResponseCookie.from("jwt", "")
-                .httpOnly(true)
+                .httpOnly(false)
                 .secure(true)
                 .path("/")
                 .maxAge(0)

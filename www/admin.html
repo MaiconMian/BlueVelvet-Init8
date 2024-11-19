@@ -32,6 +32,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#">Categories</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="logout-button">Log Out</a>
+                </li>
             </ul>
         </div>
     </nav>
@@ -40,6 +43,13 @@
         <h1>BlueVelvet Music Store</h1>
         <h2>Product Management</h2>
     </div>
+
+    <div class="container my-4 container-center text-center">
+        <div id="user-info">Carregando informações do usuário...</div>
+    </div>
+
+
+    
 
     <div class="container my-4">
         <div class="d-flex justify-content-end">
@@ -247,6 +257,8 @@
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap4.min.js"></script>
     <script src="assets/js/products.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+    <script src="assets/js/tokenInformations.js"> </script>
     
     <script>
         populateTable(product => `
@@ -523,6 +535,26 @@
                 handleSubmit(isEdit);
             });
         });
+
+        document.getElementById('logout-button').addEventListener('click', async function(event) {
+        event.preventDefault(); 
+
+        try {
+            const response = await fetch('http://localhost:8090/api/v1/auth/logout', {
+                method: 'POST', 
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                console.log('Logout realizado com sucesso');
+                window.location.href = '/login.html'; 
+            } else {
+                console.error('Erro ao fazer logout:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Erro ao enviar requisição de logout:', error);
+        }
+    });
     </script>
 </body>
 </html>
