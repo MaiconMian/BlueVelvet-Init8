@@ -27,7 +27,7 @@ public class Brand {
 
     @JsonIgnore
     @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
-    private List<Product> products;
+    private List<Product> products = new ArrayList<>();
 
     @JsonIgnore
     @ManyToMany
