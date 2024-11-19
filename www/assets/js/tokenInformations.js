@@ -25,7 +25,7 @@ if (jwt) {
 
             
         const userInfo = document.getElementById('user-info');
-        userInfo.textContent = `Logado Como: ${email} (Role: ${roleName})`;
+        userInfo.textContent = `Logged in as: ${email} (Role: ${roleName})`;
         } catch (error) {
             console.error('Erro ao decodificar o token:', error);
         }
