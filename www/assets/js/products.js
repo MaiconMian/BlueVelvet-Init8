@@ -16,15 +16,16 @@ function populateTable(actions) {
 
             $('#products').DataTable({
                 data: products,
-                columns: [
-                    { data: 'id' },
-                    { data: 'image' },
-                    { data: 'name' },
-                    { data: 'brand' },
-                    { data: 'categories' },
-                    { data: 'actions' }
+                columns: [     
+                    { data: 'id', responsivePriority: 6 },
+                    { data: 'image', responsivePriority: 1 },
+                    { data: 'name', responsivePriority: 2 },
+                    { data: 'brand', responsivePriority: 3 },
+                    { data: 'categories', responsivePriority: 4 },
+                    { data: 'actions', responsivePriority: 5 }
                 ],
-                order: [[2, 'asc']]
+                order: [[2, 'asc']],
+                responsive: true
             });
 
             $('#products').on('click', '.btn-view', function () {

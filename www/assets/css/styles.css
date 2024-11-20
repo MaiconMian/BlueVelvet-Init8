@@ -224,3 +224,10 @@ body {
 .custom-select {
     width: 55px !important; /* Largura do select do DataTables */
 }
+
+/* Controle do botão de expandir/reduzir a linha do DataTables */
+.dtr-control::before {
+    background-color: #34495e !important;
+    border: .1em solid white !important;
+    margin-left: .1em !important;
+}
