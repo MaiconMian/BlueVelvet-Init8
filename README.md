@@ -80,7 +80,7 @@ Após isso, a dashbord do administrador é mostrada, onde é possivel adicionar 
   <img src="https://github.com/MaiconMian/BlueVelvet-Init8/blob/main/pictures/Responsive.png" width="175" style="display: inline-block;"/>
 </p>
 
-É possível ver as informações do adminitrador logado clicando no ícone no canto superior direito.
+É possível ver as informações do administrador logado clicando no ícone no canto superior direito.
 
 # Modelagem
 Para representarmos o domínio da BlueVelvet, fizemos a seguinte modelagem no banco de dados:
