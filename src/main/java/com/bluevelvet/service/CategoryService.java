@@ -6,6 +6,7 @@ import com.bluevelvet.model.Product;
 import com.bluevelvet.repository.BrandRepository;
 import com.bluevelvet.repository.CategoryRepository;
 import com.bluevelvet.repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -40,6 +41,16 @@ public class CategoryService {
             return true;
         }
         return false;
+    }
+
+    @Transactional
+    public void removeProductFromAllCategories(int productId) {
+        List<Category> categories = categoryRepository.findAll();
+
+        for (Category category : categories) {
+            category.getProducts().removeIf(product -> product.getId() == productId);
+        }
+        categoryRepository.saveAll(categories);
     }
 
     public List<Category> getAllCategories() {

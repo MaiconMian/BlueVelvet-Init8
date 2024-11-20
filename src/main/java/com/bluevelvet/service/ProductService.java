@@ -39,7 +39,6 @@ public class ProductService {
     @Autowired
     private ProductPhotosService productPhotosService;
 
-
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
@@ -54,7 +53,12 @@ public class ProductService {
 
     public boolean deleteProduct(int id) {
         if (productRepository.existsById(id)) {
+            Product product = productRepository.findById(id).orElseThrow();
+            product.getCategories().clear();
+            productRepository.save(product);
+            categoryService.removeProductFromAllCategories(id);
             productRepository.deleteById(id);
+
             return true;
         } else {
             return false;
