@@ -1,0 +1,225 @@
+body {
+    background-color: #dcdfe1;
+}
+.custom-navbar {
+    background: linear-gradient(to right, #141E30, #243B55); /* Fundo azul-escuro */
+    padding: 5px 20px; /* Reduz a altura */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Linha inferior */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra leve */
+    display: flex;
+    align-items: center; /* Centraliza os itens verticalmente */
+    justify-content: flex-start; /* Move todos os itens para a esquerda */
+}
+
+/* Logo */
+.custom-navbar .navbar-brand {
+    margin-right: 30px; /* Espaço entre a logo e os links */
+}
+
+/* Ajuste do tamanho da logo */
+.custom-navbar .navbar-brand img {
+    height: 35px; /* Ajusta o tamanho da logo */
+}
+
+/* Container dos links */
+.custom-navbar .navbar-nav {
+    display: flex; /* Torna os links flexíveis */
+    gap: 5px; /* Adiciona espaçamento uniforme entre os links */
+    margin-left: 10px;
+}
+
+.custom-navbar .container {
+    max-width: 100%; /* Faz o container ocupar toda a largura */
+    padding-left: 10px; /* Ajusta o espaçamento à esquerda */
+    padding-right: 20px; /* Mantém um espaçamento padrão à direita */
+    margin: 0; /* Remove qualquer margem automática */
+}
+
+/* Links da navbar */
+.custom-navbar .navbar-nav .nav-link {
+    color: #FFFFFF; /* Texto branco */
+    font-size: 14px;
+    font-weight: 500; /* Mesma fonte para todos os links */
+    padding: 3px 8px;
+    border-radius: 20px; /* Bordas arredondadas */
+    text-transform: uppercase;
+    text-decoration: none; /* Remove sublinhado padrão */
+    transition: all 0.3s ease-in-out;
+}
+
+/* Links - efeito hover */
+.custom-navbar .navbar-nav .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Fundo branco semi-transparente */
+    color: #FFFFFF; /* Texto branco */
+}
+
+/* Item ativo */
+.custom-navbar .nav-item.active .nav-link {
+    background-color: transparent; /* Sem fundo */
+    color: #FFFFFF; /* Mesma cor dos outros links */
+    font-weight: 500; /* Mesmo peso dos outros links */
+    text-decoration: underline; /* Sublinha o link ativo */
+    text-underline-offset: 3px; /* Ajusta a distância do sublinhado */
+    transition: all 0.3s ease-in-out; /* Efeito suave */
+}
+
+/* Responsividade do botão mobile */
+.custom-navbar .navbar-toggler {
+    border: none;
+}
+
+.custom-navbar .navbar-toggler-icon {
+    background-color: #FFFFFF; /* Ícone branco */
+    height: 3px;
+    width: 25px;
+    display: block;
+    position: relative;
+    border-radius: 2px;
+}
+
+.custom-navbar .navbar-toggler-icon::before,
+.custom-navbar .navbar-toggler-icon::after {
+    content: '';
+    background-color: #FFFFFF;
+    height: 3px;
+    width: 25px;
+    position: absolute;
+    left: 0;
+    border-radius: 2px;
+}
+
+.custom-navbar .navbar-toggler-icon::before {
+    top: -8px;
+}
+
+.custom-navbar .navbar-toggler-icon::after {
+    top: 8px;
+}
+
+/* Estilos para o título */
+.container-center h2 {
+    color: #2c3e50;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    margin-top: 50px;
+}
+
+/* Estilos para a tabela */
+#products {
+    border: 2px solid #2c3e50; /* Borda sólida de 2px com cor azul-escuro */
+    border-radius: 10px; /* Arredonda os cantos da tabela */
+    overflow: hidden; /* Garante que o arredondamento seja aplicado corretamente */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil para destaque */
+    background-color: #ffffff; /* Fundo branco para a tabela */
+}
+
+/* Estilizar o cabeçalho da tabela */
+#products thead th {
+    background-color: #34495e; /* Cor de fundo do cabeçalho */
+    color: #ecf0f1; /* Cor do texto do cabeçalho */
+    font-weight: bold; /* Texto em negrito */
+    text-align: center; /* Centraliza o texto */
+}
+
+#products th,
+#products td {
+    border: none; /* Remove as bordas internas */
+}
+/* Estilizar as linhas da tabela */
+#products tbody tr {
+    background-color: #f9f9f9; /* Cor de fundo das linhas */
+    transition: background-color 0.3s ease; /* Transição suave para hover */
+}
+
+/* Efeito de hover nas linhas da tabela */
+#products tbody tr:hover {
+    background-color: #eaeaea; /* Cor de fundo ao passar o mouse */
+}
+
+/* Opcional: adicionar linhas de separação entre as linhas da tabela */
+#products tbody tr {
+    border-bottom: 1px solid #ddd; /* Linha de separação suave */
+}
+
+/* Garantir que a última linha não tenha borda inferior */
+#products tbody tr:last-child {
+    border-bottom: none;
+}
+
+/* Estilos para os botões dentro da tabela */
+.btn-view {
+    background-color: #2980b9;
+    color: #fff;
+}
+.btn-edit {
+    background-color: #48a490;
+    color: #fff;
+}
+.btn-delete {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+
+/* Estilos para os modais */
+.modal-header {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    border-bottom: none;
+}
+.modal-content {
+    border-radius: 10px;
+}
+.modal-footer {
+    border-top: none;
+}
+.modal-body {
+    padding: 20px 30px;
+}
+.modal-body .form-control {
+    border-radius: 5px;
+}
+
+/* Estilos para o ícone de perfil na navbar */
+.navbar-nav .nav-item.dropdown .nav-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 5px 15px; /* Ajuste de padding */
+    color: #FFFFFF; /* Cor branca para o link */
+}
+
+.navbar-nav .nav-item.dropdown .nav-link i {
+    font-size: 15px; /* Tamanho do ícone */
+    color: #f6f6f6; /* Cor inicial do ícone */
+}
+
+.navbar-nav .nav-item.dropdown .nav-link:hover i {
+    color: #ffffff; /* Cor ao passar o mouse no ícone */
+}
+
+/* Estilos para o dropdown */
+.dropdown-menu {
+    background-color: #2c3e50; /* Fundo azul-escuro */
+    border: none; /* Remove a borda padrão */
+    border-radius: 5px; /* Arredonda os cantos */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    padding: 15px; /* Espaçamento interno */
+}
+
+/* Conteúdo do dropdown */
+#user-info {
+    background-color: transparent; /* Remove fundo branco */
+    color: #ecf0f1; /* Cor branca para o texto */
+    font-size: 14px; /* Tamanho do texto */
+    padding: 10px; /* Espaçamento interno */
+}
+
+.dropdown-item:hover {
+    background-color: #34495e; /* Fundo ao passar o mouse */
+    color: #ecf0f1; /* Texto ao passar o mouse */
+}
+
+
+
