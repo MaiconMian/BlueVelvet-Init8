@@ -23,7 +23,8 @@ function populateTable(actions) {
                     { data: 'brand' },
                     { data: 'categories' },
                     { data: 'actions' }
-                ]
+                ],
+                order: [[2, 'asc']]
             });
 
             $('#products').on('click', '.btn-view', function () {
