@@ -74,9 +74,34 @@ function populateTable(actions) {
 
                         $('#tagPrice').text(`$${product.price}`).addClass('badge-primary');
 
-                        $('#viewWidth').text(product.width + ' in');
-                        $('#viewHeight').text(product.height + ' in');
-                        $('#viewLength').text(product.length + ' in');
+                        const technicalDetailsTable = $('.table-bordered tbody');
+                        technicalDetailsTable.empty();
+
+                        technicalDetailsTable.append(`
+                            <tr>
+                                <th>Width</th>
+                                <td>${product.width} in</td>
+                            </tr>
+                            <tr>
+                                <th>Height</th>
+                                <td>${product.height} in</td>
+                            </tr>
+                            <tr>
+                                <th>Length</th>
+                                <td>${product.length} in</td>
+                            </tr>
+                        `);
+
+                        if (product.details && product.details.length > 0) {
+                            product.details.forEach(detail => {
+                                technicalDetailsTable.append(`
+                                    <tr>
+                                        <th>${detail.detailName}</th>
+                                        <td>${detail.detailValue}</td>
+                                    </tr>
+                                `);
+                            });
+                        }
 
                         $('#modalView').modal('show');
                     },
