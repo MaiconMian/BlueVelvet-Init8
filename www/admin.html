@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css">
     <link rel="stylesheet" href="assets/css/styles.css">
-    <!-- <link rel="stylesheet" href="assets/css/styles.css"> -->
 </head>
 <body>
     <nav class="navbar navbar-expand-lg custom-navbar">
@@ -85,19 +85,21 @@
         <div class="d-flex justify-content-end">
             <button type="button" id="btnCreateProduct" class="btn btn-success mb-3">Add Product</button>
         </div>
-        <table id="products" class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Image</th>
-                    <th>Name</th>
-                    <th>Brand</th>
-                    <th>Categories</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+        <div class="table-responsive">
+            <table id="products" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Brand</th>
+                        <th>Categories</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 
     <div class="modal fade" id="modalView" tabindex="-1" role="dialog" aria-labelledby="modalViewLabel" aria-hidden="true">
@@ -144,7 +146,7 @@
     
                     <div class="mt-4">
                         <h5 class="font-weight-bold">Technical Details</h5>
-                        <table class="table table-bordered">
+                        <table id="technicalDetails" class="table table-bordered">
                             <tbody>
                                 <tr>
                                     <th>Width</th>
@@ -289,7 +291,7 @@
     <script src="assets/js/products.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
     <script src="assets/js/tokenInformations.js"> </script>
-    
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>    
     <script>
         populateTable(product => `
             <button type="button" class="btn btn-primary btn-view" data-id="${product.id}">
