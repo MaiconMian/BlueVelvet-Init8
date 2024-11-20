@@ -74,7 +74,7 @@ function populateTable(actions) {
 
                         $('#tagPrice').text(`$${product.price}`).addClass('badge-primary');
 
-                        const technicalDetailsTable = $('.table-bordered tbody');
+                        const technicalDetailsTable = $('#technicalDetails');
                         technicalDetailsTable.empty();
 
                         technicalDetailsTable.append(`
