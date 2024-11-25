@@ -69,64 +69,6 @@ public class AuthenticationController {
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body("Logout successful");
     }
 
-    @PostMapping("/admin/register")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity adminRegister(@Valid @RequestBody AdminRegisterDTO adminRegisterDTO) {
-
-        if(this.userRepository.findByEmail(adminRegisterDTO.email()) != null) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        String encryptedPassword = new BCryptPasswordEncoder().encode(adminRegisterDTO.password());
-
-        User newAdminUser = new User();
-        newAdminUser.setName(adminRegisterDTO.name());
-        newAdminUser.setLastName(adminRegisterDTO.lastName());
-        newAdminUser.setEmail(adminRegisterDTO.email());
-        newAdminUser.setPassword(encryptedPassword);
-        newAdminUser.setStatus(true);
-
-        this.userRepository.save(newAdminUser);
-
-        adminRegisterDTO.Roles().forEach(roleId -> {
-            roleService.getRoleById(roleId).ifPresent(role -> {
-                newAdminUser.getRoles().add(role);
-                role.getUsers().add(newAdminUser);
-                roleService.saveRole(role);
-            });
-        });
-
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/user/register")
-    @PreAuthorize("permitAll()")
-    public ResponseEntity userRegister(@Valid @RequestBody UserRegisterDTO userRegisterDTO) {
-
-        if(this.userRepository.findByEmail(userRegisterDTO.email()) != null) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        String encryptedPassword = new BCryptPasswordEncoder().encode(userRegisterDTO.password());
-
-        User newNormalUser = new User();
-        newNormalUser.setName(userRegisterDTO.name());
-        newNormalUser.setLastName(userRegisterDTO.lastName());
-        newNormalUser.setEmail(userRegisterDTO.email());
-        newNormalUser.setPassword(encryptedPassword);
-        newNormalUser.setStatus(true);
-
-        this.userRepository.save(newNormalUser);
-
-        roleService.getRoleById(3).ifPresent(role -> {
-            newNormalUser.getRoles().add(role);
-            role.getUsers().add(newNormalUser);
-            roleService.saveRole(role);
-        });
-
-        return ResponseEntity.ok().build();
-    }
-
     @GetMapping("/validate")
     public ResponseEntity<?> validateToken(HttpServletRequest request) {
 
