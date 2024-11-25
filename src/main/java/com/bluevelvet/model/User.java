@@ -18,16 +18,16 @@ public class User implements UserDetails{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "username", length = 100, nullable = false)
+    @Column(name = "username", length = 60, nullable = false)
     private String name;
 
-    @Column(name = "user_last_name", length = 100)
+    @Column(name = "user_last_name", length = 60)
     private String lastName;
 
-    @Column(name = "user_email", length = 100, nullable = false, unique = true)
+    @Column(name = "user_email", length = 128, nullable = false, unique = true)
     private String email;
 
-    @Column(name = "user_password", length = 100, nullable = false)
+    @Column(name = "user_password", length = 64, nullable = false)
     private String password;
 
     @Column(name = "user_status", columnDefinition = "TINYINT", nullable = false)
