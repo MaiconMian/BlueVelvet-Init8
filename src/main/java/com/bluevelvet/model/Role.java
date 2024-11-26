@@ -1,5 +1,6 @@
 package com.bluevelvet.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.*;
@@ -21,6 +22,7 @@ public class Role {
     private String description;
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(
             name = "bv_users_roles",
             joinColumns = @JoinColumn(name = "roles_id"),
