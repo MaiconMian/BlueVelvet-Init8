@@ -1,8 +1,11 @@
 package com.bluevelvet.controller;
 
 import com.bluevelvet.DTO.AdminRegisterDTO;
+import com.bluevelvet.DTO.BrandDTO;
+import com.bluevelvet.DTO.ProductDTO;
 import com.bluevelvet.DTO.UserRegisterDTO;
 import com.bluevelvet.model.ApiResponse;
+import com.bluevelvet.model.Brand;
 import com.bluevelvet.model.Product;
 import com.bluevelvet.model.User;
 import com.bluevelvet.repository.UserRepository;
@@ -20,6 +23,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class UsersController {
@@ -42,7 +46,30 @@ public class UsersController {
         return ResponseEntity.ok(new ApiResponse<>("success", users));
     }
 
-    @PostMapping("/admin/register")
+    @GetMapping("/users/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Object>> getUserById(@PathVariable int id) {
+        Optional<User> user = userService.getUserById(id);
+        if (!user.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("error", "User not found"));
+        }
+        return ResponseEntity.ok(new ApiResponse<>("success", user.get()));
+    }
+
+    @DeleteMapping("/users/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EDITOR')")
+    public ResponseEntity<ApiResponse<Object>> deleteUserById(@PathVariable int id) {
+        boolean deleted = userService.deleteUser(id);
+        if (deleted) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("error", "User not found"));
+        }
+    }
+
+    @PostMapping("/admins")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity adminRegister(@Valid @RequestBody AdminRegisterDTO adminRegisterDTO) {
 
@@ -75,7 +102,7 @@ public class UsersController {
 
     }
 
-    @PostMapping("/user/register")
+    @PostMapping("/users")
     @PreAuthorize("permitAll()")
     public ResponseEntity userRegister(@Valid @RequestBody UserRegisterDTO userRegisterDTO) {
 

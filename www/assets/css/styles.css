@@ -106,7 +106,7 @@ body {
 }
 
 /* Estilos para a tabela */
-#products {
+#dataTableContent {
     border: 2px solid #2c3e50; /* Borda sólida de 2px com cor azul-escuro */
     border-radius: 10px; /* Arredonda os cantos da tabela */
     overflow: hidden; /* Garante que o arredondamento seja aplicado corretamente */
@@ -115,35 +115,37 @@ body {
 }
 
 /* Estilizar o cabeçalho da tabela */
-#products thead th {
+#dataTableContent thead th {
     background-color: #34495e; /* Cor de fundo do cabeçalho */
     color: #ecf0f1; /* Cor do texto do cabeçalho */
     font-weight: bold; /* Texto em negrito */
     text-align: center; /* Centraliza o texto */
 }
 
-#products th,
-#products td {
+#dataTableContent th,
+#dataTableContent td {
+    text-align: center; /* Centraliza horizontalmente */
+    vertical-align: middle; /* Centraliza verticalmente */'
     border: none; /* Remove as bordas internas */
 }
 /* Estilizar as linhas da tabela */
-#products tbody tr {
+#dataTableContent tbody tr {
     background-color: #f9f9f9; /* Cor de fundo das linhas */
     transition: background-color 0.3s ease; /* Transição suave para hover */
 }
 
 /* Efeito de hover nas linhas da tabela */
-#products tbody tr:hover {
+#dataTableContent tbody tr:hover {
     background-color: #eaeaea; /* Cor de fundo ao passar o mouse */
 }
 
 /* Opcional: adicionar linhas de separação entre as linhas da tabela */
-#products tbody tr {
+#dataTableContent tbody tr {
     border-bottom: 1px solid #ddd; /* Linha de separação suave */
 }
 
 /* Garantir que a última linha não tenha borda inferior */
-#products tbody tr:last-child {
+#dataTableContent tbody tr:last-child {
     border-bottom: none;
 }
 

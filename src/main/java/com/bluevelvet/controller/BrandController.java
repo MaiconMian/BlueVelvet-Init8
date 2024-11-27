@@ -51,7 +51,7 @@ public class BrandController {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>("error", "Category not found"));
+                    .body(new ApiResponse<>("error", "Brand not found"));
         }
     }
 
@@ -59,7 +59,7 @@ public class BrandController {
     @PreAuthorize("hasAnyRole('ADMIN', 'EDITOR')")
     public ResponseEntity<ApiResponse<String>> addBrand(@Valid @RequestBody BrandDTO brandDTO) {
         Brand newBrand = brandService.saveBrand(brandDTO);
-        return ResponseEntity.ok(new ApiResponse<>("success", "Product with ID " +
+        return ResponseEntity.ok(new ApiResponse<>("success", "Brand with ID " +
                 newBrand.getId() + " added successfully"));
     }
 
