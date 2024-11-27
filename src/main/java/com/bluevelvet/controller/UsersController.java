@@ -69,7 +69,7 @@ public class UsersController {
         }
     }
 
-    @PostMapping("/admin/register")
+    @PostMapping("/admins")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity adminRegister(@Valid @RequestBody AdminRegisterDTO adminRegisterDTO) {
 
@@ -102,7 +102,7 @@ public class UsersController {
 
     }
 
-    @PostMapping("/user/register")
+    @PostMapping("/users")
     @PreAuthorize("permitAll()")
     public ResponseEntity userRegister(@Valid @RequestBody UserRegisterDTO userRegisterDTO) {
 
