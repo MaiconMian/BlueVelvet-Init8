@@ -14,7 +14,7 @@ function populateTable(actions) {
                 actions: actions(product)
             }));
 
-            $('#products').DataTable({
+            $('#dataTableContent').DataTable({
                 data: products,
                 columns: [     
                     { data: 'id', responsivePriority: 5 },
@@ -29,7 +29,7 @@ function populateTable(actions) {
                 autoWidth: false
             });
 
-            $('#products').on('click', '.btn-view', function () {
+            $('#dataTableContent').on('click', '.btn-view', function () {
                 const productId = $(this).data('id');
                 $('#viewError').hide();
 
@@ -111,7 +111,7 @@ function populateTable(actions) {
                 });
             });
 
-            $('#products').on('click', '.btn-delete', function () {
+            $('#dataTableContent').on('click', '.btn-delete', function () {
                 const productId = $(this).data('id');
                 $('#deleteError').hide();
                 $('#modalDelete').modal('show');
@@ -136,7 +136,5 @@ function populateTable(actions) {
         }
     });
 }
-
-
 
 window.populateTable = populateTable;
