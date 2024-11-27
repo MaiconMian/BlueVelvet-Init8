@@ -48,11 +48,11 @@ public class SecurityConfiguration {
 
                         .requestMatchers(HttpMethod.GET, "/users/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/users/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/user/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/admins").hasRole("ADMIN")
 
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
