@@ -43,23 +43,23 @@ public class SecurityConfiguration {
 //                        .requestMatchers(HttpMethod.DELETE, "/categories/**").hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/products/**").hasAuthority("PERMISSION_EDIT_CREATE_PRODUCT")
-                        .requestMatchers(HttpMethod.POST, "/products").hasAuthority("PERMISSION_EDIT_CREATE_PRODUCT")
-                        .requestMatchers(HttpMethod.DELETE, "/products/**").hasAuthority("PERMISSION_DELETE_PRODUCT")
+                        .requestMatchers(HttpMethod.PUT, "/products/**").hasAuthority("PERMISSION_PRODUCT_EDIT")
+                        .requestMatchers(HttpMethod.POST, "/products").hasAuthority("PERMISSION_PRODUCT_CREATE")
+                        .requestMatchers(HttpMethod.DELETE, "/products/**").hasAuthority("PERMISSION_PRODUCT_DELETE")
 
-                        .requestMatchers(HttpMethod.GET, "/users/**").hasAuthority("PERMISSION_USER_VIEW")
-                        .requestMatchers(HttpMethod.PUT, "/users/**").hasAuthority("PERMISSION_CREATE_EDIT_USER")
+                        .requestMatchers(HttpMethod.GET, "/users/**").hasAuthority("PERMISSION_PRODUCT_VIEW")
+                        .requestMatchers(HttpMethod.PUT, "/users/**").hasAuthority("PERMISSION_USER_EDIT")
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("PERMISSION_DELETE_USER")
+                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("PERMISSION_USER_DELETE")
 
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/admins").hasAuthority("PERMISSION_CREATE_EDIT_USER")
+                        .requestMatchers(HttpMethod.POST, "/admins").hasAuthority("PERMISSION_USER_CREATE")
 
-                        .requestMatchers(HttpMethod.GET, "/roles/**").hasAuthority("PERMISSION_VIEW_USER")
-                        .requestMatchers(HttpMethod.POST, "/roles").hasAuthority("PERMISSION_CREATE_EDIT_USER")
-                        .requestMatchers(HttpMethod.GET, "/permissions").hasAuthority("PERMISSION_VIEW_USER")
+                        .requestMatchers(HttpMethod.GET, "/roles/**").hasAuthority("PERMISSION_ROLE_VIEW")
+                        .requestMatchers(HttpMethod.POST, "/roles").hasAuthority("PERMISSION_ROLE_CREATE")
+                        .requestMatchers(HttpMethod.GET, "/permissions").hasAuthority("PERMISSION_ROLE_VIEW")
 
-                        .requestMatchers("/admin/**").hasAuthority("PERMISSION_CREATE_EDIT_USER")
+                        .requestMatchers("/admin/**").hasAuthority("PERMISSION_USER_CREATE")
                         .anyRequest().authenticated()
 
                 )
