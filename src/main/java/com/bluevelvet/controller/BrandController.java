@@ -44,7 +44,7 @@ public class BrandController {
     }
 
     @DeleteMapping("/brands/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'EDITOR')")
+    @PreAuthorize("hasAuthority('PERMISSION_DELETE_BRAND')")
     public ResponseEntity<ApiResponse<Object>> deleteBrandById(@PathVariable int id) {
         boolean deleted = brandService.deleteBrand(id);
         if (deleted) {
@@ -56,7 +56,7 @@ public class BrandController {
     }
 
     @PostMapping("/brands")
-    @PreAuthorize("hasAnyRole('ADMIN', 'EDITOR')")
+    @PreAuthorize("hasAuthority('PERMISSION_DELETE_BRAND')")
     public ResponseEntity<ApiResponse<String>> addBrand(@Valid @RequestBody BrandDTO brandDTO) {
         Brand newBrand = brandService.saveBrand(brandDTO);
         return ResponseEntity.ok(new ApiResponse<>("success", "Brand with ID " +

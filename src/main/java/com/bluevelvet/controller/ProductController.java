@@ -15,7 +15,7 @@ import com.bluevelvet.model.*;
 import com.bluevelvet.DTO.*;
 
 @RestController
-public class ProductController {
+public class  ProductController {
 
     @Autowired
     private ProductService productService;
@@ -43,7 +43,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/products/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'EDITOR')")
+    @PreAuthorize("hasAuthority('PERMISSION_DELETE_PRODUCT')")
     public ResponseEntity<ApiResponse<Object>> deleteProductById(@PathVariable int id) {
         boolean deleted = productService.deleteProduct(id);
         if (deleted) {
@@ -55,7 +55,7 @@ public class ProductController {
     }
 
     @PostMapping("/products")
-    @PreAuthorize("hasAnyRole('ADMIN', 'EDITOR')")
+    @PreAuthorize("hasAuthority('PERMISSION_EDIT_CREATE_PRODUCT')")
     public ResponseEntity<ApiResponse<String>> addProduct(@Valid @RequestBody ProductDTO productDTO) {
         Product createdProduct = productService.saveProductWithDetails(productDTO);
         return ResponseEntity.ok(new ApiResponse<>("success", "Product with ID " +

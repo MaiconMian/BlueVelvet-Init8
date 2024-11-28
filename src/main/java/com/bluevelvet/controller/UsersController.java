@@ -36,7 +36,7 @@ public class UsersController {
     private RoleService roleService;
 
     @GetMapping("/users")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('PERMISSION_USER_VIEW')")
     public ResponseEntity<ApiResponse<Object>> getAllUsers(){
         List<User> users = userService.getAllUsers();
         if (users.isEmpty()) {
@@ -47,7 +47,7 @@ public class UsersController {
     }
 
     @GetMapping("/users/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('PERMISSION_USER_VIEW')")
     public ResponseEntity<ApiResponse<Object>> getUserById(@PathVariable int id) {
         Optional<User> user = userService.getUserById(id);
         if (!user.isPresent()) {
@@ -58,7 +58,7 @@ public class UsersController {
     }
 
     @DeleteMapping("/users/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'EDITOR')")
+    @PreAuthorize("hasAuthority('PERMISSION_DELETE_USER')")
     public ResponseEntity<ApiResponse<Object>> deleteUserById(@PathVariable int id) {
         boolean deleted = userService.deleteUser(id);
         if (deleted) {
@@ -70,7 +70,7 @@ public class UsersController {
     }
 
     @PostMapping("/admins")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('PERMISSION_CREATE_EDIT_USER')")
     public ResponseEntity adminRegister(@Valid @RequestBody AdminRegisterDTO adminRegisterDTO) {
 
         if(this.userRepository.findByEmail(adminRegisterDTO.email()) != null) {
