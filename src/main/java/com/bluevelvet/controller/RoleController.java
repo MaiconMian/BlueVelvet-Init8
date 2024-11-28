@@ -41,26 +41,28 @@ public class RoleController {
     @PostMapping("/roles")
     @PreAuthorize("hasAuthority('PERMISSION_ROLE_CREATE')")
     public ResponseEntity<ApiResponse<Object>> createRole(@Valid @RequestBody RoleDTO roleDTO) {
-        try {
-            Role newRole = new Role();
-            newRole.setName(roleDTO.getName());
-            newRole.setDescription(roleDTO.getDescription());
+        // try {
+        Role newRole = new Role();
+        newRole.setName(roleDTO.getName());
+        newRole.setDescription(roleDTO.getDescription());
 
-            roleDTO.getPermissions().forEach(permissionId -> {
-                permissionsRepository.findById(permissionId).ifPresent(permission -> {
-                    newRole.getPermissions().add(permission);
-                    permission.getRoles().add(newRole);
-                    permissionsRepository.save(permission);
-                });
+        Role savedRole = roleService.saveRole(newRole);
+
+        roleDTO.getPermissions().forEach(permissionId -> {
+            permissionsRepository.findById(permissionId).ifPresent(permission -> {
+                newRole.getPermissions().add(permission);
+                permission.getRoles().add(newRole);
+                permissionsRepository.save(permission);
             });
+        });
 
-            Role savedRole = roleService.saveRole(newRole);
+        savedRole = roleService.saveRole(newRole);
 
-            return ResponseEntity.ok(new ApiResponse<>(true, savedRole));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>(false, "An error occurred: " + e.getMessage()));
-        }
+        return ResponseEntity.ok(new ApiResponse<>(true, savedRole));
+        // } catch (Exception e) {
+        //     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        //             .body(new ApiResponse<>(false, "An error occurred: " + e.getMessage()));
+        // }
     }
 
 
