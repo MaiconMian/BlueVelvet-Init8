@@ -30,32 +30,38 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/brands/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/brands/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/brands").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/brands/**").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.PUT, "/brands/**").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.POST, "/brands").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.DELETE, "/brands/**").hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.GET, "/categories/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/categories/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/categories").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/categories/**").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.PUT, "/categories/**").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.POST, "/categories").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.DELETE, "/categories/**").hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/products/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/products").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/products/**").hasAuthority("PERMISSION_EDIT_CREATE_PRODUCT")
+                        .requestMatchers(HttpMethod.POST, "/products").hasAuthority("PERMISSION_EDIT_CREATE_PRODUCT")
+                        .requestMatchers(HttpMethod.DELETE, "/products/**").hasAuthority("PERMISSION_DELETE_PRODUCT")
 
-                        .requestMatchers(HttpMethod.GET, "/users/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/users/**").hasAuthority("PERMISSION_USER_VIEW")
+                        .requestMatchers(HttpMethod.PUT, "/users/**").hasAuthority("PERMISSION_CREATE_EDIT_USER")
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("PERMISSION_DELETE_USER")
 
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/admins").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/admins").hasAuthority("PERMISSION_CREATE_EDIT_USER")
 
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/roles/**").hasAuthority("PERMISSION_VIEW_USER")
+                        .requestMatchers(HttpMethod.POST, "/roles").hasAuthority("PERMISSION_CREATE_EDIT_USER")
+                        .requestMatchers(HttpMethod.GET, "/permissions").hasAuthority("PERMISSION_VIEW_USER")
+
+                        .requestMatchers("/admin/**").hasAuthority("PERMISSION_CREATE_EDIT_USER")
                         .anyRequest().authenticated()
+
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
