@@ -28,7 +28,7 @@ public class RoleController {
     private PermissionsRepository permissionsRepository;
 
     @GetMapping("/roles")
-    @PreAuthorize("hasAuthority('PERMISSION_VIEW_USER')")
+    @PreAuthorize("hasAuthority('PERMISSION_REVIEW_VIEW')")
     public ResponseEntity<ApiResponse<Object>> getAllRoles(){
         List<Role> roles = roleService.getAllRoles();
         if (roles.isEmpty()) {
@@ -39,7 +39,7 @@ public class RoleController {
     }
 
     @PostMapping("/roles")
-    @PreAuthorize("hasAuthority('PERMISSION_VIEW_USER')")
+    @PreAuthorize("hasAuthority('PERMISSION_ROLE_CREATE')")
     public ResponseEntity<ApiResponse<Object>> createRole(@Valid @RequestBody RoleDTO roleDTO) {
         try {
             Role newRole = new Role();

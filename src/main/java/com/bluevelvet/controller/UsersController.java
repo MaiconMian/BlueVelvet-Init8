@@ -58,7 +58,7 @@ public class UsersController {
     }
 
     @DeleteMapping("/users/{id}")
-    @PreAuthorize("hasAuthority('PERMISSION_DELETE_USER')")
+    @PreAuthorize("hasAuthority('PERMISSION_USER_DELETE')")
     public ResponseEntity<ApiResponse<Object>> deleteUserById(@PathVariable int id) {
         boolean deleted = userService.deleteUser(id);
         if (deleted) {
@@ -70,7 +70,7 @@ public class UsersController {
     }
 
     @PostMapping("/admins")
-    @PreAuthorize("hasAuthority('PERMISSION_CREATE_EDIT_USER')")
+    @PreAuthorize("hasAuthority('PERMISSION_USER_CREATE')")
     public ResponseEntity adminRegister(@Valid @RequestBody AdminRegisterDTO adminRegisterDTO) {
 
         if(this.userRepository.findByEmail(adminRegisterDTO.email()) != null) {

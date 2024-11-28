@@ -44,7 +44,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/categories/{id}")
-    @PreAuthorize("hasAuthority('PERMISSION_DELETE_CATEGORY')")
+    @PreAuthorize("hasAuthority('PERMISSION_CATEGORY_DELETE')")
     public ResponseEntity<ApiResponse<Object>> deleteCategoryById(@PathVariable int id) {
         boolean deleted = categoryService.deleteCategory(id);
         if (deleted) {
@@ -56,7 +56,7 @@ public class CategoryController {
     }
 
     @PostMapping("/categories")
-    @PreAuthorize("hasAuthority('PERMISSION_CREATE_EDIT_CATEGORY')")
+    @PreAuthorize("hasAuthority('PERMISSION_CLIENT_CREATE')")
     public ResponseEntity<ApiResponse<String>> addCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
         Category newcategory = categoryService.saveCategory(categoryDTO);
         return ResponseEntity.ok(new ApiResponse<>("success", "Product with ID " +

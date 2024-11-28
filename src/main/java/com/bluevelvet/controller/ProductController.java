@@ -43,7 +43,7 @@ public class  ProductController {
     }
 
     @DeleteMapping("/products/{id}")
-    @PreAuthorize("hasAuthority('PERMISSION_DELETE_PRODUCT')")
+    @PreAuthorize("hasAuthority('PERMISSION_PRODUCT_DELETE')")
     public ResponseEntity<ApiResponse<Object>> deleteProductById(@PathVariable int id) {
         boolean deleted = productService.deleteProduct(id);
         if (deleted) {
@@ -55,7 +55,7 @@ public class  ProductController {
     }
 
     @PostMapping("/products")
-    @PreAuthorize("hasAuthority('PERMISSION_EDIT_CREATE_PRODUCT')")
+    @PreAuthorize("hasAuthority('PERMISSION_PRODUCT_CREATE')")
     public ResponseEntity<ApiResponse<String>> addProduct(@Valid @RequestBody ProductDTO productDTO) {
         Product createdProduct = productService.saveProductWithDetails(productDTO);
         return ResponseEntity.ok(new ApiResponse<>("success", "Product with ID " +

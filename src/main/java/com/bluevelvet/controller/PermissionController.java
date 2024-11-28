@@ -21,12 +21,12 @@ public class PermissionController {
     private PermissionsService permissionsService;
 
     @GetMapping("/permissions")
-    @PreAuthorize("hasAuthority('PERMISSION_VIEW_USER')")
+    @PreAuthorize("hasAuthority('PERMISSION_PERMISSION_VIEW')")
     public ResponseEntity<ApiResponse<Object>> getAllPermissions(){
         List<Permissions> permissions = permissionsService.findAll();
         if (permissions.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>("error", "No permissions registered"));
+                    .body(new ApiResponse<>("error", "No roles registered"));
         }
         return ResponseEntity.ok(new ApiResponse<>("success", permissions));
     }
