@@ -233,3 +233,41 @@ body {
     border: .1em solid white !important;
     margin-left: .1em !important;
 }
+
+/* Estilo das seções de permissões */
+.role-section {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+}
+
+.role-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.role-section-header h5 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.toggle-icon {
+    font-size: 18px;
+    color: #007bff;
+    transition: transform 0.3s ease;
+}
+
+.role-section-body {
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+.role-section-header i.rotate {
+    transform: rotate(180deg);
+}
