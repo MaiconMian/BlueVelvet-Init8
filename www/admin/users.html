@@ -125,7 +125,7 @@
                         </div>
                         <div class="form-group">
                             <label for="editLastName">Last Name</label>
-                            <select id="editLastName" class="form-control" required></select>
+                            <input type="text" id="editLastName" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="editUserEmail">E-mail</label>
@@ -133,7 +133,7 @@
                         </div>
                         <div class="form-group">
                             <label for="editPassword">Password</label>
-                            <input type="number" id="editPassword" class="form-control" required>
+                            <input type="password" id="editPassword" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label>Status</label>
@@ -145,7 +145,7 @@
                         <div class="form-group">
                             <label>Roles</label>
                             <div id="rolesContainer"></div>
-                            <button type="button" class="btn btn-secondary mt-2" id="addRole">Add Role</button>
+                            <button type="button" class="btn btn-secondary mt-2" id="addRoleBtn">Add Role</button>
                         </div>
                         <div class="form-group">
                             <label>Main Image</label>
@@ -215,6 +215,18 @@
             }, 3000);
         }
 
+        function fetchRoles() {
+            return Promise.all([
+                $.ajax({
+                    url: 'http://localhost:8090/api/v1/roles',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    type: 'GET'
+                })
+            ]);
+        }
+
         $(document).ready(() => {
             const previewImage = (file, containerId, isMultiple = false) => {
                 if (!file) return;
@@ -253,6 +265,60 @@
                 } else {
                     $('#mainImagePreview img').hide();
                 }
+                
+                fetchRoles().then(([roles]) => {
+                    const rolesContainer = $('#rolesContainer').empty();
+                    let selectedRoles = isEdit ? user.roles.map(r => r.id) : [];
+
+                    const updateRoleState = () => {
+                        const unselectedRoles = roles.data.filter(r => !selectedRoles.includes(r.id));
+                        $('#addRoleBtn').prop('disabled', unselectedRoles.length === 0);
+                    };
+
+                    const addRole = (role) => {
+                        const element = $(`
+                            <div class="d-inline-block badge-container mt-2 mr-2">
+                                <span class="badge badge-primary p-2" data-id="${role.id}">${role.name}</span>
+                                <button type="button" class="btn btn-sm btn-danger ml-1 remove-role" data-id="${role.id}">&times;</button>
+                            </div>
+                        `);
+                        rolesContainer.append(element);
+                        element.find('.remove-role').on('click', () => {
+                            selectedRoles = selectedRoles.filter(id => id !== role.id);
+                            element.remove();
+                            updateRoleState();
+                        });
+                    };
+
+                    selectedRoles.forEach(id => {
+                        const role = roles.data.find(r => r.id === id);
+                        if (role) addRole(role);
+                    });
+
+                    $('#addRoleBtn').off('click').on('click', () => {
+                        const unselectedRoles = roles.data.filter(r => !selectedRoles.includes(r.id));
+                        if (unselectedRoles.length) {
+                            const selectContainer = $('<div class="mt-2"></div>');
+                            const select = $('<select class="form-control"></select>');
+                            unselectedRoles.forEach(r => select.append(new Option(r.name, r.id)));
+                            const addButton = $('<button type="button" class="btn btn-primary btn-sm mt-2">Add</button>');
+                            selectContainer.append(select).append(addButton);
+                            rolesContainer.append(selectContainer);
+
+                            addButton.on('click', () => {
+                                const selectedId = parseInt(select.val());
+                                const selected = roles.data.find(r => r.id === selectedId);
+                                if (selected) {
+                                    selectedRoles.push(selectedId);
+                                    addRole(selected);
+                                    selectContainer.remove();
+                                    updateRoleState();
+                                }
+                            });
+                        }
+                    });
+                    updateRoleState();
+                });
             };
 
             const handleSubmit = (isEdit) => {
@@ -306,9 +372,19 @@
 
             $(document).on('click', '.btn-edit', function () {
                 const userId = $(this).data('id');
-                $.get(`http://localhost:8090/api/v1/users/${userId}`).done(user => {
-                    populateModal(true, user.data);
-                    $('#modalEdit').modal('show');
+                $.ajax({
+                    url: `http://localhost:8090/api/v1/users/${userId}`,
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    type: 'GET',
+                    success: function (user) {
+                        populateModal(true, user.data);
+                        $('#modalEdit').modal('show');
+                    },
+                    error: function () {
+                        console.error('Error: Failed to fetch user data');
+                    }
                 });
             });
 
