@@ -59,6 +59,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/logout")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<?> logout() {
         ResponseCookie cookie = ResponseCookie.from("jwt", "")
                 .httpOnly(false)
@@ -70,6 +71,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/validate")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<?> validateToken(HttpServletRequest request) {
 
         String token = securityHelper.recoveryToken(request);

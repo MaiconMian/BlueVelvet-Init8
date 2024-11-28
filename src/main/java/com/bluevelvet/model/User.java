@@ -1,11 +1,18 @@
 package com.bluevelvet.model;
 
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.*;
+import org.hibernate.Hibernate;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+
+import java.security.Permission;
 import java.util.*;
 
 @Entity
@@ -40,12 +47,26 @@ public class User implements UserDetails{
     @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
     private Set<Role> roles = new HashSet<>();
 
+    private static final Logger logger = (Logger) LoggerFactory.getLogger(User.class);
+
     @Override
+    @Transactional
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
-                .toList();
+        Set<GrantedAuthority> authorities = new HashSet<>();
+
+        for (Role role : this.getRoles()) {
+            Set<Permissions> permissions = role.getPermissions();
+            if (permissions != null) {
+                for (Permissions permission : permissions) {
+                    logger.debug("Adding permission: {}", permission.getName());
+                    authorities.add(new SimpleGrantedAuthority(permission.getName()));
+                }
+            }
+        }
+
+        return authorities;
     }
+
 
     @Override
     public String getPassword() {
