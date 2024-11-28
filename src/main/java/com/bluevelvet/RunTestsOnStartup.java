@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 public class RunTestsOnStartup implements CommandLineRunner {
@@ -37,271 +38,255 @@ public class RunTestsOnStartup implements CommandLineRunner {
         String imagemBase = "iVBORw0KGgoAAAANSUhEUgAAAGUAAABeCAIAAAC1o032AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAA3ElEQVR4nO3QwQ3AIBDAsNL9dz5WIC+EZE8QZc3Mx7H/dsBj/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8avxq/Gr8ajYNfwO5QbHnsQAAAABJRU5ErkJggg==";
         byte[] imageBytes = Base64.getDecoder().decode(imagemBase);
 
-        // creating permissions
-        Permissions permission1 = new Permissions();
-        permission1.setName("PERMISSION_EDIT_CREATE_PRODUCT");
-        permission1.setDescription("Permission for edit a product in BV");
+        Permissions permissionProductCreate = new Permissions();
+        permissionProductCreate.setName("PERMISSION_PRODUCT_CREATE");
+        permissionProductCreate.setDescription("Permission to create a product in BV");
 
-        Permissions permission2 = new Permissions();
-        permission2.setName("PERMISSION_VIEW_PRODUCT_DETAIL");
-        permission2.setDescription("Permission for view a product detail a product in BV");
+        Permissions permissionProductEdit = new Permissions();
+        permissionProductEdit.setName("PERMISSION_PRODUCT_EDIT");
+        permissionProductEdit.setDescription("Permission to edit a product in BV");
 
-        Permissions permission4 = new Permissions();
-        permission4.setName("PERMISSION_DELETE_PRODUCT");
-        permission4.setDescription("Permission for delete a product in BV");
+        Permissions permissionProductDelete = new Permissions();
+        permissionProductDelete.setName("PERMISSION_PRODUCT_DELETE");
+        permissionProductDelete.setDescription("Permission to delete a product in BV");
 
-        Permissions permission5 = new Permissions();
-        permission5.setName("PERMISSION_CUST_PRODUCT");
-        permission5.setDescription("Permission for alter cust a product in BV");
+        Permissions permissionProductView = new Permissions();
+        permissionProductView.setName("PERMISSION_PRODUCT_VIEW");
+        permissionProductView.setDescription("Permission to view a product in BV");
 
-        Permissions permission6 = new Permissions();
-        permission6.setName("PERMISSION_USER_VIEW");
-        permission6.setDescription("Permission for view a user in BV");
+        Permissions permissionUserCreate = new Permissions();
+        permissionUserCreate.setName("PERMISSION_USER_CREATE");
+        permissionUserCreate.setDescription("Permission to create a user in BV");
 
-        Permissions permission7 = new Permissions();
-        permission7.setName("PERMISSION_CREATE_EDIT_USER");
-        permission7.setDescription("Permission for create and edit a user in BV");
+        Permissions permissionUserEdit = new Permissions();
+        permissionUserEdit.setName("PERMISSION_USER_EDIT");
+        permissionUserEdit.setDescription("Permission to edit a user in BV");
 
-        Permissions permission8 = new Permissions();
-        permission8.setName("PERMISSION_DELETE_USER");
-        permission8.setDescription("Permission for delet a user in BV");
+        Permissions permissionUserDelete = new Permissions();
+        permissionUserDelete.setName("PERMISSION_USER_DELETE");
+        permissionUserDelete.setDescription("Permission to delete a user in BV");
 
-        Permissions permission9 = new Permissions();
-        permission9.setName("PERMISSION_VIEW_BRAND");
-        permission9.setDescription("Permission to view a brand in BV");
+        Permissions permissionUserView = new Permissions();
+        permissionUserView.setName("PERMISSION_USER_VIEW");
+        permissionUserView.setDescription("Permission to view a user in BV");
 
-        Permissions permission10 = new Permissions();
-        permission10.setName("PERMISSION_CREATE_EDIT_BRAND");
-        permission10.setDescription("Permission to create and edit a brand in BV");
+        Permissions permissionBrandCreate = new Permissions();
+        permissionBrandCreate.setName("PERMISSION_BRAND_CREATE");
+        permissionBrandCreate.setDescription("Permission to create a brand in BV");
 
-        Permissions permission11 = new Permissions();
-        permission11.setName("PERMISSION_DELETE_BRAND");
-        permission11.setDescription("Permission to delete a brand in BV");
+        Permissions permissionBrandEdit = new Permissions();
+        permissionBrandEdit.setName("PERMISSION_BRAND_EDIT");
+        permissionBrandEdit.setDescription("Permission to edit a brand in BV");
 
-        Permissions permission12 = new Permissions();
-        permission12.setName("PERMISSION_VIEW_CATEGORY");
-        permission12.setDescription("Permission to view a category in BV");
+        Permissions permissionBrandDelete = new Permissions();
+        permissionBrandDelete.setName("PERMISSION_BRAND_DELETE");
+        permissionBrandDelete.setDescription("Permission to delete a brand in BV");
 
-        Permissions permission13 = new Permissions();
-        permission13.setName("PERMISSION_CREATE_EDIT_CATEGORY");
-        permission13.setDescription("Permission to create and edit a category in BV");
+        Permissions permissionBrandView = new Permissions();
+        permissionBrandView.setName("PERMISSION_BRAND_VIEW");
+        permissionBrandView.setDescription("Permission to view a brand in BV");
 
-        Permissions permission14 = new Permissions();
-        permission14.setName("PERMISSION_DELETE_CATEGORY");
-        permission14.setDescription("Permission to delete a category in BV");
+        Permissions permissionCategoryCreate = new Permissions();
+        permissionCategoryCreate.setName("PERMISSION_CATEGORY_CREATE");
+        permissionCategoryCreate.setDescription("Permission to create a category in BV");
 
-        Permissions permission15 = new Permissions();
-        permission15.setName("PERMISSION_VIEW_CLIENT");
-        permission15.setDescription("Permission to view a client in BV");
+        Permissions permissionCategoryEdit = new Permissions();
+        permissionCategoryEdit.setName("PERMISSION_CATEGORY_EDIT");
+        permissionCategoryEdit.setDescription("Permission to edit a category in BV");
 
-        Permissions permission16 = new Permissions();
-        permission16.setName("PERMISSION_CREATE_EDIT_CLIENT");
-        permission16.setDescription("Permission to create and edit a client in BV");
+        Permissions permissionCategoryDelete = new Permissions();
+        permissionCategoryDelete.setName("PERMISSION_CATEGORY_DELETE");
+        permissionCategoryDelete.setDescription("Permission to delete a category in BV");
 
-        Permissions permission17 = new Permissions();
-        permission17.setName("PERMISSION_DELETE_CLIENT");
-        permission17.setDescription("Permission to delete a client in BV");
+        Permissions permissionCategoryView = new Permissions();
+        permissionCategoryView.setName("PERMISSION_CATEGORY_VIEW");
+        permissionCategoryView.setDescription("Permission to view a category in BV");
 
-        Permissions permission18 = new Permissions();
-        permission18.setName("PERMISSION_VIEW_SHIPPING");
-        permission18.setDescription("Permission to view a shipping in BV");
+        Permissions permissionClientCreate = new Permissions();
+        permissionClientCreate.setName("PERMISSION_CLIENT_CREATE");
+        permissionClientCreate.setDescription("Permission to create a client in BV");
 
-        Permissions permission19 = new Permissions();
-        permission19.setName("PERMISSION_UPDATE_SHIPPING_STATUS");
-        permission19.setDescription("Permission to update shipping status in BV");
+        Permissions permissionClientEdit = new Permissions();
+        permissionClientEdit.setName("PERMISSION_CLIENT_EDIT");
+        permissionClientEdit.setDescription("Permission to edit a client in BV");
 
-        Permissions permission20 = new Permissions();
-        permission20.setName("PERMISSION_VIEW_ORDER");
-        permission20.setDescription("Permission to view an order in BV");
+        Permissions permissionClientDelete = new Permissions();
+        permissionClientDelete.setName("PERMISSION_CLIENT_DELETE");
+        permissionClientDelete.setDescription("Permission to delete a client in BV");
 
-        Permissions permission21 = new Permissions();
-        permission21.setName("PERMISSION_CREATE_EDIT_ORDER");
-        permission21.setDescription("Permission to create and edit an order in BV");
+        Permissions permissionClientView = new Permissions();
+        permissionClientView.setName("PERMISSION_CLIENT_VIEW");
+        permissionClientView.setDescription("Permission to view a client in BV");
 
-        Permissions permission22 = new Permissions();
-        permission22.setName("PERMISSION_DELETE_ORDER");
-        permission22.setDescription("Permission to delete an order in BV");
+        Permissions permissionShippingView = new Permissions();
+        permissionShippingView.setName("PERMISSION_SHIPPING_VIEW");
+        permissionShippingView.setDescription("Permission to view a shipping in BV");
 
-        Permissions permission23 = new Permissions();
-        permission23.setName("PERMISSION_VIEW_QUESTION");
-        permission23.setDescription("Permission to view a question in BV");
+        Permissions permissionShippingUpdateStatus = new Permissions();
+        permissionShippingUpdateStatus.setName("PERMISSION_SHIPPING_UPDATE_STATUS");
+        permissionShippingUpdateStatus.setDescription("Permission to update a shipping status in BV");
 
-        Permissions permission24 = new Permissions();
-        permission24.setName("PERMISSION_ANSWER_QUESTION");
-        permission24.setDescription("Permission to answer a question in BV");
+        Permissions permissionOrderCreate = new Permissions();
+        permissionOrderCreate.setName("PERMISSION_ORDER_CREATE");
+        permissionOrderCreate.setDescription("Permission to create an order in BV");
 
-        Permissions permission25 = new Permissions();
-        permission25.setName("PERMISSION_VIEW_REVIEW");
-        permission25.setDescription("Permission to view a review in BV");
+        Permissions permissionOrderEdit = new Permissions();
+        permissionOrderEdit.setName("PERMISSION_ORDER_EDIT");
+        permissionOrderEdit.setDescription("Permission to edit an order in BV");
 
-        Permissions permission26 = new Permissions();
-        permission26.setName("PERMISSION_APPROVE_REVIEW");
-        permission26.setDescription("Permission to approve a review in BV");
+        Permissions permissionOrderDelete = new Permissions();
+        permissionOrderDelete.setName("PERMISSION_ORDER_DELETE");
+        permissionOrderDelete.setDescription("Permission to delete an order in BV");
 
-        Permissions permission27 = new Permissions();
-        permission27.setName("PERMISSION_DELETE_REVIEW");
-        permission27.setDescription("Permission to delete a review in BV");
+        Permissions permissionOrderView = new Permissions();
+        permissionOrderView.setName("PERMISSION_ORDER_VIEW");
+        permissionOrderView.setDescription("Permission to view an order in BV");
+
+        Permissions permissionQuestionView = new Permissions();
+        permissionQuestionView.setName("PERMISSION_QUESTION_VIEW");
+        permissionQuestionView.setDescription("Permission to view a question in BV");
+
+        Permissions permissionQuestionAnswer = new Permissions();
+        permissionQuestionAnswer.setName("PERMISSION_QUESTION_ANSWER");
+        permissionQuestionAnswer.setDescription("Permission to answer a question in BV");
+
+        Permissions permissionReviewView = new Permissions();
+        permissionReviewView.setName("PERMISSION_REVIEW_VIEW");
+        permissionReviewView.setDescription("Permission to view a review in BV");
+
+        Permissions permissionReviewApprove = new Permissions();
+        permissionReviewApprove.setName("PERMISSION_REVIEW_APPROVE");
+        permissionReviewApprove.setDescription("Permission to approve a review in BV");
+
+        Permissions permissionReviewDelete = new Permissions();
+        permissionReviewDelete.setName("PERMISSION_REVIEW_DELETE");
+        permissionReviewDelete.setDescription("Permission to delete a review in BV");
+
+        Permissions permissionRoleCreate = new Permissions();
+        permissionRoleCreate.setName("PERMISSION_ROLE_CREATE");
+        permissionRoleCreate.setDescription("Permission to create a role in BV");
+
+        Permissions permissionRoleEdit = new Permissions();
+        permissionRoleEdit.setName("PERMISSION_ROLE_EDIT");
+        permissionRoleEdit.setDescription("Permission to edit a role in BV");
+
+        Permissions permissionRoleDelete = new Permissions();
+        permissionRoleDelete.setName("PERMISSION_ROLE_DELETE");
+        permissionRoleDelete.setDescription("Permission to delete a role in BV");
+
+        Permissions permissionRoleView = new Permissions();
+        permissionRoleView.setName("PERMISSION_ROLE_VIEW");
+        permissionRoleView.setDescription("Permission to view a role in BV");
+
+        Permissions permissionPermissionCreate = new Permissions();
+        permissionPermissionCreate.setName("PERMISSION_PERMISSION_CREATE");
+        permissionPermissionCreate.setDescription("Permission to create a permission in BV");
+
+        Permissions permissionPermissionEdit = new Permissions();
+        permissionPermissionEdit.setName("PERMISSION_PERMISSION_EDIT");
+        permissionPermissionEdit.setDescription("Permission to edit a permission in BV");
+
+        Permissions permissionPermissionDelete = new Permissions();
+        permissionPermissionDelete.setName("PERMISSION_PERMISSION_DELETE");
+        permissionPermissionDelete.setDescription("Permission to delete a permission in BV");
+
+        Permissions permissionPermissionView = new Permissions();
+        permissionPermissionView.setName("PERMISSION_PERMISSION_VIEW");
+        permissionPermissionView.setDescription("Permission to view a permission in BV");
+
+        List<Permissions> allPermissions = null;
 
         try {
-            permissionsRepository.save(permission1);
-            permissionsRepository.save(permission2);
-            permissionsRepository.save(permission4);
-            permissionsRepository.save(permission6);
-            permissionsRepository.save(permission7);
-            permissionsRepository.save(permission8);
-            permissionsRepository.save(permission9);
-            permissionsRepository.save(permission10);
-            permissionsRepository.save(permission11);
-            permissionsRepository.save(permission12);
-            permissionsRepository.save(permission13);
-            permissionsRepository.save(permission14);
-            permissionsRepository.save(permission15);
+            allPermissions = List.of(
+                    permissionProductCreate, permissionProductEdit, permissionProductDelete, permissionProductView,
+                    permissionUserCreate, permissionUserEdit, permissionUserDelete, permissionUserView,
+                    permissionBrandCreate, permissionBrandEdit, permissionBrandDelete, permissionBrandView,
+                    permissionCategoryCreate, permissionCategoryEdit, permissionCategoryDelete, permissionCategoryView,
+                    permissionClientCreate, permissionClientEdit, permissionClientDelete, permissionClientView,
+                    permissionShippingView, permissionShippingUpdateStatus,
+                    permissionOrderCreate, permissionOrderEdit, permissionOrderDelete, permissionOrderView,
+                    permissionQuestionView, permissionQuestionAnswer,
+                    permissionReviewView, permissionReviewApprove, permissionReviewDelete,
+                    permissionRoleCreate, permissionRoleEdit, permissionRoleDelete, permissionRoleView,
+                    permissionPermissionCreate, permissionPermissionEdit, permissionPermissionDelete, permissionPermissionView
+            );
+
+            permissionsRepository.saveAll(allPermissions);
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        // insert role admin with all permissions
-        Role role1 = new Role();
-        role1.setName("ADMIN");
-        role1.setDescription("A role for administrator in BV");
-
-        role1.getPermissions().add(permission1);
-        role1.getPermissions().add(permission2);
-        role1.getPermissions().add(permission4);
-        role1.getPermissions().add(permission6);
-        role1.getPermissions().add(permission7);
-        role1.getPermissions().add(permission8);
-        role1.getPermissions().add(permission9);
-        role1.getPermissions().add(permission10);
-        role1.getPermissions().add(permission11);
-        role1.getPermissions().add(permission12);
-        role1.getPermissions().add(permission13);
-        role1.getPermissions().add(permission14);
-        role1.getPermissions().add(permission15);
-
-        permission1.getRoles().add(role1);
-        permission2.getRoles().add(role1);
-        permission4.getRoles().add(role1);
-        permission6.getRoles().add(role1);
-        permission7.getRoles().add(role1);
-        permission8.getRoles().add(role1);
-        permission9.getRoles().add(role1);
-        permission10.getRoles().add(role1);
-        permission11.getRoles().add(role1);
-        permission12.getRoles().add(role1);
-        permission13.getRoles().add(role1);
-        permission14.getRoles().add(role1);
-        permission15.getRoles().add(role1);
-
-        Role role2 = new Role();
-        role2.setName("SALES_MANAGER");
-        role2.setDescription("A role for sales manager in BV");
-
-        role2.getPermissions().add(permission5);
-        role2.getPermissions().add(permission15);
-        role2.getPermissions().add(permission16);
-        role2.getPermissions().add(permission17);
-        role2.getPermissions().add(permission18);
-        role2.getPermissions().add(permission19);
-        role2.getPermissions().add(permission20);
-        role2.getPermissions().add(permission21);
-        role2.getPermissions().add(permission22);
-
-        permission5.getRoles().add(role2);
-        permission15.getRoles().add(role2);
-        permission16.getRoles().add(role2);
-        permission17.getRoles().add(role2);
-        permission18.getRoles().add(role2);
-        permission19.getRoles().add(role2);
-        permission20.getRoles().add(role2);
-        permission21.getRoles().add(role2);
-        permission22.getRoles().add(role2);
-
-        Role role3 = new Role();
-        role3.setName("EDITOR");
-        role3.setDescription("A role for editor in BV");
-
-        role3.getPermissions().add(permission1);
-        role3.getPermissions().add(permission2);
-        role3.getPermissions().add(permission4);
-        role3.getPermissions().add(permission5);
-        role3.getPermissions().add(permission9);
-        role3.getPermissions().add(permission10);
-        role3.getPermissions().add(permission11);
-        role3.getPermissions().add(permission12);
-        role3.getPermissions().add(permission13);
-        role3.getPermissions().add(permission14);
-
-        permission1.getRoles().add(role3);
-        permission2.getRoles().add(role3);
-        permission4.getRoles().add(role3);
-        permission5.getRoles().add(role3);
-        permission9.getRoles().add(role3);
-        permission10.getRoles().add(role3);
-        permission11.getRoles().add(role3);
-        permission12.getRoles().add(role3);
-        permission13.getRoles().add(role3);
-        permission14.getRoles().add(role3);
-
-        Role role4 = new Role();
-        role4.setName("SHIPPING_MANAGER");
-        role4.setDescription("A role for shiping_Manager in BV");
-
-        role4.getPermissions().add(permission2);
-        role4.getPermissions().add(permission20);
-        role4.getPermissions().add(permission19);
-
-        permission2.getRoles().add(role4);
-        permission20.getRoles().add(role4);
-        permission19.getRoles().add(role4);
-
-        Role role5 = new Role();
-        role5.setName("Assistant");
-        role5.setDescription("A role for assistant in BV");
-
-        role5.getPermissions().add(permission23);
-        role5.getPermissions().add(permission24);
-        role5.getPermissions().add(permission25);
-        role5.getPermissions().add(permission26);
-        role5.getPermissions().add(permission27);
-
-        permission23.getRoles().add(role5);
-        permission24.getRoles().add(role5);
-        permission25.getRoles().add(role5);
-        permission26.getRoles().add(role5);
-        permission27.getRoles().add(role5);
-
-        try {
-            roleRepository.save(role1);
-            roleRepository.save(role2);
-            roleRepository.save(role3);
-            roleRepository.save(role4);
-            roleRepository.save(role5);
-        } catch (Exception e) {}
-
-        try {
-            permissionsRepository.save(permission1);
-            permissionsRepository.save(permission2);
-            permissionsRepository.save(permission4);
-            permissionsRepository.save(permission6);
-            permissionsRepository.save(permission7);
-            permissionsRepository.save(permission8);
-            permissionsRepository.save(permission9);
-            permissionsRepository.save(permission10);
-            permissionsRepository.save(permission11);
-            permissionsRepository.save(permission12);
-            permissionsRepository.save(permission13);
-            permissionsRepository.save(permission14);
-            permissionsRepository.save(permission15);
-        } catch (Exception e) {
+        Role adminRole = new Role();
+        if (allPermissions != null) {
+            adminRole.setName("ADMIN");
+            adminRole.setDescription("A role for administrator in BV");
+            adminRole.getPermissions().addAll(allPermissions);
+            allPermissions.forEach(permission -> permission.getRoles().add(adminRole));
         }
 
-        // create a user
+        Role salesManagerRole = new Role();
+        salesManagerRole.setName("SALES_MANAGER");
+        salesManagerRole.setDescription("A role for sales manager in BV");
+        List<Permissions> salesManagerPermissions = List.of(
+                permissionProductView, permissionClientCreate, permissionClientEdit,
+                permissionClientView, permissionOrderCreate, permissionOrderEdit,
+                permissionOrderView, permissionShippingView, permissionShippingUpdateStatus
+        );
+        salesManagerRole.getPermissions().addAll(salesManagerPermissions);
+        salesManagerPermissions.forEach(permission -> permission.getRoles().add(salesManagerRole));
+
+        Role editorRole = new Role();
+        editorRole.setName("EDITOR");
+        editorRole.setDescription("A role for editor in BV");
+        List<Permissions> editorPermissions = List.of(
+                permissionProductCreate, permissionProductEdit, permissionProductView,
+                permissionCategoryCreate, permissionCategoryEdit, permissionCategoryView,
+                permissionReviewView, permissionReviewApprove, permissionReviewDelete
+        );
+        editorRole.getPermissions().addAll(editorPermissions);
+        editorPermissions.forEach(permission -> permission.getRoles().add(editorRole));
+
+        Role shippingManagerRole = new Role();
+        shippingManagerRole.setName("SHIPPING_MANAGER");
+        shippingManagerRole.setDescription("A role for shipping manager in BV");
+        List<Permissions> shippingManagerPermissions = List.of(
+                permissionShippingView, permissionShippingUpdateStatus, permissionOrderView
+        );
+        shippingManagerRole.getPermissions().addAll(shippingManagerPermissions);
+        shippingManagerPermissions.forEach(permission -> permission.getRoles().add(shippingManagerRole));
+
+        Role assistantRole = new Role();
+        assistantRole.setName("ASSISTANT");
+        assistantRole.setDescription("A role for assistant in BV");
+        List<Permissions> assistantPermissions = List.of(
+                permissionCategoryView, permissionBrandView, permissionClientView,
+                permissionOrderView, permissionQuestionView
+        );
+        assistantRole.getPermissions().addAll(assistantPermissions);
+        assistantPermissions.forEach(permission -> permission.getRoles().add(assistantRole));
+
+        try {
+            roleRepository.saveAll(List.of(adminRole, salesManagerRole, editorRole, shippingManagerRole, assistantRole));
+
+
+            for (Permissions permission : allPermissions) {
+                permissionsRepository.save(permission);
+            }
+            salesManagerPermissions.forEach(permission -> permissionsRepository.save(permission));
+            editorPermissions.forEach(permission -> permissionsRepository.save(permission));
+            shippingManagerPermissions.forEach(permission -> permissionsRepository.save(permission));
+            assistantPermissions.forEach(permission -> permissionsRepository.save(permission));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         User user = new User();
         user.setName("Florentino");
         user.setLastName("Souza");
         user.setEmail("florentino@bluevelvet.com");
         user.setPassword(new BCryptPasswordEncoder().encode("florentino123"));
-        user.getRoles().add(role1);
+        user.getRoles().add(adminRole);
         user.setStatus(true);
 
         // create a user
@@ -310,19 +295,19 @@ public class RunTestsOnStartup implements CommandLineRunner {
         user2.setLastName("Souza");
         user2.setEmail("tiago@bluevelvet.com");
         user2.setPassword(new BCryptPasswordEncoder().encode("tiago123"));
-        user2.getRoles().add(role5);
+        user2.getRoles().add(assistantRole);
         user2.setStatus(true);
 
         try {
             userRepository.save(user);
-            role1.getUsers().add(user);
-            roleService.saveRole(role1);
+            adminRole.getUsers().add(user);
+            roleService.saveRole(adminRole);
         } catch (Exception e) {}
 
         try {
             userRepository.save(user2);
-            role5.getUsers().add(user2);
-            roleService.saveRole(role5);
+            assistantRole.getUsers().add(user2);
+            roleService.saveRole(assistantRole);
         } catch (Exception e) {}
 
         // insert brands test
@@ -374,7 +359,6 @@ public class RunTestsOnStartup implements CommandLineRunner {
             try {
                 productRepository.save(product);
             } catch (Exception e) {}
-
         }
 
         try {
