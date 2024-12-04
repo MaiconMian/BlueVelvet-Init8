@@ -130,4 +130,34 @@ public class UsersController {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/users/{id}")
+    @PreAuthorize("hasAuthority('PERMISSION_USER_EDIT')")
+    public ResponseEntity<ApiResponse<Object>> updateUserById(
+            @PathVariable int id,
+            @Valid @RequestBody UserRegisterDTO userRegisterDTO) {
+
+        // Verifica se o usuário existe
+        Optional<User> existingUser = userService.getUserById(id);
+        if (!existingUser.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("error", "User not found"));
+        }
+
+        User user = existingUser.get();
+
+        // Atualiza os campos do usuário com os valores fornecidos
+        user.setName(userRegisterDTO.name());
+        user.setLastName(userRegisterDTO.lastName());
+        user.setEmail(userRegisterDTO.email());
+
+        // Criptografa a nova senha antes de salvar
+        String encryptedPassword = new BCryptPasswordEncoder().encode(userRegisterDTO.password());
+        user.setPassword(encryptedPassword);
+
+        // Salva o usuário atualizado no banco de dados
+        userRepository.save(user);
+
+        return ResponseEntity.ok(new ApiResponse<>("success", "User updated successfully"));
+    }
+
 }
