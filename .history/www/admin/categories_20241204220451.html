@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlueVelvet Music Store</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg custom-navbar">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-start" id="navbarNav">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="../assets/images/LogoBranca.png" alt="BlueVelvet Logo">
+            </a>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="admin.html">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="users.html">Users</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="products.html">Products <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="roles.html">Roles</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Brands</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="categories.html">Categories</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="logout-button">Log Out</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-user-circle" aria-hidden="true"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="profileDropdown">
+                        <div id="user-info" class="dropdown-item">
+                            Carregando informações do usuário...
+                        </div>
+                    </div>
+                </li>                
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container my-4 container-center text-center">
+        <h2>Categories</h2>
+    </div>
+
+    <div class="container my-4">
+        <div class="d-flex justify-content-end">
+            <button type="button" id="btnCreateProduct" class="btn btn-success mb-3">Add Category</button>
+        </div>
+        <div class="table-responsive">
+            <table id="dataTableContent" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalView" tabindex="-1" role="dialog" aria-labelledby="modalViewLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalViewLabel">Category Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <img id="mainImage" src="" alt="Product main photo" class="img-fluid rounded" style="max-width: 100%; height: auto; border: 1px solid #ddd;">
+                        </div>
+                        <div class="col-md-8">
+                            <h5 id="viewName" class="font-weight-bold"></h5>
+                            <p><strong>Brand:</strong> <span id="viewBrand"></span></p>
+                            <p><strong>Short Description:</strong> <span id="viewShortDescription"></span></p>
+                            <p><strong>Long Description:</strong> <span id="viewLongDescription"></span></p>
+    
+                            <div class="d-flex align-items-center flex-wrap mt-2">
+                                <span id="tagStatus" class="badge badge-pill px-3 py-2 mr-2"></span>
+                                <span id="tagStock" class="badge badge-pill px-3 py-2 mr-2"></span>
+                                <span id="tagPrice" class="badge badge-pill px-3 py-2"></span>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="mt-4">
+                        <div id="secondaryImagesCarousel" class="carousel slide" data-ride="carousel">
+                            <div class="carousel-inner" id="carouselInner"></div>
+                            <a class="carousel-control-prev" href="#secondaryImagesCarousel" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="carousel-control-next" href="#secondaryImagesCarousel" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </div>
+                    </div>
+    
+                    <div class="mt-4">
+                        <h5 class="font-weight-bold">Technical Details</h5>
+                        <table id="technicalDetails" class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th>Width</th>
+                                    <td id="viewWidth"></td>
+                                </tr>
+                                <tr>
+                                    <th>Height</th>
+                                    <td id="viewHeight"></td>
+                                </tr>
+                                <tr>
+                                    <th>Length</th>
+                                    <td id="viewLength"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="modalEditLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalEditLabel">Edit Category</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="editError" class="alert alert-danger" style="display: none;"></div>
+                    <form id="editForm">
+                        <input type="hidden" id="editProductId">
+                        <div class="form-group">
+                            <label for="editName">Name</label>
+                            <input type="text" id="editName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editBrand">Brand</label>
+                            <select id="editBrand" class="form-control" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editShortDescription">Short Description</label>
+                            <textarea id="editShortDescription" class="form-control" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="editLongDescription">Long Description</label>
+                            <textarea id="editLongDescription" class="form-control"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="editPrice">Price</label>
+                            <input type="number" id="editPrice" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editDiscount">Discount (%)</label>
+                            <input type="number" id="editDiscount" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select id="editStatus" class="form-control" required>
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Stock</label>
+                            <select id="editStock" class="form-control" required>
+                                <option value="true">In Stock</option>
+                                <option value="false">Out of Stock</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editWidth">Width</label>
+                            <input type="number" id="editWidth" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editLength">Length</label>
+                            <input type="number" id="editLength" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editHeight">Height</label>
+                            <input type="number" id="editHeight" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editCost">Cost</label>
+                            <input type="number" id="editCost" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Categories</label>
+                            <div id="categoriesContainer"></div>
+                            <button type="button" class="btn btn-secondary mt-2" id="addCategoryBtn">Add Category</button>
+                        </div>
+                        <div class="form-group">
+                            <label>Details</label>
+                            <div id="detailsContainer"></div>
+                            <button type="button" class="btn btn-secondary mt-2" id="addDetailBtn">Add Detail</button>
+                        </div>
+                        <div class="form-group">
+                            <label>Main Image</label>
+                            <input type="file" id="editImage" class="form-control-file" required>
+                            <div class="mt-2" id="mainImagePreview" style="max-width: 200px;">
+                                <img src="" class="img-thumbnail" alt="Main Image Preview" style="display: none;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Secondary Images</label>
+                            <input type="file" id="editSecondaryImages" class="form-control-file" multiple>
+                            <div class="row mt-2" id="secondaryImagesPreview"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalDelete" tabindex="-1" role="dialog" aria-labelledby="modalDeleteLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalDeleteLabel">Delete Category</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="deleteError" class="alert alert-danger" style="display: none; background-color: #f8d7da; color: #721c24;"></div>
+                    Are you sure you want to delete this product?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>    
+    <script src="../assets/js/tokenInformations.js"> </script>
+    <script src="../assets/js/products.js"></script>
+    <script>
+        populateTable(category => `
+            <button type="button" class="btn btn-primary btn-view" data-id="${product.id}">
+                <i class="fa fa-eye"></i>
+            </button>
+            <button type="button" class="btn btn-success btn-edit" data-id="${product.id}">
+                <i class="fa fa-pencil-square-o"></i>
+            </button>
+            <button type="button" class="btn btn-danger btn-delete" data-id="${product.id}">
+                <i class="fa fa-trash"></i>
+            </button>
+        `);
+
+        function fetchBrandsAndCategories() {
+            return Promise.all([
+                $.get('http://localhost:8090/api/v1/brands'),
+                $.get('http://localhost:8090/api/v1/categories'),
+            ]);
+        }
+
+        function showSuccessMessage(message) {
+            const successAlert = $(`
+                <div class="alert alert-success" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 1050;">
+                    ${message}
+                </div>
+            `);
+            $('body').append(successAlert);
+            setTimeout(() => {
+                successAlert.fadeOut(() => successAlert.remove());
+                location.reload();
+            }, 3000);
+        }
+
+        $(document).ready(() => {
+            const previewImage = (file, containerId, isMultiple = false) => {
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    if (isMultiple) {
+                        const img = `
+                            <div class="col-md-3 mt-2">
+                                <img src="${e.target.result}" class="img-thumbnail" alt="Secondary Image Preview">
+                            </div>
+                        `;
+                        $(containerId).append(img);
+                    } else {
+                        $(`${containerId} img`).attr('src', e.target.result).show();
+                    }
+                };
+                reader.readAsDataURL(file);
+            };
+
+            $('#editImage').on('change', function () {
+                const file = this.files[0];
+                previewImage(file, '#mainImagePreview');
+            });
+
+            $('#editSecondaryImages').on('change', function () {
+                const files = Array.from(this.files);
+                $('#secondaryImagesPreview').empty();
+                files.forEach((file) => previewImage(file, '#secondaryImagesPreview', true));
+            });
+
+            const populateModal = (isEdit, product = null) => {
+                $('#editProductId').val(isEdit ? product.id : "");
+                $('#editName').val(isEdit ? product.name : "");
+                $('#editShortDescription').val(isEdit ? product.shortDescription : "");
+                $('#editLongDescription').val(isEdit ? product.longDescription : "");
+                $('#editPrice').val(isEdit ? product.price : "");
+                $('#editDiscount').val(isEdit ? product.discount : "");
+                $('#editStatus').val(isEdit && product.status ? "true" : "false");
+                $('#editStock').val(isEdit && product.hasStock ? "true" : "false");
+                $('#editWidth').val(isEdit ? product.width : "");
+                $('#editLength').val(isEdit ? product.length : "");
+                $('#editHeight').val(isEdit ? product.height : "");
+                $('#editCost').val(isEdit ? product.cost : "");
+
+                if (isEdit && product.image) {
+                    $('#mainImagePreview img').attr('src', `data:image/png;base64,${product.image}`).show();
+                } else {
+                    $('#mainImagePreview img').hide();
+                }
+
+                $('#secondaryImagesPreview').empty();
+                if (isEdit && product.photos) {
+                    product.photos.forEach(photo => {
+                        const img = `
+                            <div class="col-md-3 mt-2">
+                                <img src="data:image/png;base64,${photo.image}" class="img-thumbnail" alt="Secondary Image">
+                            </div>
+                        `;
+                        $('#secondaryImagesPreview').append(img);
+                    });
+                }
+
+                fetchBrandsAndCategories().then(([brands, categories]) => {
+                    const brandSelect = $('#editBrand').empty();
+                    brands.data.forEach(brand => {
+                        brandSelect.append(new Option(brand.brandName, brand.id, isEdit && product.brand.id === brand.id));
+                    });
+
+                    const categoriesContainer = $('#categoriesContainer').empty();
+                    let selectedCategories = isEdit ? product.categories.map(c => c.id) : [];
+
+                    const updateCategoryState = () => {
+                        const unselectedCategories = categories.data.filter(c => !selectedCategories.includes(c.id));
+                        $('#addCategoryBtn').prop('disabled', unselectedCategories.length === 0);
+                    };
+
+                    const addCategory = (category) => {
+                        const element = $(`
+                            <div class="d-inline-block badge-container mt-2 mr-2">
+                                <span class="badge badge-primary p-2" data-id="${category.id}">${category.categoryName}</span>
+                                <button type="button" class="btn btn-sm btn-danger ml-1 remove-category" data-id="${category.id}">&times;</button>
+                            </div>
+                        `);
+                        categoriesContainer.append(element);
+                        element.find('.remove-category').on('click', () => {
+                            selectedCategories = selectedCategories.filter(id => id !== category.id);
+                            element.remove();
+                            updateCategoryState();
+                        });
+                    };
+
+                    selectedCategories.forEach(id => {
+                        const category = categories.data.find(c => c.id === id);
+                        if (category) addCategory(category);
+                    });
+
+                    $('#addCategoryBtn').off('click').on('click', () => {
+                        const unselectedCategories = categories.data.filter(c => !selectedCategories.includes(c.id));
+                        if (unselectedCategories.length) {
+                            const selectContainer = $('<div class="mt-2"></div>');
+                            const select = $('<select class="form-control"></select>');
+                            unselectedCategories.forEach(c => select.append(new Option(c.categoryName, c.id)));
+                            const addButton = $('<button type="button" class="btn btn-primary btn-sm mt-2">Add</button>');
+                            selectContainer.append(select).append(addButton);
+                            categoriesContainer.append(selectContainer);
+
+                            addButton.on('click', () => {
+                                const selectedId = parseInt(select.val());
+                                const selected = categories.data.find(c => c.id === selectedId);
+                                if (selected) {
+                                    selectedCategories.push(selectedId);
+                                    addCategory(selected);
+                                    selectContainer.remove();
+                                    updateCategoryState();
+                                }
+                            });
+                        }
+                    });
+
+                    updateCategoryState();
+
+                    const detailsContainer = $('#detailsContainer').empty();
+
+                    const addDetail = (name = "", value = "") => {
+                        const element = $(`
+                            <div class="d-flex align-items-center mt-2">
+                                <input type="text" class="form-control flex-grow-1 mr-2" placeholder="Detail Name" value="${name}">
+                                <input type="text" class="form-control flex-grow-1 mr-2" placeholder="Detail Value" value="${value}">
+                                <button type="button" class="btn btn-sm btn-danger remove-detail">&times;</button>
+                            </div>
+                        `);
+                        detailsContainer.append(element);
+                        element.find('.remove-detail').on('click', () => {
+                            element.remove();
+                        });
+                    };
+
+                    if (isEdit && product.details) {
+                        product.details.forEach(detail => {
+                            addDetail(detail.detailName, detail.detailValue);
+                        });
+                    }
+
+                    $('#addDetailBtn').off('click').on('click', () => {
+                        addDetail();
+                    });
+                });
+            };
+
+            const handleSubmit = (isEdit) => {
+                const productId = $('#editProductId').val();
+                const data = {
+                    name: $('#editName').val(),
+                    brand: $('#editBrand').val(),
+                    shortDescription: $('#editShortDescription').val(),
+                    longDescription: $('#editLongDescription').val(),
+                    price: parseFloat($('#editPrice').val()),
+                    discount: parseFloat($('#editDiscount').val()),
+                    status: $('#editStatus').val() === 'true',
+                    hasStock: $('#editStock').val() === 'true',
+                    width: parseFloat($('#editWidth').val()),
+                    length: parseFloat($('#editLength').val()),
+                    height: parseFloat($('#editHeight').val()),
+                    cost: parseFloat($('#editCost').val()),
+                    categories: $('#categoriesContainer .badge').map((_, el) => parseInt($(el).data('id'))).get(),
+                    details: $('#detailsContainer .d-flex').map((_, el) => ({
+                        detailName: $(el).find('input:first').val(),
+                        detailValue: $(el).find('input:last').val(),
+                    })).get(),
+                };
+
+                const mainImageFile = $('#editImage')[0].files[0];
+                const secondaryImagesFiles = Array.from($('#editSecondaryImages')[0].files);
+
+                const convertImageToBase64 = (file, callback) => {
+                    const reader = new FileReader();
+                    reader.onload = () => callback(reader.result.split(',')[1]);
+                    reader.readAsDataURL(file);
+                };
+
+                const submitData = () => {
+                    const baseUrl = "http://localhost:8090/api/v1"
+                    const url = isEdit ? `${baseUrl}/products/${productId}` : `${baseUrl}/products`;
+                    const method = isEdit ? "PUT" : "POST";
+
+                    $.ajax({
+                        url,
+                        method,
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        contentType: 'application/json',
+                        data: JSON.stringify(data),
+                        success: () => {
+                            showSuccessMessage(`Product ${isEdit ? 'updated' : 'created'} successfully!`);
+                            $('#modalEdit').modal('hide');
+                        },
+                        error: () => {
+                            $('#editError').text(`Failed to ${isEdit ? 'update' : 'create'} product`).show();
+                        },
+                    });
+                };
+
+                if (mainImageFile) {
+                    convertImageToBase64(mainImageFile, mainImageBase64 => {
+                        data.image = mainImageBase64;
+
+                        Promise.all(
+                            secondaryImagesFiles.map(file =>
+                                new Promise(resolve => convertImageToBase64(file, resolve))
+                            )
+                        ).then(secondaryImagesBase64 => {
+                            data.photos = secondaryImagesBase64.map(image => ({ image }));
+                            submitData();
+                        });
+                    });
+                } else {
+                    data.photos = [];
+                    submitData();
+                }
+            };
+
+            $(document).on('click', '.btn-edit', function () {
+                const productId = $(this).data('id');
+                $.get(`http://localhost:8090/api/v1/products/${productId}`).done(product => {
+                    populateModal(true, product.data);
+                    $('#modalEdit').modal('show');
+                });
+            });
+
+            $('#btnCreateProduct').on('click', () => {
+                populateModal(false);
+                $('#modalEdit').modal('show');
+            });
+
+            $('#editForm').submit(function (event) {
+                event.preventDefault();
+                const isEdit = !!$('#editProductId').val();
+                handleSubmit(isEdit);
+            });
+        });
+    </script>
+</body>
+</html>
