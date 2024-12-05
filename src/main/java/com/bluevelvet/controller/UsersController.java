@@ -21,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import com.bluevelvet.DTO.UserUpdateDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -134,7 +135,7 @@ public class UsersController {
     @PreAuthorize("hasAuthority('PERMISSION_USER_EDIT')")
     public ResponseEntity<ApiResponse<Object>> updateUserById(
             @PathVariable int id,
-            @Valid @RequestBody UserRegisterDTO userRegisterDTO) {
+            @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
 
         // Verifica se o usuário existe
         Optional<User> existingUser = userService.getUserById(id);
@@ -145,19 +146,31 @@ public class UsersController {
 
         User user = existingUser.get();
 
-        // Atualiza os campos do usuário com os valores fornecidos
-        user.setName(userRegisterDTO.name());
-        user.setLastName(userRegisterDTO.lastName());
-        user.setEmail(userRegisterDTO.email());
+        // Loop através de todos os usuários para verificar se o e-mail está em uso
+        List<User> allUsers = userRepository.findAll();
+        for (User u : allUsers) {
+            if (u.getEmail().equalsIgnoreCase(userUpdateDTO.getEmail()) && u.getId() != user.getId()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ApiResponse<>("error", "Email is already in use"));
+            }
+        }
 
-        // Criptografa a nova senha antes de salvar
-        String encryptedPassword = new BCryptPasswordEncoder().encode(userRegisterDTO.password());
-        user.setPassword(encryptedPassword);
+        // Atualiza os campos do usuário com os valores fornecidos
+        user.setName(userUpdateDTO.getName());
+        user.setLastName(userUpdateDTO.getLastName());
+        user.setEmail(userUpdateDTO.getEmail());
+        user.setStatus(userUpdateDTO.getStatus());
+
+        // Atualiza a senha apenas se for fornecida
+        if (userUpdateDTO.getPassword() != null && !userUpdateDTO.getPassword().isEmpty()) {
+            String encryptedPassword = new BCryptPasswordEncoder().encode(userUpdateDTO.getPassword());
+            user.setPassword(encryptedPassword);
+        }
 
         // Salva o usuário atualizado no banco de dados
-        userRepository.save(user);
+        this.userRepository.save(user);
 
         return ResponseEntity.ok(new ApiResponse<>("success", "User updated successfully"));
     }
-
 }
+
