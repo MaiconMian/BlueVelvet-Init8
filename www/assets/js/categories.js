@@ -1,17 +1,8 @@
-$(document).ready(() => {
-    // Inicializar a tabela com as ações para os botões
-    populateTable((category) => `
-        <button type="button" class="btn btn-primary btn-view" data-id="${category.id}">
-            <i class="fa fa-eye"></i>
-        </button>
-        <button type="button" class="btn btn-success btn-edit" data-id="${category.id}">
-            <i class="fa fa-pencil-square-o"></i>
-        </button>
-        <button type="button" class="btn btn-danger btn-delete" data-id="${category.id}">
-            <i class="fa fa-trash"></i>
-        </button>
-    `);
-});
+function fetchBrands() {
+    return Promise.all([
+        $.get('http://localhost:8090/api/v1/brands')
+    ]);
+}
 
 function populateTable(actions) {
     $.ajax({
@@ -94,12 +85,55 @@ function populateTable(actions) {
     });
 }
 
+function populateModal(){
+
+}
+
+function populateBrandFields(){
+   
+}
+
 $(document).ready(() => {
+
+    populateTable((category) => `
+    <button type="button" class="btn btn-primary btn-view" data-id="${category.id}">
+        <i class="fa fa-eye"></i>
+    </button>
+    <button type="button" id="btnEditCategory"class="btn btn-success btn-edit" data-id="${category.id}">
+        <i class="fa fa-pencil-square-o"></i>
+    </button>
+    <button type="button" class="btn btn-danger btn-delete" data-id="${category.id}">
+        <i class="fa fa-trash"></i>
+    </button>
+    `);
     // Abrir modal de criação
     $('#btnCreateCategory').on('click', function () {
         $('#createForm')[0].reset(); // Limpar o formulário
         $('#createImagePreview img').hide(); // Esconder pré-visualização da imagem
         $('#modalCreate').modal('show'); // Mostrar modal
+    });
+
+    $.ajax({
+        url: "http://localhost:8090/api/v1/brands",
+        method: "GET",
+        
+        success: (response) => {
+            console.log(response.data);
+            const brandSelect = document.getElementById('categoryBrands');
+            brandSelect.append(new Option("Select a brand", ""));
+
+            response.data.forEach((brand)=>{
+                brandSelect.append(new Option(brand.brandName, brand.id));
+            });
+        },
+        error: (e) => {
+            console.log(e);
+            $('#editError').text(`Failed to create user`).show();
+        },
+    });
+
+    $('.btnEdit').on('click', function() {
+        console.log('Button clicked!');
     });
 
     // Pré-visualizar imagem antes do envio
@@ -122,29 +156,60 @@ $(document).ready(() => {
     $('#createForm').submit(function (event) {
         event.preventDefault();
 
-        const formData = new FormData();
-        formData.append('categoryName', $('#createCategoryName').val());
-        const fileInput = $('#createCategoryImage')[0].files[0];
-        if (fileInput) {
-            formData.append('image', fileInput);
+        const data = {
+            categoryName: $('#createCategoryName').val(),
+        };
+
+        const mainImageFile = $('#createCategoryImage')[0].files[0];
+
+        const convertImageToBase64 = (file, callback) => {
+            const reader = new FileReader();
+            reader.onload = () => callback(reader.result.split(',')[1]);
+            reader.readAsDataURL(file);
+        };
+
+        const submitData = () => {
+            const baseUrl = "http://localhost:8090/api/v1"
+            const url =  `${baseUrl}/categories`;
+            const method = "POST";
+
+            $.ajax({
+                url,
+                method,
+                xhrFields: {
+                    withCredentials: true
+                },
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: () => {
+                    $('#modalCreate').modal('hide');
+                    location.reload();
+                },
+                error: (e) => {
+                    console.log(e);
+                    $('#editError').text(`Failed to create user`).show();
+                },
+            });
+        };
+
+        if (mainImageFile) {
+            convertImageToBase64(mainImageFile, mainImageBase64 => {
+                data.image = mainImageBase64;
+                submitData();
+            });
         }
 
-        $.ajax({
-            url: 'http://localhost:8090/api/v1/categories', // Endpoint do backend
-            type: 'POST',
-            xhrFields: { withCredentials: true },
-            processData: false, // Necessário para enviar FormData
-            contentType: false, // Configura automaticamente o Content-Type
-            data: formData,
-            success: () => {
-                $('#modalCreate').modal('hide'); // Fechar modal
-                location.reload(); // Recarregar página para atualizar a tabela
-            },
-            error: () => {
-                $('#createError').text('Failed to create category').show();
-            }
-        });
+      
+     
+       
     });
+
+   
+
+      
+     
+       
+
 });
 
 window.populateTable = populateTable;

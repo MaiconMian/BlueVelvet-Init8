@@ -123,6 +123,11 @@
                                 <img src="" alt="Preview" style="max-width: 100px; display: none;">
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label for="createCategoryBrand"></label>
+                            <select id="categoryBrands" class="form-control" required></select>
+
+                        </div>
                         <button type="submit" class="btn btn-primary">Add Category</button>
                     </form>
                 </div>
@@ -146,9 +151,15 @@
 
                         <div class="form-group">
                             <label for="categoryName">Category Name</label>
-                            <input type="text" id="categoryName" class="form-control" required>
+                            <input type="text" id="editCategoryName" class="form-control" required>
                         </div>
-
+                        <div class="form-group">
+                            <label for="editCategoryImage">Category Image</label>
+                            <input type="file" id="createCategoryImage" class="form-control-file">
+                            <div id="createImagePreview" style="margin-top: 10px;">
+                                <img src="" alt="Preview" style="max-width: 100px; display: none;">
+                            </div>
+                        </div>
     
                         <button type="submit" class="btn btn-primary">Save Category</button>
                     </form>
