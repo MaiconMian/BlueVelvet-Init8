@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class RoleController {
@@ -41,7 +42,7 @@ public class RoleController {
     @PostMapping("/roles")
     @PreAuthorize("hasAuthority('PERMISSION_ROLE_CREATE')")
     public ResponseEntity<ApiResponse<Object>> createRole(@Valid @RequestBody RoleDTO roleDTO) {
-        // try {
+        try {
         Role newRole = new Role();
         newRole.setName(roleDTO.getName());
         newRole.setDescription(roleDTO.getDescription());
@@ -59,11 +60,49 @@ public class RoleController {
         savedRole = roleService.saveRole(newRole);
 
         return ResponseEntity.ok(new ApiResponse<>(true, savedRole));
-        // } catch (Exception e) {
-        //     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        //             .body(new ApiResponse<>(false, "An error occurred: " + e.getMessage()));
-        // }
+         } catch (Exception e) {
+             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>(false, "An error occurred: " + e.getMessage()));
+         }
     }
+
+    @GetMapping("/roles/{id}")
+    @PreAuthorize("hasAuthority('PERMISSON_ROLE_VIEW')")
+    public ResponseEntity<ApiResponse<String>> getRoleById(@PathVariable int id){
+        Optional<Role> role = roleService.getRoleById(id);
+        if(!role.isPresent()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("error", "Role not found"));
+        }
+        return ResponseEntity.ok(new ApiResponse<>("success", role.get().toString()));
+    }
+
+    @PutMapping("/roles/{id}")
+    @PreAuthorize("hasAuthority('PERMISSION_ROLE_EDIT')")
+    public ResponseEntity<ApiResponse<String>> updateRole(@PathVariable int id, @Valid @RequestBody RoleDTO roleDTO) {
+        Optional<Role> role = roleService.getRoleById(id);
+        if(!role.isPresent()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("error", "Role not found"));
+        }
+
+        Role updatedRole = role.get();
+
+        updatedRole.setName(roleDTO.getName());
+        updatedRole.setDescription(roleDTO.getDescription());
+
+        roleDTO.getPermissions().forEach(permissionId -> {
+            permissionsRepository.findById(permissionId).ifPresent(permission -> {
+                updatedRole.getPermissions().add(permission);
+                permission.getRoles().add(updatedRole);
+                permissionsRepository.save(permission);
+            });
+        });
+
+        roleService.saveRole(updatedRole);
+        return ResponseEntity.ok(new ApiResponse<>("success", role.get().toString()));
+    }
+
 
 
 }
