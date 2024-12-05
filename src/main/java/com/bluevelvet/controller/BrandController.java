@@ -3,6 +3,8 @@ package com.bluevelvet.controller;
 import com.bluevelvet.DTO.BrandDTO;
 import com.bluevelvet.DTO.CategoryDTO;
 import com.bluevelvet.model.ApiResponse;
+import com.bluevelvet.repository.CategoryRepository;
+import com.bluevelvet.repository.ProductRepository;
 import com.bluevelvet.service.BrandService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,10 @@ public class BrandController {
 
     @Autowired
     private BrandService brandService;
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     @GetMapping("/brands")
     @PreAuthorize("permitAll()")
@@ -62,5 +68,48 @@ public class BrandController {
         return ResponseEntity.ok(new ApiResponse<>("success", "Brand with ID " +
                 newBrand.getId() + " added successfully"));
     }
+
+    @PutMapping("/brands/{id}")
+    @PreAuthorize("hasAuthority('PERMISSION_BRAND_EDIT')")
+    public ResponseEntity<ApiResponse<String>> updateBrand(@PathVariable int id, @Valid @RequestBody BrandDTO brandDTO) {
+        Optional<Brand> brandOptional = brandService.getBrandById(id);
+        if (!brandOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("error", "Brand not found"));
+        }
+
+        Brand existingBrand = brandOptional.get();
+        existingBrand.setBrandName(brandDTO.getBrandName());
+        existingBrand.setImage(brandDTO.getImage());
+
+        // Update categories
+        if (brandDTO.getCategory() != null) {
+            existingBrand.getCategory().clear();
+            brandDTO.getCategory().forEach(categoryId -> {
+                Category category = categoryRepository.findById(categoryId)
+                        .orElseThrow(() -> new IllegalArgumentException("Category not found for ID: " + categoryId));
+                existingBrand.getCategory().add(category);
+                if (!category.getBrands().contains(existingBrand)) {
+                    category.getBrands().add(existingBrand);
+                }
+            });
+        }
+
+        // Update products
+        if (brandDTO.getProducts() != null) {
+            existingBrand.getProducts().clear();
+            brandDTO.getProducts().forEach(productId -> {
+                Product product = productRepository.findById(productId)
+                        .orElseThrow(() -> new IllegalArgumentException("Product not found for ID: " + productId));
+                existingBrand.getProducts().add(product);
+                product.setBrand(existingBrand);
+            });
+        }
+
+        brandService.updateBrand(id, existingBrand);
+
+        return ResponseEntity.ok(new ApiResponse<>("success", "Brand updated successfully"));
+    }
+
 
 }
