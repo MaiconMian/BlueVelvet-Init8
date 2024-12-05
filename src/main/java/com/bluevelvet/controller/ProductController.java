@@ -1,5 +1,6 @@
 package com.bluevelvet.controller;
 
+import com.bluevelvet.exception.BrandNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +21,18 @@ public class  ProductController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private BrandService brandService;
+
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private ProductDetailsService productDetailsService;
+
+    @Autowired
+    private ProductPhotosService productPhotosService;
 
     @GetMapping("/products")
     @PreAuthorize("permitAll()")
@@ -62,4 +76,72 @@ public class  ProductController {
                 createdProduct.getId() + " added successfully"));
     }
 
+    @PutMapping("/products/{id}")
+    @PreAuthorize("hasAuthority('PERMISSION_PRODUCT_EDIT')")
+    public ResponseEntity<ApiResponse<String>> updateProduct(@PathVariable int id, @Valid @RequestBody ProductDTO productDTO) {
+
+        Optional<Product> existingProduct = productService.getProductById(id);
+        if (existingProduct.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("error", "Product not found"));
+        }
+
+        Product product = existingProduct.get();
+
+        product.setName(productDTO.getName());
+        product.setImage(productDTO.getImage());
+        product.setShortDescription(productDTO.getShortDescription());
+        product.setLongDescription(productDTO.getLongDescription());
+        product.setPrice(productDTO.getPrice());
+        product.setDiscount(productDTO.getDiscount());
+        product.setStatus(productDTO.getStatus());
+        product.setHasStock(productDTO.getHasStock());
+        product.setWidth(productDTO.getWidth());
+        product.setLength(productDTO.getLength());
+        product.setHeight(productDTO.getHeight());
+        product.setCost(productDTO.getCost());
+        product.setUpdateTime(LocalDateTime.now());
+
+        brandService.getBrandById(productDTO.getBrand())
+                .ifPresentOrElse(
+                        brand -> {
+                            product.setBrand(brand);
+                            brand.getProducts().add(product);
+                            brandService.saveBrand(brand);
+                        },
+                        () -> {
+                            throw new BrandNotFoundException("Brand with ID " + productDTO.getBrand() + " not found!");
+                        }
+                );
+
+        productDTO.getCategories().forEach(categoryId -> {
+            categoryService.getCategoryById(categoryId).ifPresent(category -> {
+                product.getCategories().add(category);
+                category.getProducts().add(product);
+                categoryService.saveCategory(category);
+            });
+        });
+
+        productDTO.getDetails().forEach(detailDTO -> {
+            ProductDetails productDetails = new ProductDetails();
+            productDetails.setDetailName(detailDTO.getDetailName());
+            productDetails.setDetailValue(detailDTO.getDetailValue());
+            product.getDetails().add(productDetails);
+            productDetails.setProduct(product);
+        });
+
+        productDTO.getPhotos().forEach(photoDTO -> {
+            ProductPhotos productPhoto = new ProductPhotos();
+            productPhoto.setImage(photoDTO.getImage());
+            product.getPhotos().add(productPhoto);
+            productPhoto.setProduct(product);
+        });
+
+        productService.saveProduct(product);
+
+        product.getDetails().forEach(productDetailsService::saveProductDetails);
+        product.getPhotos().forEach(productPhotosService::saveProductPhoto);
+
+        return ResponseEntity.ok(new ApiResponse<>("success", "Product with ID " + id + " updated successfully"));
+    }
 }
