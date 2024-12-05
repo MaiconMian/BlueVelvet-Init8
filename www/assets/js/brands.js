@@ -1,13 +1,12 @@
 $(document).ready(() => {
-    // Inicializar a tabela com as ações para os botões
-    populateTable((category) => `
-        <button type="button" class="btn btn-primary btn-view" data-id="${category.id}">
+    populateTable((brand) => `
+        <button type="button" class="btn btn-primary btn-view" data-id="${brand.id}">
             <i class="fa fa-eye"></i>
         </button>
-        <button type="button" class="btn btn-success btn-edit" data-id="${category.id}">
+        <button type="button" class="btn btn-success btn-edit" data-id="${brand.id}">
             <i class="fa fa-pencil-square-o"></i>
         </button>
-        <button type="button" class="btn btn-danger btn-delete" data-id="${category.id}">
+        <button type="button" class="btn btn-danger btn-delete" data-id="${brand.id}">
             <i class="fa fa-trash"></i>
         </button>
     `);
@@ -15,23 +14,23 @@ $(document).ready(() => {
 
 function populateTable(actions) {
     $.ajax({
-        url: 'http://localhost:8090/api/v1/categories',
+        url: 'http://localhost:8090/api/v1/brands',
         type: 'GET',
         xhrFields: {
             withCredentials: true
         },
         success: function (response) {
-            const categories = response.data.map(category => ({
-                id: category.id,
-                name: category.categoryName,
-                image: category.image
-                    ? `<img src="data:image/png;base64,${category.image}" alt="${category.categoryName}" style="width: 50px; height: 50px; object-fit: cover;">`
+            const brands = response.data.map(brand => ({
+                id: brand.id,
+                name: brand.brandName,
+                image: brand.image
+                    ? `<img src="data:image/png;base64,${brand.image}" alt="${brand.brandName}" style="width: 50px; height: 50px; object-fit: cover;">`
                     : '<span>No Image</span>',
-                actions: actions(category)
+                actions: actions(brand)
             }));
 
             $('#dataTableContent').DataTable({
-                data: categories,
+                data: brands,
                 columns: [
                     { data: 'id', responsivePriority: 3 },
                     { data: 'image', responsivePriority: 4 },
@@ -43,38 +42,36 @@ function populateTable(actions) {
                 autoWidth: false
             });
 
-            // Visualizar categoria
             $('#dataTableContent').on('click', '.btn-view', function () {
-                const categoryId = $(this).data('id');
+                const brandId = $(this).data('id');
                 $('#viewError').hide();
 
                 $.ajax({
-                    url: `http://localhost:8090/api/v1/categories/${categoryId}`,
+                    url: `http://localhost:8090/api/v1/brands/${brandId}`,
                     type: 'GET',
                     xhrFields: { withCredentials: true },
                     success: function (response) {
-                        const category = response.data;
+                        const brand = response.data;
 
-                        $('#viewName').text(category.categoryName);
-                        $('#viewDescription').text(category.description || 'No description available');
+                        $('#viewName').text(brand.brandName);
+                        $('#viewDescription').text(brand.description || 'No description available');
 
                         $('#modalView').modal('show');
                     },
                     error: function () {
-                        $('#viewError').text('Error: Failed to load category details').show();
+                        $('#viewError').text('Error: Failed to load brand details').show();
                     }
                 });
             });
 
-            // Deletar categoria
             $('#dataTableContent').on('click', '.btn-delete', function () {
-                const categoryId = $(this).data('id');
+                const brandId = $(this).data('id');
                 $('#deleteError').hide();
                 $('#modalDelete').modal('show');
 
                 $('#confirmDelete').off().on('click', function () {
                     $.ajax({
-                        url: `http://localhost:8090/api/v1/categories/${categoryId}`,
+                        url: `http://localhost:8090/api/v1/brands/${brandId}`,
                         xhrFields: { withCredentials: true },
                         type: 'DELETE',
                         success: function () {
@@ -82,27 +79,25 @@ function populateTable(actions) {
                             location.reload();
                         },
                         error: function () {
-                            $('#deleteError').text('Error: Failed to delete category').show();
+                            $('#deleteError').text('Error: Failed to delete brand').show();
                         }
                     });
                 });
             });
         },
         error: function () {
-            console.error('Failed to fetch categories');
+            console.error('Failed to fetch brands');
         }
     });
 }
 
 $(document).ready(() => {
-    // Abrir modal de criação
-    $('#btnCreateCategory').on('click', function () {
-        $('#createForm')[0].reset(); // Limpar o formulário
-        $('#createImagePreview img').hide(); // Esconder pré-visualização da imagem
-        $('#modalCreate').modal('show'); // Mostrar modal
+    $('#btnCreateBrand').on('click', function () {
+        $('#createForm')[0].reset();
+        $('#createImagePreview img').hide(); 
+        $('#modalCreate').modal('show'); 
     });
 
-    // Pré-visualizar imagem antes do envio
     const previewImage = (file, containerId) => {
         if (!file) return;
 
@@ -113,35 +108,34 @@ $(document).ready(() => {
         reader.readAsDataURL(file);
     };
 
-    $('#createCategoryImage').on('change', function () {
+    $('#createBrandImage').on('change', function () {
         const file = this.files[0];
         previewImage(file, '#createImagePreview');
     });
 
-    // Submeter o formulário de criação
     $('#createForm').submit(function (event) {
         event.preventDefault();
 
         const formData = new FormData();
-        formData.append('categoryName', $('#createCategoryName').val());
-        const fileInput = $('#createCategoryImage')[0].files[0];
+        formData.append('brandName', $('#createBrandName').val());
+        const fileInput = $('#createBrandImage')[0].files[0];
         if (fileInput) {
             formData.append('image', fileInput);
         }
 
         $.ajax({
-            url: 'http://localhost:8090/api/v1/categories', // Endpoint do backend
+            url: 'http://localhost:8090/api/v1/brands', 
             type: 'POST',
             xhrFields: { withCredentials: true },
-            processData: false, // Necessário para enviar FormData
-            contentType: false, // Configura automaticamente o Content-Type
+            processData: false, 
+            contentType: false,
             data: formData,
             success: () => {
-                $('#modalCreate').modal('hide'); // Fechar modal
-                location.reload(); // Recarregar página para atualizar a tabela
+                $('#modalCreate').modal('hide'); 
+                location.reload(); 
             },
             error: () => {
-                $('#createError').text('Failed to create category').show();
+                $('#createError').text('Failed to create brand').show();
             }
         });
     });
