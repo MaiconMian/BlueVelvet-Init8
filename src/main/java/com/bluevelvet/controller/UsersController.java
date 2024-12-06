@@ -21,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import com.bluevelvet.DTO.UserUpdateDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -130,4 +131,62 @@ public class UsersController {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/users/{id}")
+    @PreAuthorize("hasAuthority('PERMISSION_USER_EDIT')")
+    public ResponseEntity<ApiResponse<Object>> updateUserById(
+            @PathVariable int id,
+            @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
+
+        // Verifica se o usuário existe
+        Optional<User> existingUser = userService.getUserById(id);
+        if (!existingUser.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("error", "User not found"));
+        }
+
+        User user = existingUser.get();
+
+        // Loop através de todos os usuários para verificar se o e-mail está em uso
+        List<User> allUsers = userRepository.findAll();
+        for (User u : allUsers) {
+            if (u.getEmail().equalsIgnoreCase(userUpdateDTO.getEmail()) && u.getId() != user.getId()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ApiResponse<>("error", "Email is already in use"));
+            }
+        }
+
+        // Atualiza os campos do usuário com os valores fornecidos
+        user.setName(userUpdateDTO.getName());
+        user.setLastName(userUpdateDTO.getLastName());
+        user.setEmail(userUpdateDTO.getEmail());
+        user.setStatus(userUpdateDTO.getStatus());
+
+        // Atualiza a senha apenas se for fornecida
+        if (userUpdateDTO.getPassword() != null && !userUpdateDTO.getPassword().isEmpty()) {
+            String encryptedPassword = new BCryptPasswordEncoder().encode(userUpdateDTO.getPassword());
+            user.setPassword(encryptedPassword);
+        }
+
+        user.getRoles().forEach(role -> {
+            role.getUsers().remove(user);
+            roleService.saveRole(role);
+        });
+
+        user.getRoles().clear();
+
+        userUpdateDTO.getRoles().forEach(roleId -> {
+            roleService.getRoleById(roleId).ifPresent(role -> {
+                user.getRoles().add(role);
+                role.getUsers().add(user);
+                roleService.saveRole(role);
+            });
+        });
+
+
+        // Salva o usuário atualizado no banco de dados
+        this.userRepository.save(user);
+
+        return ResponseEntity.ok(new ApiResponse<>("success", "User updated successfully"));
+    }
 }
+
