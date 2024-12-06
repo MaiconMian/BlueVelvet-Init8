@@ -105,7 +105,6 @@ $(document).ready(() => {
         success: (response) => {
             console.log(response.data);
             const categorySelect = document.getElementById('createCategoryBrand');
-            categorySelect.append(new Option("Select a category", ""));
 
             response.data.forEach((category)=>{
                 categorySelect.append(new Option(category.categoryName, category.id));
@@ -139,7 +138,6 @@ $(document).ready(() => {
             brandName: $('#createBrandName').val(),
             category: $('#createCategoryBrand').val()
         };
-
 
         const mainImageFile = $('#createBrandImage')[0].files[0];
 
@@ -179,10 +177,6 @@ $(document).ready(() => {
                 submitData();
             });
         }
-
-
-
-
     });
 });
 
