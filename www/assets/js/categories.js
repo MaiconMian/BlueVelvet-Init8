@@ -34,7 +34,6 @@ function populateTable(actions) {
                 autoWidth: false
             });
 
-            // Visualizar categoria
             $('#dataTableContent').on('click', '.btn-view', function () {
                 const categoryId = $(this).data('id');
                 $('#viewError').hide();
@@ -57,7 +56,7 @@ function populateTable(actions) {
                 });
             });
 
-            // Deletar categoria
+
             $('#dataTableContent').on('click', '.btn-delete', function () {
                 const categoryId = $(this).data('id');
                 $('#deleteError').hide();
@@ -106,37 +105,43 @@ $(document).ready(() => {
         <i class="fa fa-trash"></i>
     </button>
     `);
-    // Abrir modal de criação
+
     $('#btnCreateCategory').on('click', function () {
-        $('#createForm')[0].reset(); // Limpar o formulário
-        $('#createImagePreview img').hide(); // Esconder pré-visualização da imagem
-        $('#modalCreate').modal('show'); // Mostrar modal
+        $('#createForm')[0].reset(); 
+        $('#createImagePreview img').hide(); 
+        $('#modalEdit').modal('show'); 
     });
 
     $.ajax({
         url: "http://localhost:8090/api/v1/brands",
         method: "GET",
-        
         success: (response) => {
             console.log(response.data);
-            const brandSelect = document.getElementById('categoryBrands');
-            brandSelect.append(new Option("Select a brand", ""));
-
-            response.data.forEach((brand)=>{
-                brandSelect.append(new Option(brand.brandName, brand.id));
+    
+            const brandSelects = [
+                document.getElementById('categoryBrands'),
+                document.getElementById('createCategoryBrand')
+            ];
+    
+            brandSelects.forEach(brandSelect => {
+                if (brandSelect) {
+                    response.data.forEach((brand) => {
+                        brandSelect.append(new Option(brand.brandName, brand.id));
+                    });
+                } 
             });
         },
         error: (e) => {
             console.log(e);
-            $('#editError').text(`Failed to create user`).show();
+            $('#editError').text(`Failed to fetch brands`).show();
         },
     });
+    
 
     $('.btnEdit').on('click', function() {
         console.log('Button clicked!');
     });
 
-    // Pré-visualizar imagem antes do envio
     const previewImage = (file, containerId) => {
         if (!file) return;
 
@@ -152,13 +157,14 @@ $(document).ready(() => {
         previewImage(file, '#createImagePreview');
     });
 
-    // Submeter o formulário de criação
     $('#createForm').submit(function (event) {
         event.preventDefault();
 
         const data = {
             categoryName: $('#createCategoryName').val(),
+            brands: $('#createCategoryBrand').val()
         };
+        console.log(data);
 
         const mainImageFile = $('#createCategoryImage')[0].files[0];
 
@@ -191,6 +197,7 @@ $(document).ready(() => {
                 },
             });
         };
+        
 
         if (mainImageFile) {
             convertImageToBase64(mainImageFile, mainImageBase64 => {
@@ -199,16 +206,8 @@ $(document).ready(() => {
             });
         }
 
-      
-     
-       
     });
 
-   
-
-      
-     
-       
 
 });
 
