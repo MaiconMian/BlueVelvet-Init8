@@ -126,7 +126,7 @@
                         </div>
                         <div class="form-group">
                             <label for="categoryBrands"></label>
-                            <select id="createCategoryBrand" class="form-control" required multiple></select>
+                            <select id="createCategoryBrands" class="form-control" required multiple></select>
                         </div>
                         <button type="submit" class="btn btn-primary">Add Brand</button>
                     </form>
@@ -147,13 +147,23 @@
                 <div class="modal-body">
                     <div id="editError" class="alert alert-danger" style="display: none;"></div>
                     <form id="editForm">
-                        <input type="hidden" id="editCategoryId">
+                        <input type="hidden" id="editBrandId">
 
                         <div class="form-group">
                             <label for="categoryName">Brand Name</label>
-                            <input type="text" id="categoryName" class="form-control" required>
+                            <input type="text" id="editBrandName" class="form-control" required>
                         </div>
-
+                        <div class="form-group">
+                            <label for="editBrandImage">Brand Image</label>
+                            <input type="file" id="editBrandImage" class="form-control-file">
+                            <div id="editBrandImage" style="margin-top: 10px;">
+                                <img src="" alt="Preview" style="max-width: 100px; display: none;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="editCategoryBrands"></label>
+                            <select id="editCategoryBrands" class="form-control" required multiple></select>
+                        </div>
     
                         <button type="submit" class="btn btn-primary">Save Brand</button>
                     </form>

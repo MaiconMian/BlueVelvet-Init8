@@ -124,48 +124,49 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="createCategoryBrand"></label>
-                            <select id="categoryBrands" class="form-control" required></select>
-
+                            <label for="categoryBrands"> Brands for Category</label>
+                            <select id="createCategoryBrand" class="form-control" multiple></select>
                         </div>
                         <button type="submit" class="btn btn-primary">Add Category</button>
                     </form>
                 </div>
             </div>
         </div>
-    </div>       
-
-    <div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="modalEditLabel" aria-hidden="true">
+    </div>
+    <div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="modalCreateLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalEditLabel">Edit Category</h5>
+                    <h5 class="modal-title" id="modalCreateLabel">Add Category</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div id="editError" class="alert alert-danger" style="display: none;"></div>
+                    <div id="createError" class="alert alert-danger" style="display: none;"></div>
                     <form id="editForm">
-                        <input type="hidden" id="editCategoryId">
-
+                        <input type="hidden" id="idCategory" value="">
                         <div class="form-group">
-                            <label for="categoryName">Category Name</label>
+                            <label for="editCategoryName">Category Name</label>
                             <input type="text" id="editCategoryName" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="editCategoryImage">Category Image</label>
-                            <input type="file" id="createCategoryImage" class="form-control-file">
+                            <label for="createCategoryImage">Category Image</label>
+                            <input type="file" id="editCategoryImage" class="form-control-file">
                             <div id="createImagePreview" style="margin-top: 10px;">
-                                <img src="" alt="Preview" style="max-width: 100px; display: none;">
+                                <img src="" alt="Preview" id="editCategoryImagePreview" style="max-width: 100px; display: none;">
                             </div>
                         </div>
-    
-                        <button type="submit" class="btn btn-primary">Save Category</button>
+                        <div class="form-group">
+                            <label for="categoryBrands"> Brands for Category</label>
+                            <select id="editCategoryBrand" class="form-control" multiple></select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Category</button>
                     </form>
                 </div>
             </div>
         </div>
+    </div>         
     </div>
 
     <div class="modal fade" id="modalDelete" tabindex="-1" role="dialog" aria-labelledby="modalDeleteLabel" aria-hidden="true">
