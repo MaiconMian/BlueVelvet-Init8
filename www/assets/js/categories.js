@@ -57,6 +57,30 @@ function populateTable(actions) {
             });
 
 
+            $('#dataTableContent').on('click', '.btn-edit', function () {
+                const categoryId = $(this).data('id');
+                $('#viewError').hide();
+                $('#modalEdit').modal('show');
+
+                $.ajax({
+                    url: `http://localhost:8090/api/v1/categories/${categoryId}`,
+                    type: 'GET',
+                    xhrFields: { withCredentials: true },
+                    success: function (response) {
+                        const category = response.data;
+
+                        $("#idCategory").val(category.id);
+                        $('#editCategoryName').val(category.categoryName);
+
+                    },
+                    error: function () {
+                        $('#viewError').text('Error: Failed to load category details').show();
+                    }
+                });
+            });
+
+
+
             $('#dataTableContent').on('click', '.btn-delete', function () {
                 const categoryId = $(this).data('id');
                 $('#deleteError').hide();
@@ -71,14 +95,15 @@ function populateTable(actions) {
                             $('#modalDelete').modal('hide');
                             location.reload();
                         },
-                        error: function () {
+                        error: function (e) {
                             $('#deleteError').text('Error: Failed to delete category').show();
                         }
                     });
                 });
             });
         },
-        error: function () {
+        error: function (e) {
+
             console.error('Failed to fetch categories');
         }
     });
@@ -116,10 +141,9 @@ $(document).ready(() => {
         url: "http://localhost:8090/api/v1/brands",
         method: "GET",
         success: (response) => {
-            console.log(response.data);
     
             const brandSelects = [
-                document.getElementById('categoryBrands'),
+                document.getElementById('editCategoryBrand'),
                 document.getElementById('createCategoryBrand')
             ];
     
@@ -132,15 +156,12 @@ $(document).ready(() => {
             });
         },
         error: (e) => {
-            console.log(e);
             $('#editError').text(`Failed to fetch brands`).show();
         },
     });
     
 
-    $('.btnEdit').on('click', function() {
-        console.log('Button clicked!');
-    });
+    
 
     const previewImage = (file, containerId) => {
         if (!file) return;
@@ -194,6 +215,57 @@ $(document).ready(() => {
                 error: (e) => {
                     console.log(e);
                     $('#editError').text(`Failed to create user`).show();
+                },
+            });
+        };
+        
+
+        if (mainImageFile) {
+            convertImageToBase64(mainImageFile, mainImageBase64 => {
+                data.image = mainImageBase64;
+                submitData();
+            });
+        }
+
+    });
+
+    $('#editForm').submit(function (event) {
+        event.preventDefault();
+        const id = $("#idCategory").val();
+        const data = {
+            categoryName: $('#editCategoryName').val(),
+            brands: $('#editCategoryBrand').val()
+        };
+        console.log(data);
+
+        const mainImageFile = $('#editCategoryImage')[0].files[0];
+
+        const convertImageToBase64 = (file, callback) => {
+            const reader = new FileReader();
+            reader.onload = () => callback(reader.result.split(',')[1]);
+            reader.readAsDataURL(file);
+        };
+
+        const submitData = () => {
+            const baseUrl = "http://localhost:8090/api/v1"
+            const url =  `${baseUrl}/categories/${id}`;
+            const method = "PUT";
+
+            $.ajax({
+                url,
+                method,
+                xhrFields: {
+                    withCredentials: true
+                },
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: () => {
+                    $('#modalCreate').modal('hide');
+                    location.reload();
+                },
+                error: (e) => {
+                    console.log(e);
+                    $('#editError').text(`Failed to edit user`).show();
                 },
             });
         };
