@@ -63,7 +63,7 @@
 
     <div class="container my-4">
         <div class="d-flex justify-content-end">
-            <button type="button" id="btnCreateRole" class="btn btn-success mb-3">Add Brand</button>
+            <button type="button" id="btnCreateBrand" class="btn btn-success mb-3">Add Brand</button>
         </div>
         <div class="table-responsive">
             <table id="dataTableContent" class="table table-striped table-bordered">
@@ -84,7 +84,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalViewLabel">brand Details</h5>
+                    <h5 class="modal-title" id="modalViewLabel">Brand Details</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -100,6 +100,40 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="modalCreate" tabindex="-1" role="dialog" aria-labelledby="modalCreateLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalCreateLabel">Add Brand</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="createError" class="alert alert-danger" style="display: none;"></div>
+                    <form id="createForm">
+                        <div class="form-group">
+                            <label for="createBrandName">Brand Name</label>
+                            <input type="text" id="createBrandName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="createBrandImage">Brand Image</label>
+                            <input type="file" id="createBrandImage" class="form-control-file">
+                            <div id="createImagePreview" style="margin-top: 10px;">
+                                <img src="" alt="Preview" style="max-width: 100px; display: none;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="categoryBrands"></label>
+                            <select id="createCategoryBrand" class="form-control" required multiple></select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Brand</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>       
 
     <div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="modalEditLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
