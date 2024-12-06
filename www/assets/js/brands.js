@@ -64,6 +64,28 @@ function populateTable(actions) {
                 });
             });
 
+            $('#dataTableContent').on('click', '.btn-edit', function () {
+                console.log('oi')
+                const brandId = $(this).data('id');
+                $('#modalEdit').modal('show');
+
+                $.ajax({
+                    url: `http://localhost:8090/api/v1/brands/${brandId}`,
+                    type: 'GET',
+                    xhrFields: { withCredentials: true },
+                    success: function (response) {
+                        const brand = response.data;
+
+                        $("#editBrandId").val(brand.id);
+                        $('#editBrandName').val(brand.brandName);
+
+                    },
+                    error: function () {
+                        $('#editError').text('Error: Failed to load category details').show();
+                    }
+                });
+            });
+
             $('#dataTableContent').on('click', '.btn-delete', function () {
                 const brandId = $(this).data('id');
                 $('#deleteError').hide();
@@ -104,11 +126,23 @@ $(document).ready(() => {
         
         success: (response) => {
             console.log(response.data);
-            const categorySelect = document.getElementById('createCategoryBrand');
 
-            response.data.forEach((category)=>{
-                categorySelect.append(new Option(category.categoryName, category.id));
+
+
+            const categorySelects = [
+                document.getElementById('editCategoryBrands'),
+                document.getElementById('createCategoryBrands')
+            ];
+    
+            categorySelects.forEach(categorySelect => {
+                if (categorySelect) {
+                    response.data.forEach((category)=>{
+                        categorySelect.append(new Option(category.categoryName, category.id));
+                    });
+                } 
             });
+            
+            
         },
         error: (e) => {
             console.log(e);
@@ -162,6 +196,55 @@ $(document).ready(() => {
                 data: JSON.stringify(data),
                 success: () => {
                     $('#modalCreate').modal('hide');
+                    location.reload();
+                },
+                error: (e) => {
+                    console.log(e);
+                    $('#editError').text("Failed to create brand").show();
+                },
+            });
+        };
+
+        if (mainImageFile) {
+            convertImageToBase64(mainImageFile, mainImageBase64 => {
+                data.image = mainImageBase64;
+                submitData();
+            });
+        }
+    });
+
+    $('#editForm').submit(function (event) {
+        event.preventDefault();
+        const id = $('#editBrandId').val();
+
+        const data = {
+            brandName: $('#editBrandName').val(),
+            category: $('#editCategoryBrands').val()
+        };
+
+        const mainImageFile = $('#editBrandImage')[0].files[0];
+
+        const convertImageToBase64 = (file, callback) => {
+            const reader = new FileReader();
+            reader.onload = () => callback(reader.result.split(',')[1]);
+            reader.readAsDataURL(file);
+        };
+
+        const submitData = () => {
+            const baseUrl = "http://localhost:8090/api/v1"
+            const url =  `${baseUrl}/brands/${id}`;
+            const method = "PUT";
+
+            $.ajax({
+                url,
+                method,
+                xhrFields: {
+                    withCredentials: true
+                },
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: () => {
+                    $('#modalEdit').modal('hide');
                     location.reload();
                 },
                 error: (e) => {
