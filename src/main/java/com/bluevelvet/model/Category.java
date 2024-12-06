@@ -32,7 +32,7 @@
 
         @ManyToMany(mappedBy = "category")
         @JsonIgnore
-        private Set<Brand> brands;
+        private Set<Brand> brands = new HashSet();
 
         @ManyToMany
         @JsonIgnore
