@@ -67,7 +67,7 @@ public class RoleController {
     }
 
     @GetMapping("/roles/{id}")
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAuthority('PERMISSION_ROLE_VIEW')")
     public ResponseEntity<ApiResponse<String>> getRoleById(@PathVariable int id){
         Optional<Role> role = roleService.getRoleById(id);
         if(!role.isPresent()){
