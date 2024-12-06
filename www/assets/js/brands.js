@@ -98,6 +98,25 @@ $(document).ready(() => {
         $('#modalCreate').modal('show'); 
     });
 
+    $.ajax({
+        url: "http://localhost:8090/api/v1/categories",
+        method: "GET",
+        
+        success: (response) => {
+            console.log(response.data);
+            const categorySelect = document.getElementById('createCategoryBrand');
+            categorySelect.append(new Option("Select a category", ""));
+
+            response.data.forEach((category)=>{
+                categorySelect.append(new Option(category.categoryName, category.id));
+            });
+        },
+        error: (e) => {
+            console.log(e);
+            $('#editError').text(`Failed to create user`).show();
+        },
+    });
+
     const previewImage = (file, containerId) => {
         if (!file) return;
 
@@ -116,28 +135,54 @@ $(document).ready(() => {
     $('#createForm').submit(function (event) {
         event.preventDefault();
 
-        const formData = new FormData();
-        formData.append('brandName', $('#createBrandName').val());
-        const fileInput = $('#createBrandImage')[0].files[0];
-        if (fileInput) {
-            formData.append('image', fileInput);
+        const data = {
+            brandName: $('#createBrandName').val(),
+            category: $('#createCategoryBrand').val()
+        };
+
+
+        const mainImageFile = $('#createBrandImage')[0].files[0];
+
+        const convertImageToBase64 = (file, callback) => {
+            const reader = new FileReader();
+            reader.onload = () => callback(reader.result.split(',')[1]);
+            reader.readAsDataURL(file);
+        };
+
+        const submitData = () => {
+            const baseUrl = "http://localhost:8090/api/v1"
+            const url =  `${baseUrl}/brands`;
+            const method = "POST";
+
+            $.ajax({
+                url,
+                method,
+                xhrFields: {
+                    withCredentials: true
+                },
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: () => {
+                    $('#modalCreate').modal('hide');
+                    location.reload();
+                },
+                error: (e) => {
+                    console.log(e);
+                    $('#editError').text("Failed to create brand").show();
+                },
+            });
+        };
+
+        if (mainImageFile) {
+            convertImageToBase64(mainImageFile, mainImageBase64 => {
+                data.image = mainImageBase64;
+                submitData();
+            });
         }
 
-        $.ajax({
-            url: 'http://localhost:8090/api/v1/brands', 
-            type: 'POST',
-            xhrFields: { withCredentials: true },
-            processData: false, 
-            contentType: false,
-            data: formData,
-            success: () => {
-                $('#modalCreate').modal('hide'); 
-                location.reload(); 
-            },
-            error: () => {
-                $('#createError').text('Failed to create brand').show();
-            }
-        });
+
+
+
     });
 });
 
