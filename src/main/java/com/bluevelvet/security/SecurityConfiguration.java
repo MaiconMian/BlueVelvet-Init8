@@ -33,21 +33,23 @@ public class SecurityConfiguration {
 
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/brands/**").permitAll()
-//                        .requestMatchers(HttpMethod.PUT, "/brands/**").hasRole("ADMIN")
-//                        .requestMatchers(HttpMethod.POST, "/brands").hasRole("ADMIN")
-//                        .requestMatchers(HttpMethod.DELETE, "/brands/**").hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.GET, "/categories/**").permitAll()
-//                        .requestMatchers(HttpMethod.PUT, "/categories/**").hasRole("ADMIN")
-//                        .requestMatchers(HttpMethod.POST, "/categories").hasRole("ADMIN")
-//                        .requestMatchers(HttpMethod.DELETE, "/categories/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/categories/**").hasAuthority("PERMISSION_CATEGORY_EDIT")
+                        .requestMatchers(HttpMethod.POST, "/categories/**").hasAuthority("PERMISSION_CATEGORY_CREATE")
+                        .requestMatchers(HttpMethod.DELETE, "/categories/**").hasAuthority("PERMISSION_CATEGORY_DELETE")
+
+                        .requestMatchers(HttpMethod.GET, "/brands/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/brands/**").hasAuthority("PERMISSION_BRAND_EDIT")
+                        .requestMatchers(HttpMethod.POST, "/brands/**").hasAuthority("PERMISSION_BRAND_CREATE")
+                        .requestMatchers(HttpMethod.DELETE, "/brands/**").hasAuthority("PERMISSION_BRAND_DELETE")
 
                         .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/products/**").hasAuthority("PERMISSION_PRODUCT_EDIT")
                         .requestMatchers(HttpMethod.POST, "/products").hasAuthority("PERMISSION_PRODUCT_CREATE")
                         .requestMatchers(HttpMethod.DELETE, "/products/**").hasAuthority("PERMISSION_PRODUCT_DELETE")
 
-                        .requestMatchers(HttpMethod.GET, "/users/**").hasAuthority("PERMISSION_PRODUCT_VIEW")
+                        .requestMatchers(HttpMethod.GET, "/users/**").hasAuthority("PERMISSION_USER_VIEW")
                         .requestMatchers(HttpMethod.PUT, "/users/**").hasAuthority("PERMISSION_USER_EDIT")
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("PERMISSION_USER_DELETE")
@@ -56,7 +58,10 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/admins").hasAuthority("PERMISSION_USER_CREATE")
 
                         .requestMatchers(HttpMethod.GET, "/roles/**").hasAuthority("PERMISSION_ROLE_VIEW")
+                        .requestMatchers(HttpMethod.PUT, "/roles/**").hasAuthority("PERMISSION_ROLE_EDIT")
                         .requestMatchers(HttpMethod.POST, "/roles").hasAuthority("PERMISSION_ROLE_CREATE")
+                        .requestMatchers(HttpMethod.DELETE, "/roles/**").hasAuthority("PERMISSION_ROLE_EDIT")
+
                         .requestMatchers(HttpMethod.GET, "/permissions").hasAuthority("PERMISSION_ROLE_VIEW")
 
                         .requestMatchers("/admin/**").hasAuthority("PERMISSION_USER_CREATE")
