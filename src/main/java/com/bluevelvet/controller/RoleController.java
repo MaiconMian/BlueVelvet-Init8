@@ -105,16 +105,14 @@ public class RoleController {
 
     @DeleteMapping("/roles/{id}")
     @PreAuthorize("hasAuthority('PERMISSION_ROLE_DELETE')")
-    public ResponseEntity<ApiResponse<Object>> deleteRoleById(@PathVariable int id){
-        Optional<Role> role = roleService.getRoleById(id);
-        if(!role.isPresent()){
+    public ResponseEntity<ApiResponse<Object>> deleteRoleById(@PathVariable int id) {
+        boolean deleted = roleService.deleteRole(id);
+        if (deleted) {
+            return ResponseEntity.noContent().build();
+        } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse<>("error", "Role not found"));
         }
-        roleService.deleteRole(id);
-        return ResponseEntity.noContent().build();
     }
-
-
 
 }

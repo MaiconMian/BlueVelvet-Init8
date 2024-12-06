@@ -1,6 +1,7 @@
 package com.bluevelvet.service;
 
 import com.bluevelvet.model.Permissions;
+import com.bluevelvet.model.Product;
 import com.bluevelvet.model.Role;
 import com.bluevelvet.repository.RoleRepository;
 import com.bluevelvet.repository.PermissionsRepository;  // Adiciona o repositório de Permissions
@@ -18,6 +19,9 @@ public class RoleService {
     private RoleRepository roleRepository;
 
     @Autowired
+    private PermissionsService permissionsService;
+
+    @Autowired
     private PermissionsRepository permissionsRepository;
 
     public Role saveRole(Role role) {
@@ -32,8 +36,18 @@ public class RoleService {
         return roleRepository.findById(id);
     }
 
-    public void deleteRole(int id) {
-        roleRepository.deleteById(id);
+    @Transactional
+    public Boolean deleteRole(int id) {
+        if(roleRepository.existsById(id)) {
+            Role role = roleRepository.findById(id).orElseThrow();
+            role.getPermissions().clear();
+            roleRepository.save(role);
+            permissionsService.removeRoleFromAllPermissions(id);
+            roleRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Transactional
