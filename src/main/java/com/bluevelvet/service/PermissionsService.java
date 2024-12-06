@@ -1,7 +1,9 @@
 package com.bluevelvet.service;
 
+import com.bluevelvet.model.Category;
 import com.bluevelvet.model.Permissions;
 import com.bluevelvet.repository.PermissionsRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,16 @@ public class PermissionsService {
             return permissionsRepository.save(permission);
         }
         throw new RuntimeException("Permission not found");
+    }
+
+    @Transactional
+    public void removeRoleFromAllPermissions(int roleId) {
+        List<Permissions> permissions = permissionsRepository.findAll();
+
+        for (Permissions permission : permissions) {
+            permission.getRoles().removeIf(role -> role.getId() == roleId);
+        }
+        permissionsRepository.saveAll(permissions);
     }
 
     public List<Permissions> findAll() {
