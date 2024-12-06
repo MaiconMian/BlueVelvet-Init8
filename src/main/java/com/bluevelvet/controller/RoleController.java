@@ -100,7 +100,7 @@ public class RoleController {
         });
 
         roleService.saveRole(updatedRole);
-        return ResponseEntity.ok(new ApiResponse<>("success", role.get().toString()));
+        return ResponseEntity.ok(new ApiResponse<>("success", "Role updated successfully"));
     }
 
     @DeleteMapping("/roles/{id}")
