@@ -67,7 +67,7 @@ public class RoleController {
     }
 
     @GetMapping("/roles/{id}")
-    @PreAuthorize("hasAuthority('PERMISSON_ROLE_VIEW')")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<ApiResponse<String>> getRoleById(@PathVariable int id){
         Optional<Role> role = roleService.getRoleById(id);
         if(!role.isPresent()){
@@ -101,6 +101,18 @@ public class RoleController {
 
         roleService.saveRole(updatedRole);
         return ResponseEntity.ok(new ApiResponse<>("success", role.get().toString()));
+    }
+
+    @DeleteMapping("/roles/{id}")
+    @PreAuthorize("hasAuthority('PERMISSION_ROLE_DELETE')")
+    public ResponseEntity<ApiResponse<Object>> deleteRoleById(@PathVariable int id){
+        Optional<Role> role = roleService.getRoleById(id);
+        if(!role.isPresent()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("error", "Role not found"));
+        }
+        roleService.deleteRole(id);
+        return ResponseEntity.noContent().build();
     }
 
 
