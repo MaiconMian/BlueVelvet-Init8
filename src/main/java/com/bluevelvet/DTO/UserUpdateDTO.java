@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Getter
 @Setter
 public class UserUpdateDTO {
@@ -16,6 +18,9 @@ public class UserUpdateDTO {
 
     @NotEmpty(message = "Email is required")
     private String email;
+
+    @NotEmpty(message = "Roles are required")
+    private Set<Integer> roles;
 
     private String password;
 

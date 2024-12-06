@@ -167,6 +167,22 @@ public class UsersController {
             user.setPassword(encryptedPassword);
         }
 
+        user.getRoles().forEach(role -> {
+            role.getUsers().remove(user);
+            roleService.saveRole(role);
+        });
+
+        user.getRoles().clear();
+
+        userUpdateDTO.getRoles().forEach(roleId -> {
+            roleService.getRoleById(roleId).ifPresent(role -> {
+                user.getRoles().add(role);
+                role.getUsers().add(user);
+                roleService.saveRole(role);
+            });
+        });
+
+
         // Salva o usuário atualizado no banco de dados
         this.userRepository.save(user);
 
