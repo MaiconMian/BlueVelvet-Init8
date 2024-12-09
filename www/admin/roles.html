@@ -258,174 +258,81 @@
     <script src="../assets/js/tokenInformations.js"> </script>
     <script src="../assets/js/roles.js"></script>
     <script>
-        populateTable(user => `
-            <button type="button" class="btn btn-primary btn-view" data-id="${user.id}">
-                <i class="fa fa-eye"></i>
-            </button>
-            <button type="button" class="btn btn-success btn-edit" data-id="${user.id}">
-                <i class="fa fa-pencil-square-o"></i>
-            </button>
-            <button type="button" class="btn btn-danger btn-delete" data-id="${user.id}">
-                <i class="fa fa-trash"></i>
-            </button>
-        `);
-
-        function showSuccessMessage(message) {
-            const successAlert = $(`
-                <div class="alert alert-success" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 1050;">
-                    ${message}
-                </div>
-            `);
-            $('body').append(successAlert);
-            setTimeout(() => {
-                successAlert.fadeOut(() => successAlert.remove());
-                location.reload();
-            }, 3000);
-        }
-
         $(document).ready(function () {
-            const handleSubmit = (isEdit) => {
-                const roleId = $('#editRoleId').val();
-                const data = {
-                    name: $('#roleName').val(),
-                    description: $('#roleDescription').val(),
-                    permissions: $('.form-check input[type="checkbox"]:checked').map((_, chk) => parseInt($(chk).data('id'))).get(),
-                };
+    // Popula a tabela com os dados das roles
+    populateTable(user => `
+        <button type="button" class="btn btn-primary btn-view" data-id="${user.id}">
+            <i class="fa fa-eye"></i>
+        </button>
+        <button type="button" class="btn btn-success btn-edit" data-id="${user.id}">
+            <i class="fa fa-pencil-square-o"></i>
+        </button>
+        <button type="button" class="btn btn-danger btn-delete" data-id="${user.id}">
+            <i class="fa fa-trash"></i>
+        </button>
+    `);
 
-                console.log(data);
+    // Força o foco no modal quando ele é exibido
+    $('#modalView').on('shown.bs.modal', function () {
+        $(this).focus();
+    });
 
-                const submitData = () => {
-                    const baseUrl = "http://localhost:8090/api/v1"
-                    const url = isEdit ? `${baseUrl}/roles/${roleId}` : `${baseUrl}/roles`;
-                    const method = isEdit ? "PUT" : "POST";
+    // Logs para depuração do modal
+    $('#modalView').on('show.bs.modal', function () {
+        console.log('Modal está sendo exibido.');
+    });
 
-                    $.ajax({
-                        url,
-                        method,
-                        xhrFields: {
-                            withCredentials: true
-                        },
-                        contentType: 'application/json',
-                        data: JSON.stringify(data),
-                        success: () => {
-                            showSuccessMessage(`Role ${isEdit ? 'updated' : 'created'} successfully!`);
-                            $('#modalEdit').modal('hide');
-                        },
-                        error: () => {
-                            $('#editError').text(`Failed to ${isEdit ? 'update' : 'create'} role`).show();
-                        },
-                    });
-                };
+    $('#modalView').on('shown.bs.modal', function () {
+        console.log('Modal exibido com sucesso.');
+    });
 
-                submitData();
-            };
+    // Evento para visualizar os detalhes de uma role
+    $(document).on('click', '.btn-view', function () {
+        const roleId = $(this).data('id'); // Obtém o ID da role clicada
+        console.log(`ID da Role clicada: ${roleId}`); // Log do ID para depuração
 
-            function groupPermissionsByArea(permissions) {
-                const grouped = {
-                    product: [],
-                    user: [],
-                    brand: [],
-                    category: [],
-                    client: [],
-                    shipping: [],
-                    order: [],
-                    question: [],
-                    review: [],
-                    role: [],
-                    permission: [],
-                };
+        // Faz a requisição para buscar as roles
+        $.ajax({
+            url: `http://localhost:8090/api/v1/roles`, // Endpoint para buscar todas as roles
+            type: 'GET',
+            xhrFields: { withCredentials: true },
+            success: function (response) {
+                console.log('Resposta do Servidor:', response); // Log da resposta do servidor
 
-                permissions.forEach(permission => {
-                    const area = permission.name.split('_')[1].toLowerCase();
-
-                    if (grouped[area]) {
-                        grouped[area].push({
-                            id: permission.id,
-                            name: permission.name,
-                            description: permission.description
-                        });
-                    }
-                });
-                return grouped;
-            }
-
-            const populateModal = (isEdit, role = null) => {
-                $.ajax({
-                    url: 'http://localhost:8090/api/v1/permissions',
-                    type: 'GET',
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    success: function (response) {
-                        $('#roleId').val(isEdit ? role.id : "");
-                        $('#roleName').val(isEdit ? role.name : "");
-                        $('#roleDescription').val(isEdit ? role.description : "");
-
-                        $('.role-section-body').empty();
-
-                        const permissions = response.data;
-                        const groupedPermissions = groupPermissionsByArea(permissions);
-
-                        for (const area in groupedPermissions) {
-                            const section = $(`#role-section-${area}`);
-                            const permissionList = groupedPermissions[area];
-
-                            const permissionHtml = permissionList.map(permission => {
-                                const isChecked = isEdit && role.permissions && role.permissions.includes(permission.name);
-                                return `
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="${permission.name}" data-id="${permission.id}" 
-                                            ${isChecked ? 'checked' : ''}>
-                                        <label class="form-check-label" for="${permission.name}">
-                                            ${permission.name}
-                                        </label>
-                                    </div>
-                                `;
-                            }).join('');
-
-                            section.find('.role-section-body').html(permissionHtml);
-                        }
-                    }
-                });
-            };
-
-            $(document).on('click', '.role-section-header', function () {
-                const $sectionBody = $(this).next('.role-section-body');
-                const $icon = $(this).find('.toggle-icon');
-
-                if ($sectionBody.is(':visible')) {
-                    $sectionBody.slideUp();
-                    $icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
-                } else {
-                    $sectionBody.slideDown();
-                    $icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+                if (!response.data || !Array.isArray(response.data)) {
+                    console.error('Erro: O formato da resposta está incorreto ou vazio.');
+                    alert('Erro ao buscar as roles. Verifique o formato da resposta.');
+                    return;
                 }
-            });
 
-            $('#btnCreateRole').on('click', function () {
-                const isEdit = false;
-                populateModal(isEdit);
-                $('#modalEdit').modal('show');
-            });
+                const roles = response.data;
+                console.log('Lista de Roles Recebidas:', roles); // Log da lista de roles
 
-            $(document).on('click', '.btn-edit', function () {
-                const role = $(this).data('role');
-                const isEdit = true;
-                populateModal(isEdit, role);
-                $('#modalEdit').modal('show');
-            });
+                // Filtra a role pelo ID clicado
+                const role = roles.find(r => r.id === roleId);
+                console.log('Role Filtrada:', role); // Log da role filtrada
 
-            $('#modalEdit').on('hidden.bs.modal', function () {
-                $('.role-section-body').slideUp();
-                $('.toggle-icon').removeClass('fa-chevron-up').addClass('fa-chevron-down');
-            });
+                if (!role) {
+                    console.error('Erro: Role com o ID especificado não foi encontrada.');
+                    alert('Erro: Nenhuma role encontrada com o ID fornecido.');
+                    return;
+                }
 
-            $('#editForm').submit(function (event) {
-                event.preventDefault();
-                const isEdit = !!$('#editRoleId').val();
-                handleSubmit(isEdit);
-            });
+                // Atualiza os campos do modal
+                $('#viewName').text(role.name);
+                $('#viewDescription').text(role.description);
+
+                // Exibe o modal e força a remoção de aria-hidden se necessário
+                $('#modalView').attr('aria-hidden', 'false').modal('show');
+            },
+            error: function (xhr, status, error) {
+                console.error('Erro na Requisição AJAX:', status, error); // Log do erro AJAX
+                alert('Erro ao buscar os detalhes da role. Tente novamente.');
+            }
         });
+    });
+});
+
     </script>
 </body>
 </html>
