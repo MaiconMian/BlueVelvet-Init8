@@ -1,5 +1,6 @@
 package com.bluevelvet.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import lombok.*;
@@ -35,6 +36,7 @@ public class User implements UserDetails{
     private String email;
 
     @Column(name = "user_password", length = 64, nullable = false)
+    @JsonIgnore
     private String password;
 
     @Column(name = "user_status", columnDefinition = "TINYINT", nullable = false)

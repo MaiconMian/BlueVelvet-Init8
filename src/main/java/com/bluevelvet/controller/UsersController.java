@@ -70,7 +70,7 @@ public class UsersController {
         }
     }
 
-    @PostMapping("/admins")
+    @PostMapping("/users")
     @PreAuthorize("hasAuthority('PERMISSION_USER_CREATE')")
     public ResponseEntity adminRegister(@Valid @RequestBody AdminRegisterDTO adminRegisterDTO) {
 
@@ -89,7 +89,7 @@ public class UsersController {
 
         this.userRepository.save(newAdminUser);
 
-        adminRegisterDTO.Roles().forEach(roleId -> {
+        adminRegisterDTO.roles().forEach(roleId -> {
             roleService.getRoleById(roleId).ifPresent(role -> {
                 newAdminUser.getRoles().add(role);
                 role.getUsers().add(newAdminUser);
@@ -101,34 +101,6 @@ public class UsersController {
 
         return ResponseEntity.ok().build();
 
-    }
-
-    @PostMapping("/users")
-    @PreAuthorize("permitAll()")
-    public ResponseEntity userRegister(@Valid @RequestBody UserRegisterDTO userRegisterDTO) {
-
-        if(this.userRepository.findByEmail(userRegisterDTO.email()) != null) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        String encryptedPassword = new BCryptPasswordEncoder().encode(userRegisterDTO.password());
-
-        User newNormalUser = new User();
-        newNormalUser.setName(userRegisterDTO.name());
-        newNormalUser.setLastName(userRegisterDTO.lastName());
-        newNormalUser.setEmail(userRegisterDTO.email());
-        newNormalUser.setPassword(encryptedPassword);
-        newNormalUser.setStatus(true);
-
-        this.userRepository.save(newNormalUser);
-
-        roleService.getRoleById(3).ifPresent(role -> {
-            newNormalUser.getRoles().add(role);
-            role.getUsers().add(newNormalUser);
-            roleService.saveRole(role);
-        });
-
-        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/users/{id}")
