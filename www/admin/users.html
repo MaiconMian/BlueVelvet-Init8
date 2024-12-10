@@ -81,7 +81,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalView" tabindex="-1" role="dialog" aria-labelledby="modalViewLabel" aria-hidden="true">
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="modalView" tabindex="-1" role="dialog" aria-labelledby="modalViewLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -109,7 +109,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="modalEditLabel" aria-hidden="true">
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="modalEditLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -152,10 +152,8 @@
                         </div>
                         <div class="form-group">
                             <label>Main Image</label>
-                            <input type="file" id="editImage" class="form-control-file" required>
-                            <div class="mt-2" id="mainImagePreview" style="max-width: 200px;">
-                                <img src="" class="img-thumbnail" alt="Main Image Preview" style="display: none;">
-                            </div>
+                            <input type="file" id="editImage" class="form-control-file">
+                            <div class="mt-2" id="mainImagePreview" style="max-width: 200px;"></div>
                         </div>
                         <button type="submit" class="btn btn-primary">Save Changes</button>
                     </form>
@@ -164,7 +162,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalDelete" tabindex="-1" role="dialog" aria-labelledby="modalDeleteLabel" aria-hidden="true">
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="modalDelete" tabindex="-1" role="dialog" aria-labelledby="modalDeleteLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -231,21 +229,24 @@
         }
 
         $(document).ready(() => {
-            const previewImage = (file, containerId, isMultiple = false) => {
+            const previewImage = (file, containerId) => {
                 if (!file) return;
 
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    if (isMultiple) {
-                        const img = `
-                            <div class="col-md-3 mt-2">
-                                <img src="${e.target.result}" class="img-thumbnail" alt="Secondary Image Preview">
-                            </div>
-                        `;
-                        $(containerId).append(img);
-                    } else {
-                        $(`${containerId} img`).attr('src', e.target.result).show();
-                    }
+                    const imgContainer = $(`
+                        <div class="position-relative">
+                            <img src="${e.target.result}" class="img-thumbnail w-100" alt="Main Image Preview">
+                            <button id="deleteImageBtn" type="button" class="btn btn-sm btn-danger position-absolute delete-btn" aria-label="Remove Image">
+                                &times;
+                            </button>
+                        </div>
+                    `);
+                    $(containerId).html(imgContainer);
+
+                    imgContainer.find('#deleteImageBtn').on('click', () => {
+                        $(containerId).html('<p>No image selected</p>');
+                    });
                 };
                 reader.readAsDataURL(file);
             };
@@ -263,10 +264,22 @@
                 $('#editPassword').val(isEdit ? user.password : "");
                 $('#editStatus').val(isEdit && user.status ? "true" : "false");
 
+                $('#mainImagePreview').empty();
+
                 if (isEdit && user.image) {
-                    $('#mainImagePreview img').attr('src', `data:image/png;base64,${user.image}`).show();
-                } else {
-                    $('#mainImagePreview img').hide();
+                    const mainImageContainer = $(`
+                        <div class="position-relative">
+                            <img src="data:image/png;base64,${user.image}" class="img-thumbnail w-100" alt="Main Image Preview">
+                            <button id="deleteImageBtn" type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 p-1 delete-btn" aria-label="Remove Image">
+                                &times;
+                            </button>
+                        </div>
+                    `);
+                    $('#mainImagePreview').append(mainImageContainer);
+
+                    mainImageContainer.find('#deleteImageBtn').on('click', () => {
+                        $('#mainImagePreview').empty();
+                    });
                 }
                 
                 fetchRoles().then(([roles]) => {
@@ -334,13 +347,10 @@
                     status: $('#editStatus').val() === 'true',
                 };
 
-                const mainImageFile = $('#editImage')[0].files[0];
-
-                const convertImageToBase64 = (file, callback) => {
-                    const reader = new FileReader();
-                    reader.onload = () => callback(reader.result.split(',')[1]);
-                    reader.readAsDataURL(file);
-                };
+                const mainImageElement = $('#mainImagePreview img');
+                if (mainImageElement.length) {
+                    data.image = mainImageElement.attr('src').split(',')[1];
+                }
 
                 const submitData = () => {
                     const baseUrl = "http://localhost:8090/api/v1"
@@ -365,12 +375,7 @@
                     });
                 };
 
-                if (mainImageFile) {
-                    convertImageToBase64(mainImageFile, mainImageBase64 => {
-                        data.image = mainImageBase64;
-                        submitData();
-                    });
-                }
+                submitData();
             };
 
             $(document).on('click', '.btn-edit', function () {
@@ -399,6 +404,10 @@
             $('#editForm').submit(function (event) {
                 event.preventDefault();
                 const isEdit = !!$('#editUserId').val();
+                if (!isEdit && !$('#mainImagePreview img').length) {
+                    $('#editError').text('Please provide a main image for the user.').show();
+                    return;
+                }
                 handleSubmit(isEdit);
             });
         });

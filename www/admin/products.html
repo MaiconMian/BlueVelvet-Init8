@@ -82,7 +82,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalView" tabindex="-1" role="dialog" aria-labelledby="modalViewLabel" aria-hidden="true">
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="modalView" tabindex="-1" role="dialog" aria-labelledby="modalViewLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -148,7 +148,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="modalEditLabel" aria-hidden="true">
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="modalEditLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -227,10 +227,8 @@
                         </div>
                         <div class="form-group">
                             <label>Main Image</label>
-                            <input type="file" id="editImage" class="form-control-file" required>
-                            <div class="mt-2" id="mainImagePreview" style="max-width: 200px;">
-                                <img src="" class="img-thumbnail" alt="Main Image Preview" style="display: none;">
-                            </div>
+                            <input type="file" id="editImage" class="form-control-file">
+                            <div class="mt-2" id="mainImagePreview" style="max-width: 200px;"></div>
                         </div>
                         <div class="form-group">
                             <label>Secondary Images</label>
@@ -244,7 +242,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalDelete" tabindex="-1" role="dialog" aria-labelledby="modalDeleteLabel" aria-hidden="true">
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="modalDelete" tabindex="-1" role="dialog" aria-labelledby="modalDeleteLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -312,14 +310,33 @@
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     if (isMultiple) {
-                        const img = `
-                            <div class="col-md-3 mt-2">
-                                <img src="${e.target.result}" class="img-thumbnail" alt="Secondary Image Preview">
+                        const imgContainer = $(`
+                            <div class="col-md-3 col-sm-4 col-6 mt-2 position-relative">
+                                <img src="${e.target.result}" class="img-thumbnail w-100" alt="Secondary Image Preview">
+                                <button id="deleteImageBtn" type="button" class="btn btn-sm btn-danger position-absolute delete-btn" aria-label="Remove Image">
+                                    &times;
+                                </button>
                             </div>
-                        `;
-                        $(containerId).append(img);
+                        `);
+                        $(containerId).append(imgContainer);
+
+                        imgContainer.find('#deleteImageBtn').on('click', () => {
+                            imgContainer.remove();
+                        });
                     } else {
-                        $(`${containerId} img`).attr('src', e.target.result).show();
+                        const imgContainer = $(`
+                            <div class="position-relative">
+                                <img src="${e.target.result}" class="img-thumbnail w-100" alt="Main Image Preview">
+                                <button id="deleteImageBtn" type="button" class="btn btn-sm btn-danger position-absolute delete-btn" aria-label="Remove Image">
+                                    &times;
+                                </button>
+                            </div>
+                        `);
+                        $(containerId).html(imgContainer);
+
+                        imgContainer.find('#deleteImageBtn').on('click', () => {
+                            $(containerId).html('<p>No image selected</p>');
+                        });
                     }
                 };
                 reader.readAsDataURL(file);
@@ -350,21 +367,40 @@
                 $('#editHeight').val(isEdit ? product.height : "");
                 $('#editCost').val(isEdit ? product.cost : "");
 
+                $('#mainImagePreview').empty();
+                $('#secondaryImagesPreview').empty();
+
                 if (isEdit && product.image) {
-                    $('#mainImagePreview img').attr('src', `data:image/png;base64,${product.image}`).show();
-                } else {
-                    $('#mainImagePreview img').hide();
+                    const mainImageContainer = $(`
+                        <div class="position-relative">
+                            <img src="data:image/png;base64,${product.image}" class="img-thumbnail w-100" alt="Main Image Preview">
+                            <button id="deleteImageBtn" type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 p-1 delete-btn" aria-label="Remove Image">
+                                &times;
+                            </button>
+                        </div>
+                    `);
+                    $('#mainImagePreview').append(mainImageContainer);
+
+                    mainImageContainer.find('#deleteImageBtn').on('click', () => {
+                        $('#mainImagePreview').empty();
+                    });
                 }
 
-                $('#secondaryImagesPreview').empty();
                 if (isEdit && product.photos) {
                     product.photos.forEach(photo => {
-                        const img = `
-                            <div class="col-md-3 mt-2">
-                                <img src="data:image/png;base64,${photo.image}" class="img-thumbnail" alt="Secondary Image">
+                        const secondaryImageContainer = $(`
+                            <div class="col-md-3 col-sm-4 col-6 mt-2 position-relative">
+                                <img src="data:image/png;base64,${photo.image}" class="img-thumbnail w-100" alt="Secondary Image Preview">
+                                <button id="deleteImageBtn" type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 p-1 delete-btn" aria-label="Remove Image">
+                                    &times;
+                                </button>
                             </div>
-                        `;
-                        $('#secondaryImagesPreview').append(img);
+                        `);
+                        $('#secondaryImagesPreview').append(secondaryImageContainer);
+
+                        secondaryImageContainer.find('#deleteImageBtn').on('click', () => {
+                            secondaryImageContainer.remove();
+                        });
                     });
                 }
 
@@ -477,14 +513,17 @@
                     })).get(),
                 };
 
-                const mainImageFile = $('#editImage')[0].files[0];
-                const secondaryImagesFiles = Array.from($('#editSecondaryImages')[0].files);
-
-                const convertImageToBase64 = (file, callback) => {
-                    const reader = new FileReader();
-                    reader.onload = () => callback(reader.result.split(',')[1]);
-                    reader.readAsDataURL(file);
-                };
+                const mainImageElement = $('#mainImagePreview img');
+                if (mainImageElement.length) {
+                    data.image = mainImageElement.attr('src').split(',')[1];
+                }
+                
+                const secondaryImageElements = $('#secondaryImagesPreview img');
+                if (secondaryImageElements.length) {
+                    data.photos = secondaryImageElements.map((_, el) => ({
+                        image: $(el).attr('src').split(',')[1],
+                    })).get();
+                }
 
                 const submitData = () => {
                     const baseUrl = "http://localhost:8090/api/v1"
@@ -509,23 +548,7 @@
                     });
                 };
 
-                if (mainImageFile) {
-                    convertImageToBase64(mainImageFile, mainImageBase64 => {
-                        data.image = mainImageBase64;
-
-                        Promise.all(
-                            secondaryImagesFiles.map(file =>
-                                new Promise(resolve => convertImageToBase64(file, resolve))
-                            )
-                        ).then(secondaryImagesBase64 => {
-                            data.photos = secondaryImagesBase64.map(image => ({ image }));
-                            submitData();
-                        });
-                    });
-                } else {
-                    data.photos = [];
-                    submitData();
-                }
+                submitData();
             };
 
             $(document).on('click', '.btn-edit', function () {
@@ -544,6 +567,10 @@
             $('#editForm').submit(function (event) {
                 event.preventDefault();
                 const isEdit = !!$('#editProductId').val();
+                if (!isEdit && !$('#mainImagePreview img').length) {
+                    $('#editError').text('Please provide a main image for the product.').show();
+                    return;
+                }
                 handleSubmit(isEdit);
             });
         });
