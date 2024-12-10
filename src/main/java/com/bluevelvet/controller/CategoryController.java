@@ -69,11 +69,42 @@ public class CategoryController {
 
     @PostMapping("/categories")
     @PreAuthorize("hasAuthority('PERMISSION_CATEGORY_CREATE')")
-    public ResponseEntity<ApiResponse<String>> addCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
-        Category newcategory = categoryService.saveCategory(categoryDTO);
-        return ResponseEntity.ok(new ApiResponse<>("success", "Product with ID " +
-                newcategory.getId() + " added successfully"));
+    public ResponseEntity<ApiResponse<Object>> addCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
+
+        if (categoryRepository.findByCategoryName(categoryDTO.getCategoryName()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>("error", "Category name already exists"));
+        }
+
+        Category newCategory = new Category();
+        newCategory.setCategoryName(categoryDTO.getCategoryName());
+        newCategory.setImage(categoryDTO.getImage());
+
+        categoryDTO.getBrands().forEach(brandId -> {
+            brandRepository.findById(brandId).ifPresentOrElse(brand -> {
+                brand.getCategory().add(newCategory);
+                newCategory.getBrands().add(brand);
+            }, () -> {
+                throw new IllegalArgumentException("Brand with ID " + brandId + " not found");
+            });
+        });
+
+        categoryDTO.getProducts().forEach(productId -> {
+            productRepository.findById(productId).ifPresentOrElse(product -> {
+                product.getCategories().add(newCategory);
+                newCategory.getProducts().add(product);
+            }, () -> {
+                throw new IllegalArgumentException("Product with ID " + productId + " not found");
+            });
+        });
+
+        // Salvar nova categoria
+        categoryRepository.save(newCategory);
+
+        return ResponseEntity.ok(new ApiResponse<>("success", "Category created successfully"));
     }
+
+
 
     @PutMapping("/categories/{id}")
     @PreAuthorize("hasAuthority('PERMISSION_CATEGORY_EDIT')")
