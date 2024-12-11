@@ -113,13 +113,15 @@ public class ProductService {
             });
         }
 
-        productDTO.getDetails().forEach(detailDTO -> {
-            ProductDetails productDetails = new ProductDetails();
-            productDetails.setDetailName(detailDTO.getDetailName());
-            productDetails.setDetailValue(detailDTO.getDetailValue());
-            product.getDetails().add(productDetails);
-            productDetails.setProduct(product);
-        });
+        if(productDTO.getDetails() != null) {
+            productDTO.getDetails().forEach(detailDTO -> {
+                ProductDetails productDetails = new ProductDetails();
+                productDetails.setDetailName(detailDTO.getDetailName());
+                productDetails.setDetailValue(detailDTO.getDetailValue());
+                product.getDetails().add(productDetails);
+                productDetails.setProduct(product);
+            });
+        }
 
         if(productDTO.getPhotos() != null) {
             productDTO.getPhotos().forEach(photoDTO -> {
