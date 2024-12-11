@@ -354,6 +354,7 @@
             });
 
             const populateModal = (isEdit, product = null) => {
+                $('#editError').hide();
                 $('#editProductId').val(isEdit ? product.id : "");
                 $('#editName').val(isEdit ? product.name : "");
                 $('#editShortDescription').val(isEdit ? product.shortDescription : "");
