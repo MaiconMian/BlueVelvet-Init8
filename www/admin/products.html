@@ -102,8 +102,8 @@
                             <p><strong>Short Description:</strong> <div id="viewShortDescription"></div></p>
                             <p><strong>Long Description:</strong> <div id="viewLongDescription"></div></p>
     
-                            <div class="mt-4">
-                                <h5 class="font-weight-bold">Categories</h5>
+                            <div class="mt-4 d-flex align-items-center">
+                                <p class="font-weight-bold mr-2">Categories:</p>
                                 <div id="viewCategories" class="d-flex flex-wrap"></div>
                             </div>
                             
@@ -529,6 +529,8 @@
                     data.photos = secondaryImageElements.map((_, el) => ({
                         image: $(el).attr('src').split(',')[1],
                     })).get();
+                } else {
+                    data.photos = [];
                 }
 
                 const submitData = () => {
