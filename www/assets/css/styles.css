@@ -271,3 +271,14 @@ body {
 .role-section-header i.rotate {
     transform: rotate(180deg);
 }
+
+.modal-body {
+    word-wrap: break-word;
+}
+
+#viewShortDescription, #viewLongDescription {
+    max-height: 150px;
+    overflow-y: auto;
+    display: block;
+    word-wrap: break-word;
+}
