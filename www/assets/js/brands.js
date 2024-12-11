@@ -174,8 +174,9 @@ $(document).ready(() => {
 
         const data = {
             brandName: $('#createBrandName').val(),
-            category: $('#createCategoryBrand').val()
+            category: $('#editCategoryBrands .badges').map((_, el) => parseInt($(el).data('id'))).get(),
         };
+        console.log(data);
 
         const mainImageFile = $('#createBrandImage')[0].files[0];
 
@@ -223,8 +224,9 @@ $(document).ready(() => {
 
         const data = {
             brandName: $('#editBrandName').val(),
-            category: $('#editCategoryBrands').val()
+            category: $('#editCategoryBrands .badges').map((_, el) => parseInt($(el).data('id'))).get(),
         };
+        console.log(data);
 
         const mainImageFile = $('#editBrandImage')[0].files[0];
 

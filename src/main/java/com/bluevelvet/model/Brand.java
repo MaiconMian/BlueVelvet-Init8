@@ -29,7 +29,6 @@ public class Brand {
     @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
     private List<Product> products = new ArrayList<>();
 
-    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "bv_brands_categories",
