@@ -2,74 +2,69 @@ body {
     background-color: #dcdfe1;
 }
 .custom-navbar {
-    background: linear-gradient(to right, #141E30, #243B55); /* Fundo azul-escuro */
-    padding: 5px 20px; /* Reduz a altura */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Linha inferior */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra leve */
+    background: linear-gradient(to right, #141E30, #243B55); 
+    padding: 5px 20px; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
     display: flex;
-    align-items: center; /* Centraliza os itens verticalmente */
-    justify-content: flex-start; /* Move todos os itens para a esquerda */
+    align-items: center; 
+    justify-content: flex-start; 
 }
 
-/* Logo */
+
 .custom-navbar .navbar-brand {
-    margin-right: 30px; /* Espaço entre a logo e os links */
+    margin-right: 30px; 
 }
 
-/* Ajuste do tamanho da logo */
 .custom-navbar .navbar-brand img {
-    height: 35px; /* Ajusta o tamanho da logo */
+    height: 35px; 
 }
 
-/* Container dos links */
+
 .custom-navbar .navbar-nav {
-    display: flex; /* Torna os links flexíveis */
-    gap: 5px; /* Adiciona espaçamento uniforme entre os links */
+    display: flex;
+    gap: 5px; 
     margin-left: 10px;
 }
 
 .custom-navbar .container {
-    max-width: 100%; /* Faz o container ocupar toda a largura */
-    padding-left: 10px; /* Ajusta o espaçamento à esquerda */
-    padding-right: 20px; /* Mantém um espaçamento padrão à direita */
-    margin: 0; /* Remove qualquer margem automática */
+    max-width: 100%; 
+    padding-left: 10px; 
+    padding-right: 20px; 
+    margin: 0; 
 }
 
-/* Links da navbar */
 .custom-navbar .navbar-nav .nav-link {
-    color: #FFFFFF; /* Texto branco */
+    color: #FFFFFF; 
     font-size: 14px;
-    font-weight: 500; /* Mesma fonte para todos os links */
+    font-weight: 500; 
     padding: 3px 8px;
-    border-radius: 20px; /* Bordas arredondadas */
+    border-radius: 20px; 
     text-transform: uppercase;
-    text-decoration: none; /* Remove sublinhado padrão */
+    text-decoration: none; 
     transition: all 0.3s ease-in-out;
 }
 
-/* Links - efeito hover */
 .custom-navbar .navbar-nav .nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.1); /* Fundo branco semi-transparente */
-    color: #FFFFFF; /* Texto branco */
+    background-color: rgba(255, 255, 255, 0.1); 
+    color: #FFFFFF; 
 }
 
-/* Item ativo */
 .custom-navbar .nav-item.active .nav-link {
-    background-color: transparent; /* Sem fundo */
-    color: #FFFFFF; /* Mesma cor dos outros links */
-    font-weight: 500; /* Mesmo peso dos outros links */
-    text-decoration: underline; /* Sublinha o link ativo */
-    text-underline-offset: 3px; /* Ajusta a distância do sublinhado */
-    transition: all 0.3s ease-in-out; /* Efeito suave */
+    background-color: transparent; 
+    color: #FFFFFF; 
+    font-weight: 500; 
+    text-decoration: underline; 
+    text-underline-offset: 3px; 
+    transition: all 0.3s ease-in-out; 
 }
 
-/* Responsividade do botão mobile */
 .custom-navbar .navbar-toggler {
     border: none;
 }
 
 .custom-navbar .navbar-toggler-icon {
-    background-color: #FFFFFF; /* Ícone branco */
+    background-color: #FFFFFF; 
     height: 3px;
     width: 25px;
     display: block;
@@ -96,7 +91,6 @@ body {
     top: 8px;
 }
 
-/* Estilos para o título */
 .container-center h2 {
     color: #2c3e50;
     font-size: 2.5rem;
@@ -105,51 +99,48 @@ body {
     margin-top: 50px;
 }
 
-/* Estilos para a tabela */
 #dataTableContent {
-    border: 2px solid #2c3e50; /* Borda sólida de 2px com cor azul-escuro */
-    border-radius: 10px; /* Arredonda os cantos da tabela */
-    overflow: hidden; /* Garante que o arredondamento seja aplicado corretamente */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil para destaque */
-    background-color: #ffffff; /* Fundo branco para a tabela */
+    border: 2px solid #2c3e50; 
+    border-radius: 10px; 
+    overflow: hidden; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    background-color: #ffffff; 
 }
 
-/* Estilizar o cabeçalho da tabela */
 #dataTableContent thead th {
-    background-color: #34495e; /* Cor de fundo do cabeçalho */
-    color: #ecf0f1; /* Cor do texto do cabeçalho */
-    font-weight: bold; /* Texto em negrito */
-    text-align: center; /* Centraliza o texto */
+    background-color: #34495e; 
+    color: #ecf0f1; 
+    font-weight: bold; 
+    text-align: center; 
 }
 
 #dataTableContent th,
 #dataTableContent td {
-    text-align: center; /* Centraliza horizontalmente */
-    vertical-align: middle; /* Centraliza verticalmente */
-    border: none; /* Remove as bordas internas */
-}
-/* Estilizar as linhas da tabela */
-#dataTableContent tbody tr {
-    background-color: #f9f9f9; /* Cor de fundo das linhas */
-    transition: background-color 0.3s ease; /* Transição suave para hover */
+    text-align: center; 
+    vertical-align: middle; 
+    border: none; 
 }
 
-/* Efeito de hover nas linhas da tabela */
+#dataTableContent tbody tr {
+    background-color: #f9f9f9; 
+    transition: background-color 0.3s ease; 
+}
+
 #dataTableContent tbody tr:hover {
-    background-color: #eaeaea; /* Cor de fundo ao passar o mouse */
+    background-color: #eaeaea; 
 }
 
-/* Opcional: adicionar linhas de separação entre as linhas da tabela */
+
 #dataTableContent tbody tr {
-    border-bottom: 1px solid #ddd; /* Linha de separação suave */
+    border-bottom: 1px solid #ddd; 
 }
 
-/* Garantir que a última linha não tenha borda inferior */
+
 #dataTableContent tbody tr:last-child {
     border-bottom: none;
 }
 
-/* Estilos para os botões dentro da tabela */
+
 .btn-view {
     background-color: #2980b9;
     color: #fff;
@@ -164,12 +155,27 @@ body {
 }
 
 
-/* Estilos para os modais */
+
 .modal-header {
     background-color: #2c3e50;
     color: #ecf0f1;
     border-bottom: none;
 }
+
+.modal-header .close {
+    color: #ecf0f1; 
+    font-size: 1.5rem; 
+    opacity: 1; 
+    text-shadow: none; 
+    transition: all 0.3s ease; 
+}
+
+.modal-header .close:hover {
+    color: #e74c3c;
+    opacity: 1; 
+    transform: scale(1.1); 
+}
+
 .modal-content {
     border-radius: 10px;
 }
@@ -183,67 +189,62 @@ body {
     border-radius: 5px;
 }
 
-/* Estilos para o ícone de perfil na navbar */
 .navbar-nav .nav-item.dropdown .nav-link {
     position: relative;
     display: flex;
     align-items: center;
-    padding: 5px 15px; /* Ajuste de padding */
-    color: #FFFFFF; /* Cor branca para o link */
+    padding: 5px 15px;
+    color: #FFFFFF; 
 }
 
 .navbar-nav .nav-item.dropdown .nav-link i {
-    font-size: 15px; /* Tamanho do ícone */
-    color: #f6f6f6; /* Cor inicial do ícone */
+    font-size: 15px; 
+    color: #f6f6f6; 
 }
 
 .navbar-nav .nav-item.dropdown .nav-link:hover i {
-    color: #ffffff; /* Cor ao passar o mouse no ícone */
+    color: #ffffff;
 }
 
-/* Estilos para o dropdown */
 .dropdown-menu {
-    background-color: #2c3e50; /* Fundo azul-escuro */
-    border: none; /* Remove a borda padrão */
-    border-radius: 5px; /* Arredonda os cantos */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
-    padding: 15px; /* Espaçamento interno */
+    background-color: #2c3e50; 
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    padding: 15px; 
 }
 .dropdown-menu .dropdown-item p,
 .dropdown-menu .dropdown-item img {
-    color: white; /* Define a cor branca para o texto */
+    color: white; 
 }
 
 #user-email,
 #user-name {
-    color: white !important; /* Garante que a cor seja branca */
+    color: white !important; 
 }
 
-/* Conteúdo do dropdown */
 #user-info {
-    background-color: transparent; /* Remove fundo branco */
-    color: #ecf0f1; /* Cor branca para o texto */
-    font-size: 14px; /* Tamanho do texto */
-    padding: 10px; /* Espaçamento interno */
+    background-color: transparent; 
+    color: #ecf0f1; 
+    font-size: 14px; 
+    padding: 10px; 
 }
 
 .dropdown-item:hover {
-    background-color: #34495e; /* Fundo ao passar o mouse */
-    color: #ecf0f1; /* Texto ao passar o mouse */
+    background-color: #34495e; 
+    color: #ecf0f1; 
 }
 
 .custom-select {
-    width: 55px !important; /* Largura do select do DataTables */
+    width: 55px !important; 
 }
 
-/* Controle do botão de expandir/reduzir a linha do DataTables */
 .dtr-control::before {
     background-color: #34495e !important;
     border: .1em solid white !important;
     margin-left: .1em !important;
 }
 
-/* Estilo das seções de permissões */
 .role-section {
     border: 1px solid #ddd;
     border-radius: 5px;
