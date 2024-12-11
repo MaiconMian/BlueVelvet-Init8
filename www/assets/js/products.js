@@ -1,3 +1,8 @@
+const formatDate = (dateArray) => {
+    const [year, month, day, hour, minute, second] = dateArray;
+    return new Date(year, month - 1, day, hour, minute, second).toLocaleString();
+};
+
 function populateTable(actions) {
     $.ajax({
         url: 'http://localhost:8090/api/v1/products',
@@ -43,6 +48,8 @@ function populateTable(actions) {
                         $('#viewBrand').text(product.brand.brandName);
                         $('#viewShortDescription').text(product.shortDescription);
                         $('#viewLongDescription').text(product.longDescription);
+                        $('#viewCreationDate').text(formatDate(product.creationTime));
+                        $('#viewUpdateDate').text(formatDate(product.updateTime));
 
                         const categoriesContainer = $('#viewCategories').empty();
                         if (product.categories && product.categories.length > 0) {
