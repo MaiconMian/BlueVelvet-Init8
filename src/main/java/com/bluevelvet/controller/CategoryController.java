@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.bluevelvet.model.*;
+import java.util.stream.Collectors;
 
 import java.util.List;
 import java.util.Optional;
@@ -58,12 +59,31 @@ public class CategoryController {
     @DeleteMapping("/categories/{id}")
     @PreAuthorize("hasAuthority('PERMISSION_CATEGORY_DELETE')")
     public ResponseEntity<ApiResponse<Object>> deleteCategoryById(@PathVariable int id) {
+        Optional<Category> categoryOptional = categoryService.getCategoryById(id);
+
+        if (!categoryOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("error", "Category not found"));
+        }
+
+        Category category = categoryOptional.get();
+
+        category.getBrands().forEach(brand -> {
+            brand.getCategory().remove(category);
+            brandRepository.save(brand);
+        });
+
+        category.getProducts().forEach(product -> {
+            product.getCategories().remove(category);
+            productRepository.save(product);
+        });
+
         boolean deleted = categoryService.deleteCategory(id);
         if (deleted) {
             return ResponseEntity.noContent().build();
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>("error", "Category not found"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>("error", "Failed to delete category"));
         }
     }
 
@@ -112,21 +132,51 @@ public class CategoryController {
             @PathVariable int id,
             @Valid @RequestBody CategoryDTO categoryDTO) {
 
-        // Verifica se a categoria existe
-        Optional<Category> existingCategory = categoryService.getCategoryById(id);
-        if (!existingCategory.isPresent()) {
+        Optional<Category> existingCategoryOptional = categoryService.getCategoryById(id);
+        if (!existingCategoryOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse<>("error", "Category not found"));
         }
 
-        Category newCategory = existingCategory.get();
-        newCategory.setImage(categoryDTO.getImage());
-        newCategory.setCategoryName(categoryDTO.getCategoryName());
+        Category existingCategory = existingCategoryOptional.get();
+
+        existingCategory.setCategoryName(categoryDTO.getCategoryName());
+        existingCategory.setImage(categoryDTO.getImage());
 
 
-        // Atualiza a categoria usando o método saveCategory no CategoryService
+        existingCategory.getBrands().forEach(brand -> {
+            brand.getCategory().remove(existingCategory);
+            brandRepository.save(brand);
+        });
+        existingCategory.getBrands().clear();
+
+        categoryDTO.getBrands().forEach(brandId -> {
+            brandRepository.findById(brandId).ifPresentOrElse(brand -> {
+                brand.getCategory().add(existingCategory);
+                existingCategory.getBrands().add(brand);
+            }, () -> {
+                throw new IllegalArgumentException("Brand with ID " + brandId + " not found");
+            });
+        });
+
+
+        existingCategory.getProducts().forEach(product -> {
+            product.getCategories().remove(existingCategory);
+            productRepository.save(product);
+        });
+        existingCategory.getProducts().clear();
+
+        categoryDTO.getProducts().forEach(productId -> {
+            productRepository.findById(productId).ifPresentOrElse(product -> {
+                product.getCategories().add(existingCategory);
+                existingCategory.getProducts().add(product);
+            }, () -> {
+                throw new IllegalArgumentException("Product with ID " + productId + " not found");
+            });
+        });
+
         try {
-            Category updatedCategory = categoryService.saveCategory(newCategory);
+            Category updatedCategory = categoryService.saveCategory(existingCategory);
             return ResponseEntity.ok(new ApiResponse<>("success", "Category updated successfully"));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -137,7 +187,40 @@ public class CategoryController {
         }
     }
 
+    @PatchMapping("/categories/{id}/add")
+    @PreAuthorize("hasAuthority('PERMISSION_CATEGORY_EDIT')")
+    public ResponseEntity<ApiResponse<Object>> addCategories(
+            @PathVariable int id,
+            @RequestBody CategoryDTO categoryDTO) {
 
+        // Verifica se a categoria existe
+        Optional<Category> existingCategoryOptional = categoryService.getCategoryById(id);
+        if (!existingCategoryOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("error", "Category not found"));
+        }
 
+        Category existingCategory = existingCategoryOptional.get();
+
+        // Preenche os dados atuais da categoria
+        CategoryDTO updatedDTO = new CategoryDTO();
+        updatedDTO.setCategoryName(existingCategory.getCategoryName());
+        updatedDTO.setImage(existingCategory.getImage());
+        updatedDTO.setBrands(existingCategory.getBrands().stream()
+                .map(Brand::getId).collect(Collectors.toSet()));
+        updatedDTO.setProducts(existingCategory.getProducts().stream()
+                .map(Product::getId).collect(Collectors.toSet()));
+
+        // Adiciona as novas marcas e produtos
+        if (categoryDTO.getBrands() != null) {
+            updatedDTO.getBrands().addAll(categoryDTO.getBrands());
+        }
+        if (categoryDTO.getProducts() != null) {
+            updatedDTO.getProducts().addAll(categoryDTO.getProducts());
+        }
+
+        // Chama o método de edição de categoria com os dados atualizados
+        return updateCategory(id, updatedDTO);
+    }
 
 }
