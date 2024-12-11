@@ -171,6 +171,7 @@
                         <div class="form-group">
                             <label for="editName">Name</label>
                             <input type="text" id="editName" class="form-control" maxlength="100" required>
+                            <div id="nameCounter" style="color: gray; font-size: 0.9em;">0/100</div>
                         </div>
                         <div class="form-group">
                             <label for="editBrand">Brand</label>
@@ -179,10 +180,12 @@
                         <div class="form-group">
                             <label for="editShortDescription">Short Description</label>
                             <textarea id="editShortDescription" class="form-control" maxlength="100" required></textarea>
+                            <div id="shortDescriptionCounter" style="color: gray; font-size: 0.9em;">0/100</div>
                         </div>
                         <div class="form-group">
                             <label for="editLongDescription">Long Description</label>
                             <textarea id="editLongDescription" class="form-control" maxlength="500"></textarea>
+                            <div id="longDescriptionCounter" style="color: gray; font-size: 0.9em;">0/100</div>
                         </div>
                         <div class="form-group">
                             <label for="editPrice">Price</label>
@@ -359,13 +362,50 @@
                 $('#secondaryImagesPreview').empty();
                 files.forEach((file) => previewImage(file, '#secondaryImagesPreview', true));
             });
+            //corrige erros no contador -> nao ter
+            const updateCounter = (fieldId, counterId, maxLength, isEdit) => {
+                if (isEdit) {
+                    const currentLength = $(`#${fieldId}`).val().length; //modo edicao, contagem atual
+                    $(`#${counterId}`).text(`${currentLength}/${maxLength}`);
+                } else {
+                    $(`#${counterId}`).text(`0/${maxLength}`); //adicionar produto, contagem reseta
+                }
+            };
 
             const populateModal = (isEdit, product = null) => {
                 $('#editError').hide();
                 $('#editProductId').val(isEdit ? product.id : "");
-                $('#editName').val(isEdit ? product.name : "");
-                $('#editShortDescription').val(isEdit ? product.shortDescription : "");
-                $('#editLongDescription').val(isEdit ? product.longDescription : "");
+
+                $('#editName')
+                    .val(isEdit ? product.name : "")
+                    .attr('maxlength', 100)
+                    .on('input', function () {
+                        const currentLength = $(this).val().length;
+                        $('#nameCounter').text(`${currentLength}/100`);
+                    });
+                //atualiza de acordo com o modo edicao/criacao
+                updateCounter('editName', 'nameCounter', 100, isEdit);
+
+                $('#editShortDescription')
+                    .val(isEdit ? product.shortDescription : "")
+                    .attr('maxlength', 100)
+                    .on('input', function () {
+                        const currentLength = $(this).val().length;
+                        $('#shortDescriptionCounter').text(`${currentLength}/100`);
+                    });
+                //atualiza de acordo com o modo edicao/criacao
+                updateCounter('editShortDescription', 'shortDescriptionCounter', 100, isEdit);
+
+                $('#editLongDescription')
+                    .val(isEdit ? product.longDescription : "")
+                    .attr('maxlength', 500)
+                    .on('input', function () {
+                        const currentLength = $(this).val().length;
+                        $('#longDescriptionCounter').text(`${currentLength}/500`);
+                    });
+                //atualiza de acordo com o modo edicao/criacao
+                updateCounter('editLongDescription', 'longDescriptionCounter', 500, isEdit);
+
                 $('#editPrice').val(isEdit ? product.price : "");
 
                 $('#editDiscount')
