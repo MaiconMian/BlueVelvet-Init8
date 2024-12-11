@@ -187,7 +187,7 @@ public class CategoryController {
         }
     }
 
-    @PatchMapping("/categories/{id}/add")
+    @PatchMapping("/categories/{id}")
     @PreAuthorize("hasAuthority('PERMISSION_CATEGORY_EDIT')")
     public ResponseEntity<ApiResponse<Object>> addCategories(
             @PathVariable int id,

@@ -18,6 +18,7 @@ public class CategoryDTO {
     @NotNull(message = "Category Name is required")
     private String categoryName;
 
+    @NotNull(message = "Category image is required")
     private byte[] image;
 
     @NotNull(message = "Brand ID is required")
