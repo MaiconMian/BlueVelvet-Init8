@@ -367,7 +367,16 @@
                 $('#editShortDescription').val(isEdit ? product.shortDescription : "");
                 $('#editLongDescription').val(isEdit ? product.longDescription : "");
                 $('#editPrice').val(isEdit ? product.price : "");
-                $('#editDiscount').val(isEdit ? product.discount : "");
+
+                $('#editDiscount')
+                    .val(isEdit ? product.discount : 0)
+                    .on('input', function() {
+                        let discountValue = parseInt($(this).val(), 10) || 0;
+                        if (discountValue < 0) discountValue = 0; //maior que 0
+                        if (discountValue > 100) discountValue = 100; //menor que 100
+                        $(this).val(discountValue);
+                    });
+
                 $('#editStatus').val(isEdit && product.status ? "true" : "false");
                 $('#editStock').val(isEdit && product.hasStock ? "true" : "false");
                 $('#editWidth').val(isEdit ? product.width : "");
