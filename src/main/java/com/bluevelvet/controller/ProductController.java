@@ -127,13 +127,18 @@ public class  ProductController {
             productService.clearProductCategories(product);
         }
 
-        productDTO.getDetails().forEach(detailDTO -> {
-            ProductDetails productDetails = new ProductDetails();
-            productDetails.setDetailName(detailDTO.getDetailName());
-            productDetails.setDetailValue(detailDTO.getDetailValue());
-            product.getDetails().add(productDetails);
-            productDetails.setProduct(product);
-        });
+        if(productDTO.getDetails() != null) {
+            productService.clearProductDetails(product);
+            productDTO.getDetails().forEach(detailDTO -> {
+                ProductDetails productDetails = new ProductDetails();
+                productDetails.setDetailName(detailDTO.getDetailName());
+                productDetails.setDetailValue(detailDTO.getDetailValue());
+                product.getDetails().add(productDetails);
+                productDetails.setProduct(product);
+            });
+        } else {
+            productService.clearProductDetails(product);
+        }
 
         productDTO.getPhotos().forEach(photoDTO -> {
             ProductPhotos productPhoto = new ProductPhotos();

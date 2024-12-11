@@ -60,6 +60,11 @@ public class ProductService {
         this.saveProduct(product);
     }
 
+    public void clearProductDetails(Product product) {
+        product.getDetails().clear();
+        this.saveProduct(product);
+    }
+
     public boolean deleteProduct(int id) {
         if (productRepository.existsById(id)) {
             Product product = productRepository.findById(id).orElseThrow();
