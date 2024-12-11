@@ -44,6 +44,16 @@ function populateTable(actions) {
                         $('#viewShortDescription').text(product.shortDescription);
                         $('#viewLongDescription').text(product.longDescription);
 
+                        const categoriesContainer = $('#viewCategories').empty();
+                        if (product.categories && product.categories.length > 0) {
+                            product.categories.forEach(category => {
+                                const badge = $(`<span class="badge badge-primary mr-2 mb-2">${category.categoryName}</span>`);
+                                categoriesContainer.append(badge);
+                            });
+                        } else {
+                            categoriesContainer.html('<span class="badge badge-danger mr-2 mb-2">No categories</span>');
+                        }
+    
                         const mainImageSrc = product.image
                             ? `data:image/jpeg;charset=utf-8;base64,${product.image}`
                             : 'https://via.assets.so/img.jpg?w=300&h=300&tc=gray&bg=#cecece&t=Image+not+found';
