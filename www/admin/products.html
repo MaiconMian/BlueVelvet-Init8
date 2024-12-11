@@ -163,7 +163,7 @@
                         <input type="hidden" id="editProductId">
                         <div class="form-group">
                             <label for="editName">Name</label>
-                            <input type="text" id="editName" class="form-control" required>
+                            <input type="text" id="editName" class="form-control" maxlength="100" required>
                         </div>
                         <div class="form-group">
                             <label for="editBrand">Brand</label>
@@ -171,11 +171,11 @@
                         </div>
                         <div class="form-group">
                             <label for="editShortDescription">Short Description</label>
-                            <textarea id="editShortDescription" class="form-control" required></textarea>
+                            <textarea id="editShortDescription" class="form-control" maxlength="100" required></textarea>
                         </div>
                         <div class="form-group">
                             <label for="editLongDescription">Long Description</label>
-                            <textarea id="editLongDescription" class="form-control"></textarea>
+                            <textarea id="editLongDescription" class="form-control" maxlength="500"></textarea>
                         </div>
                         <div class="form-group">
                             <label for="editPrice">Price</label>
@@ -183,7 +183,7 @@
                         </div>
                         <div class="form-group">
                             <label for="editDiscount">Discount (%)</label>
-                            <input type="number" id="editDiscount" class="form-control">
+                            <input type="number" id="editDiscount" class="form-control" max="100">
                         </div>
                         <div class="form-group">
                             <label>Status</label>
