@@ -75,7 +75,7 @@ public class BrandService {
                 productRepository.save(product);
             });
         }
-
+        newBrand.setImage(brandDTO.getImage());
         this.saveBrand(newBrand);
         return newBrand;
     }

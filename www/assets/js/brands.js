@@ -54,7 +54,11 @@ function populateTable(actions) {
                         const brand = response.data;
 
                         $('#viewName').text(brand.brandName);
-                        $('#viewDescription').text(brand.description || 'No description available');
+                        $('#viewCategories').text(brand.category);
+                        const mainImageSrc = brand.image
+                            ? `data:image/jpeg;charset=utf-8;base64,${brand.image}`
+                            : 'https://via.assets.so/img.jpg?w=300&h=300&tc=gray&bg=#cecece&t=Image+not+found';
+                        $('#mainImage').attr('src', mainImageSrc);
 
                         $('#modalView').modal('show');
                     },
