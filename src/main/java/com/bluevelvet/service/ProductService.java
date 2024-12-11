@@ -65,6 +65,11 @@ public class ProductService {
         this.saveProduct(product);
     }
 
+    public void clearProductPhotos(Product product) {
+        product.getPhotos().clear();
+        this.saveProduct(product);
+    }
+
     public boolean deleteProduct(int id) {
         if (productRepository.existsById(id)) {
             Product product = productRepository.findById(id).orElseThrow();
@@ -116,12 +121,14 @@ public class ProductService {
             productDetails.setProduct(product);
         });
 
-        productDTO.getPhotos().forEach(photoDTO -> {
-            ProductPhotos productPhoto = new ProductPhotos();
-            productPhoto.setImage(photoDTO.getImage());
-            product.getPhotos().add(productPhoto);
-            productPhoto.setProduct(product);
-        });
+        if(productDTO.getPhotos() != null) {
+            productDTO.getPhotos().forEach(photoDTO -> {
+                ProductPhotos productPhoto = new ProductPhotos();
+                productPhoto.setImage(photoDTO.getImage());
+                product.getPhotos().add(productPhoto);
+                productPhoto.setProduct(product);
+            });
+        }
 
         saveProduct(product);
 

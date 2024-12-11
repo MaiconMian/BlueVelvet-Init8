@@ -140,12 +140,17 @@ public class  ProductController {
             productService.clearProductDetails(product);
         }
 
-        productDTO.getPhotos().forEach(photoDTO -> {
-            ProductPhotos productPhoto = new ProductPhotos();
-            productPhoto.setImage(photoDTO.getImage());
-            product.getPhotos().add(productPhoto);
-            productPhoto.setProduct(product);
-        });
+        if(productDTO.getPhotos() != null) {
+            productService.clearProductPhotos(product);
+            productDTO.getPhotos().forEach(photoDTO -> {
+                ProductPhotos productPhoto = new ProductPhotos();
+                productPhoto.setImage(photoDTO.getImage());
+                product.getPhotos().add(productPhoto);
+                productPhoto.setProduct(product);
+            });
+        } else {
+            productService.clearProductPhotos(product);
+        }
 
         productService.saveProduct(product);
 
