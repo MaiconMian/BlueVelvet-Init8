@@ -125,7 +125,7 @@ body {
 #dataTableContent th,
 #dataTableContent td {
     text-align: center; /* Centraliza horizontalmente */
-    vertical-align: middle; /* Centraliza verticalmente */'
+    vertical-align: middle; /* Centraliza verticalmente */
     border: none; /* Remove as bordas internas */
 }
 /* Estilizar as linhas da tabela */
@@ -208,6 +208,15 @@ body {
     border-radius: 5px; /* Arredonda os cantos */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
     padding: 15px; /* Espaçamento interno */
+}
+.dropdown-menu .dropdown-item p,
+.dropdown-menu .dropdown-item img {
+    color: white; /* Define a cor branca para o texto */
+}
+
+#user-email,
+#user-name {
+    color: white !important; /* Garante que a cor seja branca */
 }
 
 /* Conteúdo do dropdown */
