@@ -51,6 +51,15 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    public void clearProductCategories(Product product) {
+        product.getCategories().forEach(category -> {
+            category.getProducts().remove(product);
+            categoryService.saveCategory(category);
+        });
+        product.getCategories().clear();
+        this.saveProduct(product);
+    }
+
     public boolean deleteProduct(int id) {
         if (productRepository.existsById(id)) {
             Product product = productRepository.findById(id).orElseThrow();
@@ -84,13 +93,15 @@ public class ProductService {
                         }
                 );
 
-        productDTO.getCategories().forEach(categoryId -> {
-            categoryService.getCategoryById(categoryId).ifPresent(category -> {
-                product.getCategories().add(category);
-                category.getProducts().add(product);
-                categoryService.saveCategory(category);
+        if(productDTO.getCategories() != null) {
+            productDTO.getCategories().forEach(categoryId -> {
+                categoryService.getCategoryById(categoryId).ifPresent(category -> {
+                    product.getCategories().add(category);
+                    category.getProducts().add(product);
+                    categoryService.saveCategory(category);
+                });
             });
-        });
+        }
 
         productDTO.getDetails().forEach(detailDTO -> {
             ProductDetails productDetails = new ProductDetails();

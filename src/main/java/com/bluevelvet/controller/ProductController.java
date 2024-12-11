@@ -114,13 +114,18 @@ public class  ProductController {
                         }
                 );
 
-        productDTO.getCategories().forEach(categoryId -> {
-            categoryService.getCategoryById(categoryId).ifPresent(category -> {
-                product.getCategories().add(category);
-                category.getProducts().add(product);
-                categoryService.saveCategory(category);
+        if(productDTO.getCategories() != null) {
+            productService.clearProductCategories(product);
+            productDTO.getCategories().forEach(categoryId -> {
+                categoryService.getCategoryById(categoryId).ifPresent(category -> {
+                    product.getCategories().add(category);
+                    category.getProducts().add(product);
+                    categoryService.saveCategory(category);
+                });
             });
-        });
+        } else {
+            productService.clearProductCategories(product);
+        }
 
         productDTO.getDetails().forEach(detailDTO -> {
             ProductDetails productDetails = new ProductDetails();
