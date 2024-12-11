@@ -305,3 +305,26 @@ body {
     color: #fff;
     font-size: 1.5rem;
 }
+
+.carousel-inner {
+    overflow: hidden; 
+}
+
+.carousel-inner img {
+    width: 100%; 
+    height: auto; 
+    max-height: 400px; 
+    object-fit: cover; 
+}
+
+@media (max-width: 768px) {
+    .carousel-inner img {
+        max-height: 300px; 
+    }
+}
+
+@media (max-width: 576px) {
+    .carousel-inner img {
+        max-height: 200px; 
+    }
+}
