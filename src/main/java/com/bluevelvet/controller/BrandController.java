@@ -106,16 +106,6 @@ public class BrandController {
             });
         }
 
-        // Update products
-        if (brandDTO.getProducts() != null) {
-            existingBrand.getProducts().clear();
-            brandDTO.getProducts().forEach(productId -> {
-                Product product = productRepository.findById(productId)
-                        .orElseThrow(() -> new IllegalArgumentException("Product not found for ID: " + productId));
-                existingBrand.getProducts().add(product);
-                product.setBrand(existingBrand);
-            });
-        }
 
         brandService.updateBrand(id, existingBrand);
 
