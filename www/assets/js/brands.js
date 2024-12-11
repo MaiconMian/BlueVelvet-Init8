@@ -172,9 +172,14 @@ $(document).ready(() => {
     $('#createForm').submit(function (event) {
         event.preventDefault();
 
+        const selectedCategories = [];
+        $('#createCategoryBrands option:selected').each(function () {
+            selectedCategories.push($(this).val()); 
+        });
+
         const data = {
             brandName: $('#createBrandName').val(),
-            category: $('#editCategoryBrands .badges').map((_, el) => parseInt($(el).data('id'))).get(),
+            category: selectedCategories,
         };
         console.log(data);
 
@@ -221,6 +226,12 @@ $(document).ready(() => {
     $('#editForm').submit(function (event) {
         event.preventDefault();
         const id = $('#editBrandId').val();
+
+        const selectedCategories = [];
+        $('#editCategoryBrands option:selected').each(function () {
+            selectedCategories.push($(this).val()); 
+        });
+
 
         const data = {
             brandName: $('#editBrandName').val(),
