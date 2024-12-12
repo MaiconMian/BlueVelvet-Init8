@@ -97,9 +97,16 @@
                         <div class="col-md-8">
                             <h5 id="viewName" class="font-weight-bold"></h5>
                             <p><strong>Brand:</strong> <span id="viewBrand"></span></p>
-                            <p><strong>Short Description:</strong> <span id="viewShortDescription"></span></p>
-                            <p><strong>Long Description:</strong> <span id="viewLongDescription"></span></p>
-    
+                            <p><strong>Short Description:</strong> <div id="viewShortDescription"></div></p>
+                            <p><strong>Long Description:</strong> <div id="viewLongDescription"></div></p>
+                            <p><strong>Creation Date:</strong> <span id="viewCreationDate"></span></p>
+                            <p><strong>Update Date:</strong> <span id="viewUpdateDate"></span></p>
+                            
+                            <div class="mt-4 d-flex align-items-center">
+                                <p class="font-weight-bold mr-2">Categories:</p>
+                                <div id="viewCategories" class="d-flex flex-wrap"></div>
+                            </div>
+                            
                             <div class="d-flex align-items-center flex-wrap mt-2">
                                 <span id="tagStatus" class="badge badge-pill px-3 py-2 mr-2"></span>
                                 <span id="tagStock" class="badge badge-pill px-3 py-2 mr-2"></span>
@@ -161,7 +168,8 @@
                         <input type="hidden" id="editProductId">
                         <div class="form-group">
                             <label for="editName">Name</label>
-                            <input type="text" id="editName" class="form-control" required>
+                            <input type="text" id="editName" class="form-control" maxlength="100" required>
+                            <div id="nameCounter" style="color: gray; font-size: 0.9em;">0/100</div>
                         </div>
                         <div class="form-group">
                             <label for="editBrand">Brand</label>
@@ -169,11 +177,13 @@
                         </div>
                         <div class="form-group">
                             <label for="editShortDescription">Short Description</label>
-                            <textarea id="editShortDescription" class="form-control" required></textarea>
+                            <textarea id="editShortDescription" class="form-control" maxlength="100" required></textarea>
+                            <div id="shortDescriptionCounter" style="color: gray; font-size: 0.9em;">0/100</div>
                         </div>
                         <div class="form-group">
                             <label for="editLongDescription">Long Description</label>
-                            <textarea id="editLongDescription" class="form-control"></textarea>
+                            <textarea id="editLongDescription" class="form-control" maxlength="500"></textarea>
+                            <div id="longDescriptionCounter" style="color: gray; font-size: 0.9em;">0/100</div>
                         </div>
                         <div class="form-group">
                             <label for="editPrice">Price</label>
@@ -181,7 +191,7 @@
                         </div>
                         <div class="form-group">
                             <label for="editDiscount">Discount (%)</label>
-                            <input type="number" id="editDiscount" class="form-control">
+                            <input type="number" id="editDiscount" class="form-control" max="100">
                         </div>
                         <div class="form-group">
                             <label>Status</label>
@@ -340,6 +350,24 @@
                 reader.readAsDataURL(file);
             };
 
+            const previewExistingImages = (image_src, containerId) => {
+                if(!image_src) return;
+
+                const imgContainer = $(`
+                    <div class="col-md-3 col-sm-4 col-6 mt-2 position-relative">
+                        <img src="${image_src}" class="img-thumbnail w-100" alt="Main Image Preview">
+                        <button id="deleteImageBtn" type="button" class="btn btn-sm btn-danger position-absolute delete-btn" aria-label="Remove Image">
+                            &times;
+                        </button>
+                    </div>
+                `);
+                $(containerId).append(imgContainer);
+
+                imgContainer.find('#deleteImageBtn').on('click', () => {
+                    imgContainer.remove();
+                });
+            }
+
             $('#editImage').on('change', function () {
                 const file = this.files[0];
                 previewImage(file, '#mainImagePreview');
@@ -347,17 +375,66 @@
 
             $('#editSecondaryImages').on('change', function () {
                 const files = Array.from(this.files);
+                const imageSrcs = $('#secondaryImagesPreview').find('img').map(function() {return $(this).attr('src');}).get();
                 $('#secondaryImagesPreview').empty();
                 files.forEach((file) => previewImage(file, '#secondaryImagesPreview', true));
+                imageSrcs.forEach((image_src) => previewExistingImages(image_src, '#secondaryImagesPreview'));
             });
+            //corrige erros no contador -> nao ter
+            const updateCounter = (fieldId, counterId, maxLength, isEdit) => {
+                if (isEdit) {
+                    const currentLength = $(`#${fieldId}`).val().length; //modo edicao, contagem atual
+                    $(`#${counterId}`).text(`${currentLength}/${maxLength}`);
+                } else {
+                    $(`#${counterId}`).text(`0/${maxLength}`); //adicionar produto, contagem reseta
+                }
+            };
 
             const populateModal = (isEdit, product = null) => {
+                $('#editError').hide();
                 $('#editProductId').val(isEdit ? product.id : "");
-                $('#editName').val(isEdit ? product.name : "");
-                $('#editShortDescription').val(isEdit ? product.shortDescription : "");
-                $('#editLongDescription').val(isEdit ? product.longDescription : "");
+
+                $('#editName')
+                    .val(isEdit ? product.name : "")
+                    .attr('maxlength', 100)
+                    .on('input', function () {
+                        const currentLength = $(this).val().length;
+                        $('#nameCounter').text(`${currentLength}/100`);
+                    });
+                //atualiza de acordo com o modo edicao/criacao
+                updateCounter('editName', 'nameCounter', 100, isEdit);
+
+                $('#editShortDescription')
+                    .val(isEdit ? product.shortDescription : "")
+                    .attr('maxlength', 100)
+                    .on('input', function () {
+                        const currentLength = $(this).val().length;
+                        $('#shortDescriptionCounter').text(`${currentLength}/100`);
+                    });
+                //atualiza de acordo com o modo edicao/criacao
+                updateCounter('editShortDescription', 'shortDescriptionCounter', 100, isEdit);
+
+                $('#editLongDescription')
+                    .val(isEdit ? product.longDescription : "")
+                    .attr('maxlength', 500)
+                    .on('input', function () {
+                        const currentLength = $(this).val().length;
+                        $('#longDescriptionCounter').text(`${currentLength}/500`);
+                    });
+                //atualiza de acordo com o modo edicao/criacao
+                updateCounter('editLongDescription', 'longDescriptionCounter', 500, isEdit);
+
                 $('#editPrice').val(isEdit ? product.price : "");
-                $('#editDiscount').val(isEdit ? product.discount : "");
+
+                $('#editDiscount')
+                    .val(isEdit ? product.discount : 0)
+                    .on('input', function() {
+                        let discountValue = parseInt($(this).val(), 10) || 0;
+                        if (discountValue < 0) discountValue = 0; //maior que 0
+                        if (discountValue > 100) discountValue = 100; //menor que 100
+                        $(this).val(discountValue);
+                    });
+
                 $('#editStatus').val(isEdit && product.status ? "true" : "false");
                 $('#editStock').val(isEdit && product.hasStock ? "true" : "false");
                 $('#editWidth').val(isEdit ? product.width : "");
@@ -521,6 +598,8 @@
                     data.photos = secondaryImageElements.map((_, el) => ({
                         image: $(el).attr('src').split(',')[1],
                     })).get();
+                } else {
+                    data.photos = [];
                 }
 
                 const submitData = () => {

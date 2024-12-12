@@ -51,6 +51,25 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    public void clearProductCategories(Product product) {
+        product.getCategories().forEach(category -> {
+            category.getProducts().remove(product);
+            categoryService.saveCategory(category);
+        });
+        product.getCategories().clear();
+        this.saveProduct(product);
+    }
+
+    public void clearProductDetails(Product product) {
+        product.getDetails().clear();
+        this.saveProduct(product);
+    }
+
+    public void clearProductPhotos(Product product) {
+        product.getPhotos().clear();
+        this.saveProduct(product);
+    }
+
     public boolean deleteProduct(int id) {
         if (productRepository.existsById(id)) {
             Product product = productRepository.findById(id).orElseThrow();
@@ -84,28 +103,34 @@ public class ProductService {
                         }
                 );
 
-        productDTO.getCategories().forEach(categoryId -> {
-            categoryService.getCategoryById(categoryId).ifPresent(category -> {
-                product.getCategories().add(category);
-                category.getProducts().add(product);
-                categoryService.saveCategory(category);
+        if(productDTO.getCategories() != null) {
+            productDTO.getCategories().forEach(categoryId -> {
+                categoryService.getCategoryById(categoryId).ifPresent(category -> {
+                    product.getCategories().add(category);
+                    category.getProducts().add(product);
+                    categoryService.saveCategory(category);
+                });
             });
-        });
+        }
 
-        productDTO.getDetails().forEach(detailDTO -> {
-            ProductDetails productDetails = new ProductDetails();
-            productDetails.setDetailName(detailDTO.getDetailName());
-            productDetails.setDetailValue(detailDTO.getDetailValue());
-            product.getDetails().add(productDetails);
-            productDetails.setProduct(product);
-        });
+        if(productDTO.getDetails() != null) {
+            productDTO.getDetails().forEach(detailDTO -> {
+                ProductDetails productDetails = new ProductDetails();
+                productDetails.setDetailName(detailDTO.getDetailName());
+                productDetails.setDetailValue(detailDTO.getDetailValue());
+                product.getDetails().add(productDetails);
+                productDetails.setProduct(product);
+            });
+        }
 
-        productDTO.getPhotos().forEach(photoDTO -> {
-            ProductPhotos productPhoto = new ProductPhotos();
-            productPhoto.setImage(photoDTO.getImage());
-            product.getPhotos().add(productPhoto);
-            productPhoto.setProduct(product);
-        });
+        if(productDTO.getPhotos() != null) {
+            productDTO.getPhotos().forEach(photoDTO -> {
+                ProductPhotos productPhoto = new ProductPhotos();
+                productPhoto.setImage(photoDTO.getImage());
+                product.getPhotos().add(productPhoto);
+                productPhoto.setProduct(product);
+            });
+        }
 
         saveProduct(product);
 

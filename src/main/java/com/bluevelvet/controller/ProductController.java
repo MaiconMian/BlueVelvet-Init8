@@ -114,28 +114,43 @@ public class  ProductController {
                         }
                 );
 
-        productDTO.getCategories().forEach(categoryId -> {
-            categoryService.getCategoryById(categoryId).ifPresent(category -> {
-                product.getCategories().add(category);
-                category.getProducts().add(product);
-                categoryService.saveCategory(category);
+        if(productDTO.getCategories() != null) {
+            productService.clearProductCategories(product);
+            productDTO.getCategories().forEach(categoryId -> {
+                categoryService.getCategoryById(categoryId).ifPresent(category -> {
+                    product.getCategories().add(category);
+                    category.getProducts().add(product);
+                    categoryService.saveCategory(category);
+                });
             });
-        });
+        } else {
+            productService.clearProductCategories(product);
+        }
 
-        productDTO.getDetails().forEach(detailDTO -> {
-            ProductDetails productDetails = new ProductDetails();
-            productDetails.setDetailName(detailDTO.getDetailName());
-            productDetails.setDetailValue(detailDTO.getDetailValue());
-            product.getDetails().add(productDetails);
-            productDetails.setProduct(product);
-        });
+        if(productDTO.getDetails() != null) {
+            productService.clearProductDetails(product);
+            productDTO.getDetails().forEach(detailDTO -> {
+                ProductDetails productDetails = new ProductDetails();
+                productDetails.setDetailName(detailDTO.getDetailName());
+                productDetails.setDetailValue(detailDTO.getDetailValue());
+                product.getDetails().add(productDetails);
+                productDetails.setProduct(product);
+            });
+        } else {
+            productService.clearProductDetails(product);
+        }
 
-        productDTO.getPhotos().forEach(photoDTO -> {
-            ProductPhotos productPhoto = new ProductPhotos();
-            productPhoto.setImage(photoDTO.getImage());
-            product.getPhotos().add(productPhoto);
-            productPhoto.setProduct(product);
-        });
+        if(productDTO.getPhotos() != null) {
+            productService.clearProductPhotos(product);
+            productDTO.getPhotos().forEach(photoDTO -> {
+                ProductPhotos productPhoto = new ProductPhotos();
+                productPhoto.setImage(photoDTO.getImage());
+                product.getPhotos().add(productPhoto);
+                productPhoto.setProduct(product);
+            });
+        } else {
+            productService.clearProductPhotos(product);
+        }
 
         productService.saveProduct(product);
 

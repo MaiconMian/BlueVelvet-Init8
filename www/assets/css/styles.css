@@ -307,3 +307,60 @@ body {
 .role-section-header i.rotate {
     transform: rotate(180deg);
 }
+
+.modal-body {
+    word-wrap: break-word;
+}
+
+#viewShortDescription, #viewLongDescription {
+    max-height: 150px;
+    overflow-y: auto;
+    display: block;
+    word-wrap: break-word;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    padding: 10px;
+}
+
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: 5%;
+}
+
+.carousel-control-prev-icon::after,
+.carousel-control-next-icon::after {
+    color: #fff;
+    font-size: 1.5rem;
+}
+
+.carousel-inner {
+    overflow: hidden; 
+}
+
+.carousel-inner img {
+    width: 100%; 
+    height: auto; 
+    max-height: 400px; 
+    object-fit: cover; 
+}
+
+@media (max-width: 768px) {
+    .carousel-inner img {
+        max-height: 300px; 
+    }
+}
+
+@media (max-width: 576px) {
+    .carousel-inner img {
+        max-height: 200px; 
+    }
+}
