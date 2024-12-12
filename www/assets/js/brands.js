@@ -100,26 +100,7 @@ function populateTable(actions) {
                 });
             });
 
-            $('#dataTableContent').on('click', '.btn-delete', function () {
-                const brandId = $(this).data('id');
-                $('#deleteError').hide();
-                $('#modalDelete').modal('show');
-
-                $('#confirmDelete').off().on('click', function () {
-                    $.ajax({
-                        url: `http://localhost:8090/api/v1/brands/${brandId}`,
-                        xhrFields: { withCredentials: true },
-                        type: 'DELETE',
-                        success: function () {
-                            $('#modalDelete').modal('hide');
-                            location.reload();
-                        },
-                        error: function () {
-                            $('#deleteError').text('Error: Failed to delete brand').show();
-                        }
-                    });
-                });
-            });
+           
         },
         error: function () {
             console.error('Failed to fetch brands');

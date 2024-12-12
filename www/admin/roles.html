@@ -93,17 +93,23 @@
                             <h5 id="viewName" class="font-weight-bold"></h5>
                             <p><strong>Description:</strong> <span id="viewDescription"></span></p>
                         </div>
+                        <div class="col-md-8">
+                            <label for="rolePermissionList"><b>Permissions</b></label>
+                            <div class="list-group" style="height:200px; overflow-y: auto;" id="rolePermissionList">
+
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="modalEditLabel" aria-hidden="true">
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="modalCreateEdit" tabindex="-1" role="dialog" aria-labelledby="modalCreateEditLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalEditLabel">Edit Role</h5>
+                    <h5 class="modal-title" id="modalCreateEditLabel">Edit Role</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -111,7 +117,7 @@
                 <div class="modal-body">
                     <div id="editError" class="alert alert-danger" style="display: none;"></div>
                     <form id="editForm">
-                        <input type="hidden" id="editRoleId">
+                        <input type="hidden" id="roleId">
                         <div class="form-group">
                             <label for="roleName">Role Name</label>
                             <input type="text" id="roleName" class="form-control" required>
@@ -256,11 +262,14 @@
     <script src="../assets/js/user_informations.js"> </script>
     <script src="../assets/js/roles.js"></script>
     <script>
+        
+
+
         populateTable(user => `
             <button type="button" class="btn btn-primary btn-view" data-id="${user.id}">
                 <i class="fa fa-eye"></i>
             </button>
-            <button type="button" class="btn btn-success btn-edit" data-id="${user.id}">
+            <button type="button" class="btn btn-success btn-edit" data-role="${user.id}">
                 <i class="fa fa-pencil-square-o"></i>
             </button>
             <button type="button" class="btn btn-danger btn-delete" data-id="${user.id}">
@@ -282,17 +291,21 @@
         }
 
         $(document).ready(function () {
+            
+            const togglePermission = (id) =>{
+                const checkbox = document.getElementById(`labelPermission${id}`);
+            }
             const handleSubmit = (isEdit) => {
-                const roleId = $('#editRoleId').val();
+                const roleId = $('#roleId').val();
                 const data = {
                     name: $('#roleName').val(),
                     description: $('#roleDescription').val(),
-                    permissions: $('.form-check input[type="checkbox"]:checked').map((_, chk) => parseInt($(chk).data('id'))).get(),
+                    permissions: $('input.custom-control-input:checked').map((_, chk) => parseInt($(chk).data('id'))).get(),
                 };
 
                 console.log(data);
 
-                const submitData = () => {
+                const submitData = (isEdit) => {
                     const baseUrl = "http://localhost:8090/api/v1"
                     const url = isEdit ? `${baseUrl}/roles/${roleId}` : `${baseUrl}/roles`;
                     const method = isEdit ? "PUT" : "POST";
@@ -307,7 +320,7 @@
                         data: JSON.stringify(data),
                         success: () => {
                             showSuccessMessage(`Role ${isEdit ? 'updated' : 'created'} successfully!`);
-                            $('#modalEdit').modal('hide');
+                            $('#modalCreateEdit').modal('hide');
                         },
                         error: () => {
                             $('#editError').text(`Failed to ${isEdit ? 'update' : 'create'} role`).show();
@@ -315,7 +328,7 @@
                     });
                 };
 
-                submitData();
+                submitData(isEdit);
             };
 
             function groupPermissionsByArea(permissions) {
@@ -347,34 +360,32 @@
                 return grouped;
             }
 
-            const populateModal = (isEdit, role = null) => {
+            const populateModalEdit = (id,permissions) => {
                 $.ajax({
-                    url: 'http://localhost:8090/api/v1/permissions',
+                    url: `http://localhost:8090/api/v1/roles/${id}`,
                     type: 'GET',
                     xhrFields: {
                         withCredentials: true
                     },
-                    success: function (response) {
-                        $('#roleId').val(isEdit ? role.id : "");
-                        $('#roleName').val(isEdit ? role.name : "");
-                        $('#roleDescription').val(isEdit ? role.description : "");
-
-                        $('.role-section-body').empty();
-
-                        const permissions = response.data;
+                    success: function(response){
+                        const role = response.data;
+                        $('#roleId').val(role.id);
+                        $('#roleName').val(role.name);
+                        $('#roleDescription').val(role.description);
+                        console.log(permissions);
                         const groupedPermissions = groupPermissionsByArea(permissions);
-
+                        console.log(groupedPermissions);
                         for (const area in groupedPermissions) {
                             const section = $(`#role-section-${area}`);
                             const permissionList = groupedPermissions[area];
 
                             const permissionHtml = permissionList.map(permission => {
-                                const isChecked = isEdit && role.permissions && role.permissions.includes(permission.name);
+                                const isChecked = role.permissions && role.permissions.some(p => p.name === permission.name);
+                            
                                 return `
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="${permission.name}" data-id="${permission.id}" 
-                                            ${isChecked ? 'checked' : ''}>
-                                        <label class="form-check-label" for="${permission.name}">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input" data-id="${permission.id}" value="${permission.name}" id="labelPermission${permission.id}"  id="customSwitch1" ${isChecked ? 'checked' : ''}>
+                                        <label class="custom-control-label" data-id="${permission.id}" for="${permission.name}">
                                             ${permission.name}
                                         </label>
                                     </div>
@@ -385,8 +396,63 @@
                         }
                     }
                 });
-            };
 
+                
+
+
+                
+            }
+            
+            const populateModal = (isEdit, role = null) => {
+                $.ajax({
+                    url: 'http://localhost:8090/api/v1/permissions',
+                    type: 'GET',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (response) {
+                        $('.role-section-body').empty();
+                        const permissions = response.data;
+                        if(!isEdit){
+                        const groupedPermissions = groupPermissionsByArea(permissions);
+
+                        for (const area in groupedPermissions) {
+                            const section = $(`#role-section-${area}`);
+                            const permissionList = groupedPermissions[area];
+
+                            const permissionHtml = permissionList.map(permission => {
+                                
+                                return `
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input" data-id="${permission.id}" value="${permission.name}" id="labelPermission${permission.id}"  id="customSwitch1">
+                                        <label class="custom-control-label" data-id="${permission.id}" for="${permission.name}">
+                                            ${permission.name}
+                                        </label>
+                                    </div>
+                                `;
+                            }).join('');
+
+                            section.find('.role-section-body').html(permissionHtml);
+                        }
+                    }else{
+                        populateModalEdit(role,permissions);
+                    }
+                    }
+                });
+            };
+            $(document).on('click','.custom-control-label', function(){
+                let id = $(this).data('id');
+                const checkbox = document.getElementById(`labelPermission${id}`);
+                
+                
+                if(checkbox.checked){
+                    checkbox.checked = false;
+                }
+                else{
+                    checkbox.checked = true;
+                }
+            });
+            
             $(document).on('click', '.role-section-header', function () {
                 const $sectionBody = $(this).next('.role-section-body');
                 const $icon = $(this).find('.toggle-icon');
@@ -403,24 +469,27 @@
             $('#btnCreateRole').on('click', function () {
                 const isEdit = false;
                 populateModal(isEdit);
-                $('#modalEdit').modal('show');
+                $('#modalCreateEdit').modal('show');
+                document.getElementById('modalCreateEditLabel').innerHTML = "Add Role";
             });
 
             $(document).on('click', '.btn-edit', function () {
                 const role = $(this).data('role');
                 const isEdit = true;
                 populateModal(isEdit, role);
-                $('#modalEdit').modal('show');
+                $('#modalCreateEdit').modal('show');
+                document.getElementById('modalCreateEditLabel').innerHTML = "Edit Role";
             });
 
-            $('#modalEdit').on('hidden.bs.modal', function () {
+            $('#modalCreateEdit').on('hidden.bs.modal', function () {
                 $('.role-section-body').slideUp();
                 $('.toggle-icon').removeClass('fa-chevron-up').addClass('fa-chevron-down');
             });
 
             $('#editForm').submit(function (event) {
                 event.preventDefault();
-                const isEdit = !!$('#editRoleId').val();
+                const isEdit = $('#roleId').val() != '';
+                console.log($('#roleId').val());
                 handleSubmit(isEdit);
             });
         });

@@ -7,6 +7,7 @@ import com.bluevelvet.model.Role;
 import com.bluevelvet.model.User;
 import com.bluevelvet.repository.PermissionsRepository;
 import com.bluevelvet.repository.UserRepository;
+import com.bluevelvet.service.PermissionsService;
 import com.bluevelvet.service.RoleService;
 import com.bluevelvet.service.UserService;
 import jakarta.validation.Valid;
@@ -27,6 +28,8 @@ public class RoleController {
 
     @Autowired
     private PermissionsRepository permissionsRepository;
+    @Autowired
+    private PermissionsService permissionsService;
 
     @GetMapping("/roles")
     @PreAuthorize("hasAuthority('PERMISSION_REVIEW_VIEW')")
@@ -68,13 +71,13 @@ public class RoleController {
 
     @GetMapping("/roles/{id}")
     @PreAuthorize("hasAuthority('PERMISSION_ROLE_VIEW')")
-    public ResponseEntity<ApiResponse<String>> getRoleById(@PathVariable int id){
+    public ResponseEntity<ApiResponse<Object>> getRoleById(@PathVariable int id){
         Optional<Role> role = roleService.getRoleById(id);
         if(!role.isPresent()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse<>("error", "Role not found"));
         }
-        return ResponseEntity.ok(new ApiResponse<>("success", role.get().toString()));
+        return ResponseEntity.ok(new ApiResponse<>("success", role.get()));
     }
 
     @PutMapping("/roles/{id}")
@@ -91,6 +94,8 @@ public class RoleController {
         updatedRole.setName(roleDTO.getName());
         updatedRole.setDescription(roleDTO.getDescription());
 
+        permissionsService.removeRoleFromAllPermissions(id);
+        
         roleDTO.getPermissions().forEach(permissionId -> {
             permissionsRepository.findById(permissionId).ifPresent(permission -> {
                 updatedRole.getPermissions().add(permission);
