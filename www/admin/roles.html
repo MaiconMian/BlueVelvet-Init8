@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous">
     <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 <body>
@@ -94,6 +95,12 @@
                         <div class="col-md-8">
                             <h5 id="viewNameRole" class="font-weight-bold"></h5>
                             <p><strong>Description:</strong> <span id="viewDescriptionRole"></span></p>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="rolePermissionList"><b>Permissions</b></label>
+                            <div class="list-group" style="height:200px; overflow-y: auto;" id="rolePermissionList">
+
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -262,7 +269,6 @@
 
                 $('#dataTableContent').on('click', '#btn-view', function () {
                     const roleId = $(this).data('id');
-                    console.log('oi')
                     $('#viewError').hide();
 
                     $.ajax({
@@ -273,9 +279,18 @@
                         },
                         success: function (response) {
                             let role = response.data;
-                            console.log(response);
+                            const rolePermissionList = document.getElementById('rolePermissionList');
                             $('#viewNameRole').text(role.name);
                             $('#viewDescriptionRole').text(role.description);
+                           rolePermissionList.innerHTML = '';
+                            
+                            role.permissions.forEach((permission)=>{
+                                rolePermissionList.innerHTML += `
+                                 <li class="list-group-item list-group-item-action">${permission.name}</li>
+
+                                
+                                `;
+                            });
                             
                             $('#modalViewRole').modal('show');
                         },
