@@ -129,6 +129,24 @@ public class CategoryController {
             }
         }
 
+        if (categoryDTO.getBrands() != null) {
+
+            newCategory.getBrands().forEach(brand -> {
+                brand.getCategory().remove(newCategory);
+                brandRepository.save(brand);
+            });
+
+            newCategory.getBrands().clear();
+
+            categoryDTO.getBrands().forEach(brandId -> {
+                Brand brand = brandRepository.findById(brandId)
+                        .orElseThrow(() -> new IllegalArgumentException("Brand not found: " + brandId));
+                newCategory.getBrands().add(brand);
+                brand.getCategory().add(newCategory);
+                brandRepository.save(brand);
+            });
+        }
+
         try {
             Category updatedCategory = categoryService.saveCategory(newCategory);
             return ResponseEntity.ok(new ApiResponse<>("success", "Category updated successfully"));

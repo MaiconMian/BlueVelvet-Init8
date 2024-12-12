@@ -3,7 +3,6 @@ package com.bluevelvet.controller;
 import com.bluevelvet.DTO.AdminRegisterDTO;
 import com.bluevelvet.DTO.BrandDTO;
 import com.bluevelvet.DTO.ProductDTO;
-import com.bluevelvet.DTO.UserRegisterDTO;
 import com.bluevelvet.model.ApiResponse;
 import com.bluevelvet.model.Brand;
 import com.bluevelvet.model.Product;
