@@ -22,6 +22,8 @@ public class UserUpdateDTO {
     @NotEmpty(message = "Roles are required")
     private Set<Integer> roles;
 
+    private byte[] image;
+
     private String password;
 
     private Boolean status;
