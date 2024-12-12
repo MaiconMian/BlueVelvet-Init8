@@ -80,7 +80,7 @@
         </div>
     </div>
 
-    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="modalView" tabindex="-1" role="dialog" aria-labelledby="modalViewLabel" aria-hidden="true">
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="modalViewRole" tabindex="-1" role="dialog" aria-labelledby="modalViewLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -92,8 +92,8 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-8">
-                            <h5 id="viewName" class="font-weight-bold"></h5>
-                            <p><strong>Description:</strong> <span id="viewDescription"></span></p>
+                            <h5 id="viewNameRole" class="font-weight-bold"></h5>
+                            <p><strong>Description:</strong> <span id="viewDescriptionRole"></span></p>
                         </div>
                     </div>
                 </div>
@@ -258,8 +258,35 @@
     <script src="../assets/js/tokenInformations.js"> </script>
     <script src="../assets/js/roles.js"></script>
     <script>
-        populateTable(user => `
-            <button type="button" class="btn btn-primary btn-view" data-id="${user.id}">
+             $(document).ready(function () {
+
+                $('#dataTableContent').on('click', '#btn-view', function () {
+                    const roleId = $(this).data('id');
+                    console.log('oi')
+                    $('#viewError').hide();
+
+                    $.ajax({
+                        url: `http://localhost:8090/api/v1/roles/${roleId}`,
+                        type: 'GET',
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        success: function (response) {
+                            let role = response.data;
+                            console.log(response);
+                            $('#viewNameRole').text(role.name);
+                            $('#viewDescriptionRole').text(role.description);
+                            
+                            $('#modalViewRole').modal('show');
+                        },
+                        error: function () {
+                            $('#viewError').text('Error: Failed to load role details').show();
+                        }
+                    });
+                });
+            });
+            populateTable(user => `
+            <button type="button" id="btn-view" class="btn btn-primary btn-view" data-id="${user.id}">
                 <i class="fa fa-eye"></i>
             </button>
             <button type="button" class="btn btn-success btn-edit" data-id="${user.id}">
@@ -284,6 +311,8 @@
         }
 
         $(document).ready(function () {
+
+            
             const handleSubmit = (isEdit) => {
                 const roleId = $('#editRoleId').val();
                 const data = {

@@ -26,29 +26,7 @@ function populateTable(actions) {
                 autoWidth: false
             });
 
-            $('#dataTableContent').on('click', '.btn-view', function () {
-                const roleId = $(this).data('id');
-                $('#viewError').hide();
-
-                $.ajax({
-                    url: `http://localhost:8090/api/v1/roles/${roleId}`,
-                    type: 'GET',
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    success: function (response) {
-                        const role = response.data;
-
-                        $('#viewName').text(role.name);
-                        $('#viewDescription').text(role.description);
-
-                        $('#modalView').modal('show');
-                    },
-                    error: function () {
-                        $('#viewError').text('Error: Failed to load role details').show();
-                    }
-                });
-            });
+           
 
             $('#dataTableContent').on('click', '.btn-delete', function () {
                 const userId = $(this).data('id');
@@ -76,4 +54,31 @@ function populateTable(actions) {
     });
 }
 
+$(document).ready(function () {
+
+    $('#dataTableContent').on('click', '#btn-view', function () {
+        const roleId = $(this).data('id');
+        console.log('oi')
+        $('#viewError').hide();
+
+        $.ajax({
+            url: `http://localhost:8090/api/v1/roles/${roleId}`,
+            type: 'GET',
+            xhrFields: {
+                withCredentials: true
+            },
+            success: function (response) {
+                const role = response.data;
+
+                $('#viewName').text(role.name);
+                $('#viewDescription').text(role.description);
+
+                $('#modalViewRole').modal('show');
+            },
+            error: function () {
+                $('#viewError').text('Error: Failed to load role details').show();
+            }
+        });
+    });
+});
 window.populateTable = populateTable;

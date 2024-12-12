@@ -68,13 +68,13 @@ public class RoleController {
 
     @GetMapping("/roles/{id}")
     @PreAuthorize("hasAuthority('PERMISSION_ROLE_VIEW')")
-    public ResponseEntity<ApiResponse<String>> getRoleById(@PathVariable int id){
+    public ResponseEntity<ApiResponse<Object>> getRoleById(@PathVariable int id){
         Optional<Role> role = roleService.getRoleById(id);
         if(!role.isPresent()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse<>("error", "Role not found"));
         }
-        return ResponseEntity.ok(new ApiResponse<>("success", role.get().toString()));
+        return ResponseEntity.ok(new ApiResponse<>("success", role.get()));
     }
 
     @PutMapping("/roles/{id}")
