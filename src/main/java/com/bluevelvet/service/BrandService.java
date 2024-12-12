@@ -65,17 +65,8 @@ public class BrandService {
                 categoryRepository.save(category);
             });
         }
-
-        if (brandDTO.getProducts() != null) {
-            brandDTO.getProducts().forEach(productId -> {
-                Product product = productRepository.findById(productId)
-                        .orElseThrow(() -> new IllegalArgumentException("Product not found for ID: " + productId));
-                newBrand.getProducts().add(product);
-                product.setBrand(newBrand);
-                productRepository.save(product);
-            });
-        }
-
+        
+        newBrand.setImage(brandDTO.getImage());
         this.saveBrand(newBrand);
         return newBrand;
     }

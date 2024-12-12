@@ -18,7 +18,6 @@ public class BrandDTO {
 
     private byte[] image;
 
-    private List<Integer> products;
 
     private Set<Integer> category;
 }

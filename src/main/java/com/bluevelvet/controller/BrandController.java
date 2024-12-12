@@ -3,9 +3,11 @@ package com.bluevelvet.controller;
 import com.bluevelvet.DTO.BrandDTO;
 import com.bluevelvet.DTO.CategoryDTO;
 import com.bluevelvet.model.ApiResponse;
+import com.bluevelvet.repository.BrandRepository;
 import com.bluevelvet.repository.CategoryRepository;
 import com.bluevelvet.repository.ProductRepository;
 import com.bluevelvet.service.BrandService;
+import com.bluevelvet.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,8 @@ public class BrandController {
     private CategoryRepository categoryRepository;
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private ProductService productService;
 
     @GetMapping("/brands")
     @PreAuthorize("permitAll()")
@@ -52,6 +56,13 @@ public class BrandController {
     @DeleteMapping("/brands/{id}")
     @PreAuthorize("hasAuthority('PERMISSION_BRAND_DELETE')")
     public ResponseEntity<ApiResponse<Object>> deleteBrandById(@PathVariable int id) {
+        List<Product> allProducts = productRepository.findAll();
+        Brand b = brandService.getBrandById(id).get();
+        for (Product p : allProducts) {
+            if (p.getBrand() == b) {
+                productService.deleteProduct(p.getId());
+            }
+        }
         boolean deleted = brandService.deleteBrand(id);
         if (deleted) {
             return ResponseEntity.noContent().build();
@@ -95,16 +106,6 @@ public class BrandController {
             });
         }
 
-        // Update products
-        if (brandDTO.getProducts() != null) {
-            existingBrand.getProducts().clear();
-            brandDTO.getProducts().forEach(productId -> {
-                Product product = productRepository.findById(productId)
-                        .orElseThrow(() -> new IllegalArgumentException("Product not found for ID: " + productId));
-                existingBrand.getProducts().add(product);
-                product.setBrand(existingBrand);
-            });
-        }
 
         brandService.updateBrand(id, existingBrand);
 
