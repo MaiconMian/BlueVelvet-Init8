@@ -14,7 +14,9 @@ import com.bluevelvet.security.TokenService;
 import com.bluevelvet.service.RoleService;
 import com.bluevelvet.service.UserService;
 import jakarta.validation.Valid;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +25,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import com.bluevelvet.DTO.UserUpdateDTO;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,14 +63,49 @@ public class UsersController {
 
     @DeleteMapping("/users/{id}")
     @PreAuthorize("hasAuthority('PERMISSION_USER_DELETE')")
-    public ResponseEntity<ApiResponse<Object>> deleteUserById(@PathVariable int id) {
-        boolean deleted = userService.deleteUser(id);
-        if (deleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>("error", "User not found"));
+    public ResponseEntity<ApiResponse<Object>> deleteUserById(@RequestHeader(HttpHeaders.COOKIE) String cookieHeader, @PathVariable int id) {
+
+        String token = extractTokenFromCookie(cookieHeader, "jwt");
+
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>("Token not found", null));
         }
+
+        String email = decodeToken(token);
+        User user = (User) userRepository.findByEmail(email);
+
+        if(user.getId() == id){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>("You can't delete yourself", null));
+        } else {
+            boolean deleted = userService.deleteUser(id);
+            if (deleted) {
+                return ResponseEntity.noContent().build();
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("error", "User not found"));
+            }
+        }
+    }
+
+    private String decodeToken(String token){
+        String[] chunks = token.split("\\.");
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+        String payload = new String(decoder.decode(chunks[1]));
+        JSONObject json = new JSONObject(payload);
+        return json.getString("email");
+    }
+
+    private String extractTokenFromCookie(String cookieHeader, String cookieName) {
+        if (cookieHeader != null && !cookieHeader.isEmpty()) {
+            String[] cookies = cookieHeader.split(";");
+            for (String cookie : cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(cookieName + "=")) {
+                    return cookie.substring(cookieName.length() + 1);
+                }
+            }
+        }
+        return null;
     }
 
     @PostMapping("/users")
