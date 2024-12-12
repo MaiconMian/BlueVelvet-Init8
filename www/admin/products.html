@@ -349,6 +349,24 @@
                 reader.readAsDataURL(file);
             };
 
+            const previewExistingImages = (image_src, containerId) => {
+                if(!image_src) return;
+
+                const imgContainer = $(`
+                    <div class="col-md-3 col-sm-4 col-6 mt-2 position-relative">
+                        <img src="${image_src}" class="img-thumbnail w-100" alt="Main Image Preview">
+                        <button id="deleteImageBtn" type="button" class="btn btn-sm btn-danger position-absolute delete-btn" aria-label="Remove Image">
+                            &times;
+                        </button>
+                    </div>
+                `);
+                $(containerId).append(imgContainer);
+
+                imgContainer.find('#deleteImageBtn').on('click', () => {
+                    imgContainer.remove();
+                });
+            }
+
             $('#editImage').on('change', function () {
                 const file = this.files[0];
                 previewImage(file, '#mainImagePreview');
@@ -356,8 +374,10 @@
 
             $('#editSecondaryImages').on('change', function () {
                 const files = Array.from(this.files);
+                const imageSrcs = $('#secondaryImagesPreview').find('img').map(function() {return $(this).attr('src');}).get();
                 $('#secondaryImagesPreview').empty();
                 files.forEach((file) => previewImage(file, '#secondaryImagesPreview', true));
+                imageSrcs.forEach((image_src) => previewExistingImages(image_src, '#secondaryImagesPreview'));
             });
 
             const populateModal = (isEdit, product = null) => {
