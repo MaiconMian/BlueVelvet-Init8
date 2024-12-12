@@ -1,0 +1,130 @@
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --linear-grad: radial-gradient(circle, #243B55, #141E30 80%);
+    --text-light: #cdd7e5;
+    --text-dark: #ffffff;
+    --highlight: #2b88d8;
+    --button-bg: #2b88d8;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Poppins', sans-serif;
+    background: var(--linear-grad);
+    color: var(--text-dark);
+}
+
+
+.welcome-container {
+    position: relative;
+    width: 850px;
+    height: 500px;
+    background: #141E30;
+    color: var(--text-dark);
+    border-radius: 13px;
+    box-shadow: 
+        0px 10px 20px rgba(0, 0, 0, 0.3), 
+        0px 0px 10px rgba(43, 136, 216, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.05); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: radial-gradient(circle, #2B3A55, #141E30 80%);
+    transition: all 0.3s ease-in-out;
+}
+
+.welcome-container:hover {
+    box-shadow: 
+        0px 15px 25px rgba(0, 0, 0, 0.4), 
+        0px 0px 15px rgba(43, 136, 216, 0.4); 
+    transform: scale(1.01); 
+}
+
+
+.welcome-panel h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.welcome-panel h1 span {
+    color: var(--highlight);
+}
+
+.logo-image {
+    width: 200px; 
+    height: auto;
+    margin: 10px 0 20px;
+}
+
+.welcome-panel p {
+    font-size: 16px;
+    font-weight: 300;
+    margin-bottom: 30px;
+    color: var(--text-light);
+}
+
+.login-button {
+    display: inline-block;
+    padding: 10px 30px;
+    color: var(--text-dark);
+    background-color: var(--button-bg);
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 20px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.login-button:hover {
+    background-color: #1b6dbb;
+    transform: scale(1.05);
+}
+
+
+footer {
+    margin-top: 20px;
+    text-align: center;
+    color: var(--text-light);
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+footer p {
+    margin: 10px 0;
+}
+
+
+@media (max-width: 768px) {
+    .welcome-container {
+        width: 95%;
+        height: auto;
+        padding: 20px;
+    }
+
+    .welcome-panel h1 {
+        font-size: 2rem;
+    }
+
+    .logo-image {
+        width: 80px;
+    }
+
+    .login-button {
+        padding: 8px 20px;
+    }
+
+    footer {
+        font-size: 10px;
+    }
+}
