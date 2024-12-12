@@ -81,7 +81,7 @@ function populateTable(actions) {
                             location.reload();
                         },
                         error: function () {
-                            $('#deleteError').text('Error: Failed to delete product').show();
+                            $('#deleteError').text('Error: Failed to delete User').show();
                         }
                     });
                 });
