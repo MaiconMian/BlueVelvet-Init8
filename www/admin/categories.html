@@ -82,89 +82,63 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalViewLabel">category Details</h5>
+                    <h5 class="modal-title" id="modalViewLabel">Category Details</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
+                        <div class="col-md-4 text-center">
+                            <img id="mainImage" src="" alt="Category main photo" class="img-fluid rounded" style="max-width: 100%; height: auto; border: 1px solid #ddd;">
+                        </div>
                         <div class="col-md-8">
                             <h5 id="viewName" class="font-weight-bold"></h5>
-                            <p><strong>Description:</strong> <span id="viewDescription"></span></p>
+                            <p><strong>Parent category:</strong> <div id="viewParent"></div></p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="modalCreate" tabindex="-1" role="dialog" aria-labelledby="modalCreateLabel" aria-hidden="true">
+
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="modalEditLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalCreateLabel">Add Category</h5>
+                    <h5 class="modal-title" id="modalEditLabel">Edit Category</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div id="createError" class="alert alert-danger" style="display: none;"></div>
-                    <form id="createForm">
-                        <div class="form-group">
-                            <label for="createCategoryName">Category Name</label>
-                            <input type="text" id="createCategoryName" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="createCategoryImage">Category Image</label>
-                            <input type="file" id="createCategoryImage" class="form-control-file">
-                            <div id="createImagePreview" style="margin-top: 10px;">
-                                <img src="" alt="Preview" style="max-width: 100px; display: none;">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="categoryBrands"> Brands for Category</label>
-                            <select id="createCategoryBrand" class="form-control" multiple></select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Add Category</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="modalCreateLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalCreateLabel">Add Category</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div id="createError" class="alert alert-danger" style="display: none;"></div>
+                    <div id="editError" class="alert alert-danger" style="display: none;"></div>
                     <form id="editForm">
-                        <input type="hidden" id="idCategory" value="">
+                        <input type="hidden" id="editCategoryId">
                         <div class="form-group">
-                            <label for="editCategoryName">Category Name</label>
-                            <input type="text" id="editCategoryName" class="form-control" required>
+                            <label for="editName">Name</label>
+                            <input type="text" id="editName" class="form-control" maxlength="100" required>
+                            <div id="nameCounter" style="color: gray; font-size: 0.9em;">0/100</div>
                         </div>
                         <div class="form-group">
-                            <label for="createCategoryImage">Category Image</label>
-                            <input type="file" id="editCategoryImage" class="form-control-file">
-                            <div id="createImagePreview" style="margin-top: 10px;">
-                                <img src="" alt="Preview" id="editCategoryImagePreview" style="max-width: 100px; display: none;">
-                            </div>
+                            <label>Parent Category</label>
+                            <select id="editStock" class="form-control">
+                            </select>
                         </div>
                         <div class="form-group">
-                            <label for="categoryBrands"> Brands for Category</label>
-                            <select id="editCategoryBrand" class="form-control" multiple></select>
+                            <label for="createBrands"></label>
+                            <select id="createBrands" class="form-control" required multiple></select>
+                        </div>                       
+                        <div class="form-group">
+                            <label>Main Image</label>
+                            <input type="file" id="editImage" class="form-control-file">
+                            <div class="mt-2" id="mainImagePreview" style="max-width: 200px;"></div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Add Category</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
                     </form>
                 </div>
             </div>
         </div>
-    </div>         
     </div>
 
     <div class="modal fade" data-backdrop="static" data-keyboard="false" id="modalDelete" tabindex="-1" role="dialog" aria-labelledby="modalDeleteLabel" aria-hidden="true">
@@ -195,6 +169,190 @@
     <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>    
     <script src="../assets/js/user_informations.js"> </script>
     <script src="../assets/js/categories.js"></script>
-    
+    <script>
+        populateTable(category => `
+            <button type="button" class="btn btn-primary btn-view" data-id="${category.id}">
+                <i class="fa fa-eye"></i>
+            </button>
+            <button type="button" class="btn btn-success btn-edit" data-id="${category.id}">
+                <i class="fa fa-pencil-square-o"></i>
+            </button>
+            <button type="button" class="btn btn-danger btn-delete" data-id="${category.id}">
+                <i class="fa fa-trash"></i>
+            </button>
+        `);
+
+        function showSuccessMessage(message) {
+            const successAlert = $(`
+                <div class="alert alert-success" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 1050;">
+                    ${message}
+                </div>
+            `);
+            $('body').append(successAlert);
+            setTimeout(() => {
+                successAlert.fadeOut(() => successAlert.remove());
+                location.reload();
+            }, 3000);
+        }
+
+        function fetchBrands() {
+            return Promise.all([
+                $.get('http://localhost:8090/api/v1/brands'),
+            ]);
+        }
+
+        $(document).ready(() => {
+            const previewImage = (file, containerId) => {
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const imgContainer = $(`
+                        <div class="position-relative">
+                            <img src="${e.target.result}" class="img-thumbnail w-100" alt="Main Image Preview">
+                            <button id="deleteImageBtn" type="button" class="btn btn-sm btn-danger position-absolute delete-btn" aria-label="Remove Image">
+                                &times;
+                            </button>
+                        </div>
+                    `);
+                    $(containerId).html(imgContainer);
+
+                    imgContainer.find('#deleteImageBtn').on('click', () => {
+                        $(containerId).html('<p>No image selected</p>');
+                    });
+                };
+                reader.readAsDataURL(file);
+            };
+
+            const updateCounter = (fieldId, counterId, maxLength, isEdit) => {
+                if (isEdit) {
+                    const currentLength = $(`#${fieldId}`).val().length;
+                    $(`#${counterId}`).text(`${currentLength}/${maxLength}`);
+                } else {
+                    $(`#${counterId}`).text(`0/${maxLength}`);
+                }
+            };
+
+            $('#editImage').on('change', function () {
+                const file = this.files[0];
+                previewImage(file, '#mainImagePreview');
+            });
+
+            const populateModal = (isEdit, category = null) => {
+                $('#editCategoryId').val(isEdit ? category.id : "");
+
+                $('#editName')
+                    .val(isEdit ? category.categoryName : "")
+                    .attr('maxlength', 100)
+                    .on('input', function () {
+                        const currentLength = $(this).val().length;
+                        $('#nameCounter').text(`${currentLength}/100`);
+                    });
+                updateCounter('editName', 'nameCounter', 100, isEdit);
+
+                $('#mainImagePreview').empty();
+
+                if (isEdit && category.image) {
+                    const mainImageContainer = $(`
+                        <div class="position-relative">
+                            <img src="data:image/png;base64,${category.image}" class="img-thumbnail w-100" alt="Main Image Preview">
+                            <button id="deleteImageBtn" type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 p-1 delete-btn" aria-label="Remove Image">
+                                &times;
+                            </button>
+                        </div>
+                    `);
+                    $('#mainImagePreview').append(mainImageContainer);
+
+                    mainImageContainer.find('#deleteImageBtn').on('click', () => {
+                        $('#mainImagePreview').empty();
+                    });
+                }
+
+                fetchBrands().then(([brands]) => {
+                    const brandSelect = $('#createBrands').empty();
+                    brands.data.forEach((brand) => {
+                        brandSelect.append(new Option(brand.brandName, brand.id));
+                    });
+                });
+            };
+
+            const handleSubmit = (isEdit) => {
+                const categoryId = $('#editCategoryId').val();
+
+                const selectedBrands = [];
+                $('#createBrands option:selected').each(function () {
+                    selectedBrands.push(parseInt($(this).val())); 
+                });
+
+                const data = {
+                    categoryName: $('#editName').val(),
+                    brands: selectedBrands
+                };
+
+                const mainImageElement = $('#mainImagePreview img');
+                if (mainImageElement.length) {
+                    data.image = mainImageElement.attr('src').split(',')[1];
+                }
+
+                const submitData = () => {
+                    const baseUrl = "http://localhost:8090/api/v1"
+                    const url = isEdit ? `${baseUrl}/categories/${categoryId}` : `${baseUrl}/categories`;
+                    const method = isEdit ? "PUT" : "POST";
+
+                    $.ajax({
+                        url,
+                        method,
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        contentType: 'application/json',
+                        data: JSON.stringify(data),
+                        success: () => {
+                            showSuccessMessage(`Category ${isEdit ? 'updated' : 'created'} successfully!`);
+                            $('#modalEdit').modal('hide');
+                        },
+                        error: () => {
+                            $('#editError').text(`Failed to ${isEdit ? 'update' : 'create'} category`).show();
+                        },
+                    });
+                };
+
+                submitData();
+            };
+
+            $(document).on('click', '.btn-edit', function () {
+                const categoryId = $(this).data('id');
+                $.ajax({
+                    url: `http://localhost:8090/api/v1/users/${categoryId}`,
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    type: 'GET',
+                    success: function (user) {
+                        populateModal(true, user.data);
+                        $('#modalEdit').modal('show');
+                    },
+                    error: function () {
+                        console.error('Error: Failed to fetch category data');
+                    }
+                });
+            });
+
+            $('#btnCreateCategory').on('click', () => {
+                populateModal(false);
+                $('#modalEdit').modal('show');
+            });
+
+            $('#editForm').submit(function (event) {
+                event.preventDefault();
+                const isEdit = !!$('#editCategoryId').val();
+                if (!isEdit && !$('#mainImagePreview img').length) {
+                    $('#editError').text('Please provide a main image for the category.').show();
+                    return;
+                }
+                handleSubmit(isEdit);
+            });
+        });
+    </script>
 </body>
 </html>
