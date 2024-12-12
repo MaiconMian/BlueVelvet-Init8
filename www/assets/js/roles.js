@@ -56,24 +56,33 @@ function populateTable(actions) {
 
 $(document).ready(function () {
 
-    $('#dataTableContent').on('click', '#btn-view', function () {
+    $('#dataTableContent').on('click', '.btn-view', function () {
         const roleId = $(this).data('id');
-        console.log('oi')
         $('#viewError').hide();
 
         $.ajax({
             url: `http://localhost:8090/api/v1/roles/${roleId}`,
-            type: 'GET',
             xhrFields: {
                 withCredentials: true
             },
+            type: 'GET',
             success: function (response) {
                 const role = response.data;
+                const rolePermissionList = document.getElementById('rolePermissionList');
 
                 $('#viewName').text(role.name);
                 $('#viewDescription').text(role.description);
+                
+                rolePermissionList.innerHTML = '';
 
-                $('#modalViewRole').modal('show');
+                role.permissions.forEach((permission)=>{
+                    rolePermissionList.innerHTML += `
+                        <li class="list-group-item list-group-item-action">${permission.name}</li>
+                    
+                    `;
+                });
+                $('#modalView').modal('show');
+
             },
             error: function () {
                 $('#viewError').text('Error: Failed to load role details').show();
