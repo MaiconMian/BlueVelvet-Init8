@@ -38,14 +38,14 @@ function populateTable(actions) {
                     },
                     success: function (response) {
                         const category = response.data;
-
+            
                         $('#viewName').text(category.categoryName);
-
+            
                         const mainImageSrc = category.image
                             ? `data:image/jpeg;charset=utf-8;base64,${category.image}`
-                            : 'https://via.assets.so/img.jpg?w=300&h=300&tc=gray&bg=#cecece&t=Image+not+found';
+                            : 'https://via.placeholder.com/300?text=Image+not+found';
                         $('#mainImage').attr('src', mainImageSrc);
-
+                        
                         $('#modalView').modal('show');
                     },
                     error: function () {
