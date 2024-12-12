@@ -54,7 +54,17 @@ function populateTable(actions) {
                         const brand = response.data;
 
                         $('#viewName').text(brand.brandName);
-                        $('#viewCategories').text(brand.category);
+
+                        const categoriesView = $('#viewCategories').empty();
+                        if(brand.category && brand.category.length > 0){
+                            brand.category.forEach(category => {
+                                const badge = $(`<span class="badge badge-primary mr-2 mb-2">${category.categoryName}</span>`);
+                                categoriesView.append(badge);
+                            });
+                        } else {
+                            categoriesView.html('<span class="badge badge-danger mr-2 mb-2">No categories</span>');
+                        }
+
                         const mainImageSrc = brand.image
                             ? `data:image/jpeg;charset=utf-8;base64,${brand.image}`
                             : 'https://via.assets.so/img.jpg?w=300&h=300&tc=gray&bg=#cecece&t=Image+not+found';
@@ -174,7 +184,7 @@ $(document).ready(() => {
 
         const selectedCategories = [];
         $('#createCategoryBrands option:selected').each(function () {
-            selectedCategories.push($(this).val()); 
+            selectedCategories.push(parseInt($(this).val())); 
         });
 
         const data = {
@@ -229,15 +239,13 @@ $(document).ready(() => {
 
         const selectedCategories = [];
         $('#editCategoryBrands option:selected').each(function () {
-            selectedCategories.push($(this).val()); 
+            selectedCategories.push(parseInt($(this).val())); 
         });
-
 
         const data = {
             brandName: $('#editBrandName').val(),
-            category: $('#editCategoryBrands .badges').map((_, el) => parseInt($(el).data('id'))).get(),
+            category: selectedCategories
         };
-        console.log(data);
 
         const mainImageFile = $('#editBrandImage')[0].files[0];
 
