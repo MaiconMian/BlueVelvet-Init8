@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous">
     <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 <body>
@@ -81,7 +80,7 @@
         </div>
     </div>
 
-    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="modalViewRole" tabindex="-1" role="dialog" aria-labelledby="modalViewLabel" aria-hidden="true">
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="modalView" tabindex="-1" role="dialog" aria-labelledby="modalViewLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -93,14 +92,8 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-8">
-                            <h5 id="viewNameRole" class="font-weight-bold"></h5>
-                            <p><strong>Description:</strong> <span id="viewDescriptionRole"></span></p>
-                        </div>
-                        <div class="col-md-8">
-                            <label for="rolePermissionList"><b>Permissions</b></label>
-                            <div class="list-group" style="height:200px; overflow-y: auto;" id="rolePermissionList">
-
-                            </div>
+                            <h5 id="viewName" class="font-weight-bold"></h5>
+                            <p><strong>Description:</strong> <span id="viewDescription"></span></p>
                         </div>
                     </div>
                 </div>
@@ -108,11 +101,11 @@
         </div>
     </div>
 
-    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="modalEditLabel" aria-hidden="true">
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="modalCreateEdit" tabindex="-1" role="dialog" aria-labelledby="modalCreateEditLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalEditLabel">Edit Role</h5>
+                    <h5 class="modal-title" id="modalCreateEditLabel">Edit Role</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -265,43 +258,8 @@
     <script src="../assets/js/tokenInformations.js"> </script>
     <script src="../assets/js/roles.js"></script>
     <script>
-             $(document).ready(function () {
-
-                $('#dataTableContent').on('click', '#btn-view', function () {
-                    const roleId = $(this).data('id');
-                    $('#viewError').hide();
-
-                    $.ajax({
-                        url: `http://localhost:8090/api/v1/roles/${roleId}`,
-                        type: 'GET',
-                        xhrFields: {
-                            withCredentials: true
-                        },
-                        success: function (response) {
-                            let role = response.data;
-                            const rolePermissionList = document.getElementById('rolePermissionList');
-                            $('#viewNameRole').text(role.name);
-                            $('#viewDescriptionRole').text(role.description);
-                           rolePermissionList.innerHTML = '';
-                            
-                            role.permissions.forEach((permission)=>{
-                                rolePermissionList.innerHTML += `
-                                 <li class="list-group-item list-group-item-action">${permission.name}</li>
-
-                                
-                                `;
-                            });
-                            
-                            $('#modalViewRole').modal('show');
-                        },
-                        error: function () {
-                            $('#viewError').text('Error: Failed to load role details').show();
-                        }
-                    });
-                });
-            });
-            populateTable(user => `
-            <button type="button" id="btn-view" class="btn btn-primary btn-view" data-id="${user.id}">
+        populateTable(user => `
+            <button type="button" class="btn btn-primary btn-view" data-id="${user.id}">
                 <i class="fa fa-eye"></i>
             </button>
             <button type="button" class="btn btn-success btn-edit" data-id="${user.id}">
@@ -327,7 +285,10 @@
 
         $(document).ready(function () {
 
-            
+            const togglePermission = (id) =>{
+                const checkbox = document.getElementById(`labelPermission${id}`);
+                console.log(checkbox.checked);
+            }
             const handleSubmit = (isEdit) => {
                 const roleId = $('#editRoleId').val();
                 const data = {
@@ -353,7 +314,7 @@
                         data: JSON.stringify(data),
                         success: () => {
                             showSuccessMessage(`Role ${isEdit ? 'updated' : 'created'} successfully!`);
-                            $('#modalEdit').modal('hide');
+                            $('#modalCreateEdit').modal('hide');
                         },
                         error: () => {
                             $('#editError').text(`Failed to ${isEdit ? 'update' : 'create'} role`).show();
@@ -392,7 +353,7 @@
                 });
                 return grouped;
             }
-
+            
             const populateModal = (isEdit, role = null) => {
                 $.ajax({
                     url: 'http://localhost:8090/api/v1/permissions',
@@ -417,10 +378,9 @@
                             const permissionHtml = permissionList.map(permission => {
                                 const isChecked = isEdit && role.permissions && role.permissions.includes(permission.name);
                                 return `
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="${permission.name}" data-id="${permission.id}" 
-                                            ${isChecked ? 'checked' : ''}>
-                                        <label class="form-check-label" for="${permission.name}">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input" data-id="${permission.id}" value="${permission.name}" id="labelPermission${permission.id}"  id="customSwitch1" ${isChecked ? 'checked' : ''}>
+                                        <label class="custom-control-label" data-id="${permission.id}" for="${permission.name}">
                                             ${permission.name}
                                         </label>
                                     </div>
@@ -432,7 +392,19 @@
                     }
                 });
             };
-
+            $(document).on('click','.custom-control-label', function(){
+                let id = $(this).data('id');
+                const checkbox = document.getElementById(`labelPermission${id}`);
+                
+                
+                if(checkbox.checked){
+                    checkbox.checked = false;
+                }
+                else{
+                    checkbox.checked = true;
+                }
+            });
+            
             $(document).on('click', '.role-section-header', function () {
                 const $sectionBody = $(this).next('.role-section-body');
                 const $icon = $(this).find('.toggle-icon');
@@ -449,17 +421,19 @@
             $('#btnCreateRole').on('click', function () {
                 const isEdit = false;
                 populateModal(isEdit);
-                $('#modalEdit').modal('show');
+                $('#modalCreateEdit').modal('show');
+                document.getElementById('modalCreateEditLabel').innerHTML = "Add Role";
             });
 
             $(document).on('click', '.btn-edit', function () {
                 const role = $(this).data('role');
                 const isEdit = true;
                 populateModal(isEdit, role);
-                $('#modalEdit').modal('show');
+                $('#modalCreateEdit').modal('show');
+                document.getElementById('modalCreateEditLabel').innerHTML = "Edit Role";
             });
 
-            $('#modalEdit').on('hidden.bs.modal', function () {
+            $('#modalCreateEdit').on('hidden.bs.modal', function () {
                 $('.role-section-body').slideUp();
                 $('.toggle-icon').removeClass('fa-chevron-up').addClass('fa-chevron-down');
             });
