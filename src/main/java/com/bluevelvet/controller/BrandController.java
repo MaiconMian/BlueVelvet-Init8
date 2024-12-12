@@ -93,9 +93,14 @@ public class BrandController {
         existingBrand.setBrandName(brandDTO.getBrandName());
         existingBrand.setImage(brandDTO.getImage());
 
-        // Update categories
         if (brandDTO.getCategory() != null) {
+            existingBrand.getCategory().forEach(category -> {
+                category.getBrands().remove(existingBrand);
+                categoryRepository.save(category);
+            });
+
             existingBrand.getCategory().clear();
+
             brandDTO.getCategory().forEach(categoryId -> {
                 Category category = categoryRepository.findById(categoryId)
                         .orElseThrow(() -> new IllegalArgumentException("Category not found for ID: " + categoryId));
@@ -103,8 +108,10 @@ public class BrandController {
                 if (!category.getBrands().contains(existingBrand)) {
                     category.getBrands().add(existingBrand);
                 }
+                categoryRepository.save(category);
             });
         }
+
 
 
         brandService.updateBrand(id, existingBrand);
