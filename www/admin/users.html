@@ -122,15 +122,18 @@
                         <input type="hidden" id="editUserId">
                         <div class="form-group">
                             <label for="editName">Name</label>
-                            <input type="text" id="editName" class="form-control" required>
+                            <input type="text" id="editName" class="form-control" maxlength="60" required>
+                            <div id="nameCounter" style="color: gray; font-size: 0.9em;">0/60</div>
                         </div>
                         <div class="form-group">
                             <label for="editLastName">Last Name</label>
-                            <input type="text" id="editLastName" class="form-control" required>
+                            <input type="text" id="editLastName" class="form-control" maxlength="60" required>
+                            <div id="lastNameCounter" style="color: gray; font-size: 0.9em;">0/60</div>
                         </div>
                         <div class="form-group">
                             <label for="editUserEmail">E-mail</label>
-                            <input type="text" id="editUserEmail" class="form-control" required>
+                            <input type="text" id="editUserEmail" class="form-control" maxlength="128" required>
+                            <div id="emailCounter" style="color: gray; font-size: 0.9em;">0/128</div>
                         </div>
                         <div class="form-group">
                             <label for="editPassword">Password</label>
@@ -249,6 +252,15 @@
                 reader.readAsDataURL(file);
             };
 
+            const updateCounter = (fieldId, counterId, maxLength, isEdit) => {
+                if (isEdit) {
+                    const currentLength = $(`#${fieldId}`).val().length;
+                    $(`#${counterId}`).text(`${currentLength}/${maxLength}`);
+                } else {
+                    $(`#${counterId}`).text(`0/${maxLength}`);
+                }
+            };
+
             $('#editImage').on('change', function () {
                 const file = this.files[0];
                 previewImage(file, '#mainImagePreview');
@@ -256,9 +268,32 @@
 
             const populateModal = (isEdit, user = null) => {
                 $('#editUserId').val(isEdit ? user.id : "");
-                $('#editName').val(isEdit ? user.name : "");
-                $('#editLastName').val(isEdit ? user.lastName : "");
-                $('#editUserEmail').val(isEdit ? user.email : "");
+
+                $('#editName')
+                    .val(isEdit ? user.name : "")
+                    .attr('maxlength', 60)
+                    .on('input', function () {
+                        const currentLength = $(this).val().length;
+                        $('#nameCounter').text(`${currentLength}/60`);
+                    });
+                updateCounter('editName', 'nameCounter', 60, isEdit);
+
+                $('#editLastName').val(isEdit ? user.lastName : "")
+                    .attr('maxlength', 60)
+                    .on('input', function () {
+                        const currentLength = $(this).val().length;
+                        $('#lastNameCounter').text(`${currentLength}/60`);
+                    });
+                updateCounter('editLastName', 'lastNameCounter', 60, isEdit);
+
+                $('#editUserEmail').val(isEdit ? user.email : "")
+                    .attr('maxlength', 128)
+                    .on('input', function () {
+                        const currentLength = $(this).val().length;
+                        $('#emailCounter').text(`${currentLength}/128`);
+                    });
+                updateCounter('editUserEmail', 'emailCounter', 128, isEdit);
+                
                 $('#editPassword').val(isEdit ? user.password : "");
                 $('#editStatus').val(isEdit && user.status ? "true" : "false");
 
