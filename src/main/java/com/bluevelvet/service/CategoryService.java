@@ -87,17 +87,6 @@ public class CategoryService {
             });
         }
 
-        if (categoryDTO.getProducts() != null) {
-            categoryDTO.getProducts().forEach(productId -> {
-                Product product = productRepository.findById(productId)
-                        .orElseThrow(() -> new IllegalArgumentException("Product not found for ID: " + productId));
-                newCategory.getProducts().add(product);
-                product.getCategories().add(newCategory);
-                productRepository.save(product);
-            });
-        }
-
-        // Finalize saving the new category
         return this.saveCategory(newCategory);
     }
 }

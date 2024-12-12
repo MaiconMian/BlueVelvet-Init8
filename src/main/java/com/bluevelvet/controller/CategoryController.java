@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.bluevelvet.model.*;
 
+import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,7 +59,37 @@ public class CategoryController {
     @DeleteMapping("/categories/{id}")
     @PreAuthorize("hasAuthority('PERMISSION_CATEGORY_DELETE')")
     public ResponseEntity<ApiResponse<Object>> deleteCategoryById(@PathVariable int id) {
+
+        Optional<Category> categoryOptional = categoryService.getCategoryById(id);
+
+        if (!categoryOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse<>("error", "Category not found"));
+        }
+
+        Category category = categoryOptional.get();
+
+        List<Category> categories = categoryService.getAllCategories();
+
+        for (Category categorypercorred : categories) {
+            if (categorypercorred.getCategoryParent() != null && categorypercorred.getCategoryParent() == category) {
+                categorypercorred.setCategoryParent(categorypercorred);
+                categoryService.saveCategory(categorypercorred);
+            }
+        }
+
+        category.getBrands().forEach(brand -> {
+            brand.getCategory().remove(category);
+            brandRepository.save(brand);
+        });
+
+        category.getProducts().forEach(product -> {
+            product.getCategories().remove(category);
+            productRepository.save(product);
+        });
+
         boolean deleted = categoryService.deleteCategory(id);
+
         if (deleted) {
             return ResponseEntity.noContent().build();
         } else {
@@ -71,7 +102,7 @@ public class CategoryController {
     @PreAuthorize("hasAuthority('PERMISSION_CATEGORY_CREATE')")
     public ResponseEntity<ApiResponse<String>> addCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
         Category newcategory = categoryService.saveCategory(categoryDTO);
-        return ResponseEntity.ok(new ApiResponse<>("success", "Product with ID " +
+        return ResponseEntity.ok(new ApiResponse<>("success", "Category with ID " +
                 newcategory.getId() + " added successfully"));
     }
 
@@ -81,7 +112,6 @@ public class CategoryController {
             @PathVariable int id,
             @Valid @RequestBody CategoryDTO categoryDTO) {
 
-        // Verifica se a categoria existe
         Optional<Category> existingCategory = categoryService.getCategoryById(id);
         if (!existingCategory.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -92,8 +122,13 @@ public class CategoryController {
         newCategory.setImage(categoryDTO.getImage());
         newCategory.setCategoryName(categoryDTO.getCategoryName());
 
+        if(newCategory.getCategoryParent() != null){
+            Optional categoryParent = categoryService.getCategoryById(categoryDTO.getCategoryParent());
+            if(categoryParent.isPresent()){
+                newCategory.setCategoryParent((Category) categoryParent.get());
+            }
+        }
 
-        // Atualiza a categoria usando o método saveCategory no CategoryService
         try {
             Category updatedCategory = categoryService.saveCategory(newCategory);
             return ResponseEntity.ok(new ApiResponse<>("success", "Category updated successfully"));
@@ -105,8 +140,5 @@ public class CategoryController {
                     .body(new ApiResponse<>("error", "An error occurred while updating the category"));
         }
     }
-
-
-
-
+    
 }
