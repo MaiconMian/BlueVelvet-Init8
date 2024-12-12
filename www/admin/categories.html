@@ -122,12 +122,11 @@
                         </div>
                         <div class="form-group">
                             <label>Parent Category</label>
-                            <select id="editStock" class="form-control">
+                            <select id="editParent" class="form-control">
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="createBrands"></label>
-                            <select id="createBrands" class="form-control" required multiple></select>
+                            <select id="editBrands" class="form-control" required multiple></select>
                         </div>                       
                         <div class="form-group">
                             <label>Main Image</label>
@@ -195,9 +194,10 @@
             }, 3000);
         }
 
-        function fetchBrands() {
+        function fetchBrandsAndCategories() {
             return Promise.all([
                 $.get('http://localhost:8090/api/v1/brands'),
+                $.get('http://localhost:8090/api/v1/categories')
             ]);
         }
 
@@ -268,10 +268,22 @@
                     });
                 }
 
-                fetchBrands().then(([brands]) => {
-                    const brandSelect = $('#createBrands').empty();
+                fetchBrandsAndCategories().then(([brands, categories]) => {
+                    const brandSelect = $('#editBrands').empty();
                     brands.data.forEach((brand) => {
                         brandSelect.append(new Option(brand.brandName, brand.id));
+                    });
+
+                    const parentSelect = $('#editParent').empty();
+                    parentSelect.append(new Option("No parent", null));
+                    categories.data.forEach((cat) => {
+                        if(!isEdit) {
+                            parentSelect.append(new Option(cat.categoryName, cat.id));
+                        } else {
+                            if (cat.id != category.id) {
+                                parentSelect.append(new Option(cat.categoryName, cat.id));
+                            }
+                        }
                     });
                 });
             };
@@ -280,12 +292,13 @@
                 const categoryId = $('#editCategoryId').val();
 
                 const selectedBrands = [];
-                $('#createBrands option:selected').each(function () {
+                $('#editBrands option:selected').each(function () {
                     selectedBrands.push(parseInt($(this).val())); 
                 });
 
                 const data = {
                     categoryName: $('#editName').val(),
+                    categoryParent: parseInt($('#editParent').val()) || categoryId,
                     brands: selectedBrands
                 };
 
@@ -323,7 +336,7 @@
             $(document).on('click', '.btn-edit', function () {
                 const categoryId = $(this).data('id');
                 $.ajax({
-                    url: `http://localhost:8090/api/v1/users/${categoryId}`,
+                    url: `http://localhost:8090/api/v1/categories/${categoryId}`,
                     xhrFields: {
                         withCredentials: true
                     },
