@@ -3,7 +3,6 @@ package com.bluevelvet.controller;
 import com.bluevelvet.DTO.AdminRegisterDTO;
 import com.bluevelvet.DTO.UserInformationsDTO;
 import com.bluevelvet.DTO.LoginDTO;
-import com.bluevelvet.DTO.UserRegisterDTO;
 import com.bluevelvet.model.ApiResponse;
 import com.bluevelvet.model.Role;
 import com.bluevelvet.repository.UserRepository;
