@@ -124,6 +124,7 @@ public class UsersController {
         newAdminUser.setEmail(adminRegisterDTO.email());
         newAdminUser.setPassword(encryptedPassword);
         newAdminUser.setStatus(adminRegisterDTO.status());
+        newAdminUser.setImage(adminRegisterDTO.image());
 
         this.userRepository.save(newAdminUser);
 
@@ -170,6 +171,10 @@ public class UsersController {
         user.setLastName(userUpdateDTO.getLastName());
         user.setEmail(userUpdateDTO.getEmail());
         user.setStatus(userUpdateDTO.getStatus());
+
+        if(userUpdateDTO.getImage() != null){
+            user.setImage(userUpdateDTO.getImage());
+        }
 
         // Atualiza a senha apenas se for fornecida
         if (userUpdateDTO.getPassword() != null && !userUpdateDTO.getPassword().isEmpty()) {
