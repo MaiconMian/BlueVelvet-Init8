@@ -337,13 +337,21 @@
 
             const handleSubmit = (isEdit) => {
                 const userId = $('#editUserId').val();
+
+                const selectedRoles = $('#rolesContainer').find('.badge-container').map((_, element) => {
+                    return parseInt($(element).find('span').data('id'));
+                }).get();
+
                 const data = {
                     name: $('#editName').val(),
                     lastName: $('#editLastName').val(),
                     email: $('#editUserEmail').val(),
-                    password: parseFloat($('#editPassword').val()),
+                    password: ($('#editPassword').val()),
                     status: $('#editStatus').val() === 'true',
+                    roles: selectedRoles
                 };
+
+                console.log(data);
 
                 const mainImageElement = $('#mainImagePreview img');
                 if (mainImageElement.length) {
