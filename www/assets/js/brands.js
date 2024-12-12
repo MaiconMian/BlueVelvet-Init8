@@ -12,6 +12,59 @@ $(document).ready(() => {
     `);
 });
 
+const populateModal = (isEdit, brand = null) => {
+    $('#editBrandId').val(isEdit ? brand.id : "");
+
+    $('#editName')
+        .val(isEdit ? brand.brandName : "")
+        .attr('maxlength', 100)
+        .on('input', function () {
+            const currentLength = $(this).val().length;
+            $('#nameCounter').text(`${currentLength}/100`);
+        });
+    updateCounter('editName', 'nameCounter', 100, isEdit);
+
+    $('#mainImagePreview').empty();
+
+    if (isEdit && brand.image) {
+        const mainImageContainer = $(`
+            <div class="position-relative">
+                <img src="data:image/png;base64,${brand.image}" class="img-thumbnail w-100" alt="Main Image Preview">
+                <button id="deleteImageBtn" type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 p-1 delete-btn" aria-label="Remove Image">
+                    &times;
+                </button>
+            </div>
+        `);
+        $('#mainImagePreview').append(mainImageContainer);
+
+        mainImageContainer.find('#deleteImageBtn').on('click', () => {
+            $('#mainImagePreview').empty();
+        });
+    }
+
+    fetchCategories().then(([categories]) => {
+        const categoriesSelect = $('#editCategories').empty();
+        categories.data.forEach((cat) => {
+            categoriesSelect.append(new Option(cat.categoryName, cat.id));
+        });
+    });
+};
+
+const updateCounter = (fieldId, counterId, maxLength, isEdit) => {
+    if (isEdit) {
+        const currentLength = $(`#${fieldId}`).val().length;
+        $(`#${counterId}`).text(`${currentLength}/${maxLength}`);
+    } else {
+        $(`#${counterId}`).text(`0/${maxLength}`);
+    }
+};
+
+function fetchCategories() {
+    return Promise.all([
+        $.get('http://localhost:8090/api/v1/categories')
+    ]);
+}
+
 function populateTable(actions) {
     $.ajax({
         url: 'http://localhost:8090/api/v1/brands',
@@ -79,7 +132,6 @@ function populateTable(actions) {
             });
 
             $('#dataTableContent').on('click', '.btn-edit', function () {
-                console.log('oi')
                 const brandId = $(this).data('id');
                 $('#modalEdit').modal('show');
 
@@ -89,10 +141,8 @@ function populateTable(actions) {
                     xhrFields: { withCredentials: true },
                     success: function (response) {
                         const brand = response.data;
-
-                        $("#editBrandId").val(brand.id);
-                        $('#editBrandName').val(brand.brandName);
-
+                        populateModal(true, brand);
+                        $('#modalEdit').modal('show');
                     },
                     error: function () {
                         $('#editError').text('Error: Failed to load category details').show();
@@ -100,6 +150,28 @@ function populateTable(actions) {
                 });
             });
 
+            $('#dataTableContent').on('click', '.btn-delete', function () {
+                const brandId = $(this).data('id');
+                $('#deleteError').hide();
+                $('#modalDelete').modal('show');
+
+                $('#confirmDelete').off().on('click', function () {
+                    $.ajax({
+                        url: `http://localhost:8090/api/v1/brands/${brandId}`,
+                        xhrFields: { 
+                            withCredentials: true 
+                        },
+                        type: 'DELETE',
+                        success: function () {
+                            $('#modalDelete').modal('hide');
+                            location.reload();
+                        },
+                        error: function (e) {
+                            $('#deleteError').text('Error: Failed to delete brand').show();
+                        }
+                    });
+                });
+            });
            
         },
         error: function () {
@@ -109,83 +181,68 @@ function populateTable(actions) {
 }
 
 $(document).ready(() => {
-    $('#btnCreateBrand').on('click', function () {
-        $('#createForm')[0].reset();
-        $('#createImagePreview img').hide(); 
-        $('#modalCreate').modal('show'); 
-    });
-
-    $.ajax({
-        url: "http://localhost:8090/api/v1/categories",
-        method: "GET",
-        
-        success: (response) => {
-            console.log(response.data);
-
-
-
-            const categorySelects = [
-                document.getElementById('editCategoryBrands'),
-                document.getElementById('createCategoryBrands')
-            ];
-    
-            categorySelects.forEach(categorySelect => {
-                if (categorySelect) {
-                    response.data.forEach((category)=>{
-                        categorySelect.append(new Option(category.categoryName, category.id));
-                    });
-                } 
-            });
-            
-            
-        },
-        error: (e) => {
-            console.log(e);
-            $('#editError').text(`Failed to create user`).show();
-        },
-    });
-
     const previewImage = (file, containerId) => {
         if (!file) return;
 
         const reader = new FileReader();
         reader.onload = (e) => {
-            $(`${containerId} img`).attr('src', e.target.result).show();
+            const imgContainer = $(`
+                <div class="position-relative">
+                    <img src="${e.target.result}" class="img-thumbnail w-100" alt="Main Image Preview">
+                    <button id="deleteImageBtn" type="button" class="btn btn-sm btn-danger position-absolute delete-btn" aria-label="Remove Image">
+                        &times;
+                    </button>
+                </div>
+            `);
+            $(containerId).html(imgContainer);
+
+            imgContainer.find('#deleteImageBtn').on('click', () => {
+                $(containerId).html('<p>No image selected</p>');
+            });
         };
         reader.readAsDataURL(file);
     };
 
-    $('#createBrandImage').on('change', function () {
+    function showSuccessMessage(message) {
+        const successAlert = $(`
+            <div class="alert alert-success" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 1050;">
+                ${message}
+            </div>
+        `);
+        $('body').append(successAlert);
+        setTimeout(() => {
+            successAlert.fadeOut(() => successAlert.remove());
+            location.reload();
+        }, 1000);
+    }
+
+    $('#editImage').on('change', function () {
         const file = this.files[0];
-        previewImage(file, '#createImagePreview');
+        previewImage(file, '#mainImagePreview');
     });
 
-    $('#createForm').submit(function (event) {
-        event.preventDefault();
+    const handleSubmit = (isEdit) => {
+        const brandId = $('#editBrandId').val();
 
         const selectedCategories = [];
-        $('#createCategoryBrands option:selected').each(function () {
+        $('#editCategories option:selected').each(function () {
             selectedCategories.push(parseInt($(this).val())); 
         });
 
         const data = {
-            brandName: $('#createBrandName').val(),
-            category: selectedCategories,
+            brandName: $('#editName').val(),
+            category: selectedCategories
         };
-        console.log(data);
 
-        const mainImageFile = $('#createBrandImage')[0].files[0];
-
-        const convertImageToBase64 = (file, callback) => {
-            const reader = new FileReader();
-            reader.onload = () => callback(reader.result.split(',')[1]);
-            reader.readAsDataURL(file);
-        };
+        const mainImageElement = $('#mainImagePreview img');
+        if (mainImageElement.length) {
+            data.image = mainImageElement.attr('src').split(',')[1];
+        }
 
         const submitData = () => {
             const baseUrl = "http://localhost:8090/api/v1"
-            const url =  `${baseUrl}/brands`;
-            const method = "POST";
+            const url = isEdit ? `${baseUrl}/brands/${brandId}` : `${baseUrl}/brands`;
+            const method = isEdit ? "PUT" : "POST";
 
             $.ajax({
                 url,
@@ -196,76 +253,31 @@ $(document).ready(() => {
                 contentType: 'application/json',
                 data: JSON.stringify(data),
                 success: () => {
-                    $('#modalCreate').modal('hide');
-                    location.reload();
+                    showSuccessMessage(`Brand ${isEdit ? 'updated' : 'created'} successfully!`);
+                    $('#modalEdit').modal('hide');
                 },
-                error: (e) => {
-                    console.log(e);
-                    $('#editError').text("Failed to create brand").show();
+                error: () => {
+                    $('#editError').text(`Failed to ${isEdit ? 'update' : 'create'} brand`).show();
                 },
             });
         };
 
-        if (mainImageFile) {
-            convertImageToBase64(mainImageFile, mainImageBase64 => {
-                data.image = mainImageBase64;
-                submitData();
-            });
-        }
+        submitData();
+    };
+
+    $('#btnCreateBrand').on('click', () => {
+        populateModal(false);
+        $('#modalEdit').modal('show');
     });
 
     $('#editForm').submit(function (event) {
         event.preventDefault();
-        const id = $('#editBrandId').val();
-
-        const selectedCategories = [];
-        $('#editCategoryBrands option:selected').each(function () {
-            selectedCategories.push(parseInt($(this).val())); 
-        });
-
-        const data = {
-            brandName: $('#editBrandName').val(),
-            category: selectedCategories
-        };
-
-        const mainImageFile = $('#editBrandImage')[0].files[0];
-
-        const convertImageToBase64 = (file, callback) => {
-            const reader = new FileReader();
-            reader.onload = () => callback(reader.result.split(',')[1]);
-            reader.readAsDataURL(file);
-        };
-
-        const submitData = () => {
-            const baseUrl = "http://localhost:8090/api/v1"
-            const url =  `${baseUrl}/brands/${id}`;
-            const method = "PUT";
-
-            $.ajax({
-                url,
-                method,
-                xhrFields: {
-                    withCredentials: true
-                },
-                contentType: 'application/json',
-                data: JSON.stringify(data),
-                success: () => {
-                    $('#modalEdit').modal('hide');
-                    location.reload();
-                },
-                error: (e) => {
-                    console.log(e);
-                    $('#editError').text("Failed to create brand").show();
-                },
-            });
-        };
-
-        if (mainImageFile) {
-            convertImageToBase64(mainImageFile, mainImageBase64 => {
-                data.image = mainImageBase64;
-                submitData();
-            });
+        const isEdit = !!$('#editBrandId').val();
+        if (!isEdit && !$('#mainImagePreview img').length) {
+            $('#editError').text('Please provide a main image for the brand.').show();
+            return;
         }
+        handleSubmit(isEdit);
     });
 });
 

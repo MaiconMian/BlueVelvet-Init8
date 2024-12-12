@@ -149,24 +149,20 @@
                     <div id="editError" class="alert alert-danger" style="display: none;"></div>
                     <form id="editForm">
                         <input type="hidden" id="editBrandId">
-
                         <div class="form-group">
-                            <label for="categoryName">Brand Name</label>
-                            <input type="text" id="editBrandName" class="form-control" required>
+                            <label for="editName">Name</label>
+                            <input type="text" id="editName" class="form-control" maxlength="100" required>
+                            <div id="nameCounter" style="color: gray; font-size: 0.9em;">0/100</div>
                         </div>
                         <div class="form-group">
-                            <label for="editBrandImage">Brand Image</label>
-                            <input type="file" id="editBrandImage" class="form-control-file">
-                            <div id="editBrandImage" style="margin-top: 10px;">
-                                <img src="" alt="Preview" style="max-width: 100px; display: none;">
-                            </div>
-                        </div>
+                            <select id="editCategories" class="form-control" required multiple></select>
+                        </div>                       
                         <div class="form-group">
-                            <label for="editCategoryBrands"></label>
-                            <select id="editCategoryBrands" class="form-control" required multiple></select>
+                            <label>Main Image</label>
+                            <input type="file" id="editImage" class="form-control-file">
+                            <div class="mt-2" id="mainImagePreview" style="max-width: 200px;"></div>
                         </div>
-    
-                        <button type="submit" class="btn btn-primary">Save Brand</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
                     </form>
                 </div>
             </div>
