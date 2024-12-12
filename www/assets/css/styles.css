@@ -11,6 +11,32 @@ body {
     justify-content: flex-start; 
 }
 
+.dataTables_paginate .paginate_button:focus,
+.dataTables_paginate .paginate_button:hover {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.dataTables_paginate .paginate_button {
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+}
+
+.paginate_button page-item {
+    border-radius: 5% !important;
+}
+
+.dataTables_paginate .paginate_button:hover {
+    background-color: transparent; 
+    color: #091d28 !important;
+}
+
+.page-link{
+    border-radius: 10%;
+}
+
 
 .custom-navbar .navbar-brand {
     margin-right: 30px; 
