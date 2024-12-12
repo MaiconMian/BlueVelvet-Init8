@@ -119,7 +119,7 @@
                 <div class="modal-body">
                     <div id="editError" class="alert alert-danger" style="display: none;"></div>
                     <form id="editForm">
-                        <input type="hidden" id="editRoleId">
+                        <input type="hidden" id="roleId">
                         <div class="form-group">
                             <label for="roleName">Role Name</label>
                             <input type="text" id="roleName" class="form-control" required>
@@ -296,10 +296,9 @@
             
             const togglePermission = (id) =>{
                 const checkbox = document.getElementById(`labelPermission${id}`);
-                console.log(checkbox.checked);
             }
             const handleSubmit = (isEdit) => {
-                const roleId = $('#editRoleId').val();
+                const roleId = $('#roleId').val();
                 const data = {
                     name: $('#roleName').val(),
                     description: $('#roleDescription').val(),
@@ -308,7 +307,7 @@
 
                 console.log(data);
 
-                const submitData = () => {
+                const submitData = (isEdit) => {
                     const baseUrl = "http://localhost:8090/api/v1"
                     const url = isEdit ? `${baseUrl}/roles/${roleId}` : `${baseUrl}/roles`;
                     const method = isEdit ? "PUT" : "POST";
@@ -331,7 +330,7 @@
                     });
                 };
 
-                submitData();
+                submitData(isEdit);
             };
 
             function groupPermissionsByArea(permissions) {
@@ -491,7 +490,8 @@
 
             $('#editForm').submit(function (event) {
                 event.preventDefault();
-                const isEdit = !!$('#editRoleId').val();
+                const isEdit = $('#roleId').val() != '';
+                console.log($('#roleId').val());
                 handleSubmit(isEdit);
             });
         });
