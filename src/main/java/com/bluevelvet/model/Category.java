@@ -20,7 +20,7 @@
 
         @ManyToOne
         @JsonIgnore
-        @JoinColumn(name = "category_parent_id", insertable = false, updatable = false)
+        @JoinColumn(name = "category_parent_id")
         private Category categoryParent;
 
         @Column(name = "category_name", length=100)
