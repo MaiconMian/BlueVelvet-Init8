@@ -3,6 +3,7 @@ package com.bluevelvet.DTO;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 import java.util.List;
 import java.util.Set;
@@ -29,7 +30,7 @@ public class ProductDTO {
     @NotNull(message = "Product price is required")
     private Float price;
 
-    @Positive(message = "Product discount must be positive")
+    @PositiveOrZero(message = "Product discount must be positive or zero")
     @NotNull(message = "Product discount is required")
     private Float discount;
 
