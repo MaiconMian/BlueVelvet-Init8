@@ -70,7 +70,7 @@ public class UsersController {
         }
     }
 
-    @PostMapping("/admins")
+    @PostMapping("/users")
     @PreAuthorize("hasAuthority('PERMISSION_USER_CREATE')")
     public ResponseEntity adminRegister(@Valid @RequestBody AdminRegisterDTO adminRegisterDTO) {
 

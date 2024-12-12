@@ -287,6 +287,7 @@ public class RunTestsOnStartup implements CommandLineRunner {
         user.setEmail("florentino@bluevelvet.com");
         user.setPassword(new BCryptPasswordEncoder().encode("florentino123"));
         user.getRoles().add(adminRole);
+        user.setImage(imageBytes);
         user.setStatus(true);
 
         // create a user
