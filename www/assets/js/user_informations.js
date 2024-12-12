@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dropdownUserImage = document.getElementById("dropdown-user-image");
     const userName = document.getElementById("user-name");
     const userEmail = document.getElementById("user-email");
+    const userRole = document.getElementById("user-role");
 
     function base64ToImage(base64String) {
         return `data:image/png;base64,${base64String}`;
@@ -20,22 +21,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
             });
             if (!response.ok) {
-                throw new Error("Erro ao buscar os dados do usuário");
+                throw new Error("Error fetching user data");
             }
             const data = await response.json();
 
             if (data?.data) {
-                const { name, lastName, email, image } = data.data;
+                const { name, lastName, email, image , roles} = data.data;
 
                 userName.textContent = `${name} ${lastName}`;
                 userEmail.textContent = email;
+                userRole.textContent = roles;
 
                 const imageUrl = image ? base64ToImage(image) : "../assets/images/user-placeholder.png";
                 userImage.src = imageUrl;
                 dropdownUserImage.src = imageUrl;
             }
         } catch (error) {
-            console.error("Erro ao carregar os dados do usuário:", error);
+            console.error("Error fetching user data:", error);
         }
     }
 
@@ -52,12 +54,12 @@ document.getElementById('logout-button').addEventListener('click', async functio
         });
 
         if (response.ok) {
-            console.log('Logout realizado com sucesso');
+            console.log('Logout sucess!');
             window.location.href = '/login.html'; 
         } else {
-            console.error('Erro ao fazer logout:', response.statusText);
+            console.error('Error in logout:', response.statusText);
         }
     } catch (error) {
-        console.error('Erro ao enviar requisição de logout:', error);
+        console.error('Error fetching logout:', error);
     }
 });
