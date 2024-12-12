@@ -20,9 +20,6 @@ public class CategoryDTO {
 
     private byte[] image;
 
-    @NotNull(message = "Brand ID is required")
     private Set<Integer> brands;
-
-    private Set<Integer> products;
 
 }
